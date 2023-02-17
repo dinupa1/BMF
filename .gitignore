@@ -1,1 +1,10 @@
 articles
+.DS_Store
+imgs/
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
