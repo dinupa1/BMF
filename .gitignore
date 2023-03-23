@@ -8,3 +8,6 @@ imgs/
 *.snm
 *.toc
 *.vrb
+*.root
+*.tex
+.idea/
