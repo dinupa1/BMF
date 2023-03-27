@@ -13,7 +13,7 @@ netD = Discriminator()
 criterionG = nn.MSELoss()
 criterionD = nn.BCELoss()
 
-batch_size = 32
+batch_size = 64
 
 optimizerD = torch.optim.Adam(netD.parameters(), lr=0.001)
 optimizerG = torch.optim.Adam(netG.parameters(), lr=0.001)
@@ -109,8 +109,8 @@ plt.legend()
 plt.savefig("imgs/error.png")
 plt.close("all")
 
-import ROOT
-from ROOT import TH1D, TCanvas
+
+netG.eval()
 
 # test histograms
 test_tree = uproot.open("hist.root:test1")
@@ -120,25 +120,11 @@ test_hist_1 = test_tree["hist"].array().to_numpy()
 
 output = netG(torch.Tensor(test_hist_1).unsqueeze(1)).detach().numpy()
 
-
-hist1 = TH1D("hist1", "; lambda; count [a.u.]", 10, -1., 1.)
-hist2 = TH1D("hist2", "; mu; count [a.u.]", 10, -0.4, 0.2)
-hist3 = TH1D("hist3", "; nu; count [a.u.]", 10, -0.2, 0.4)
-
-[hist1.Fill(m) for m in output[:, 0]]
-[hist2.Fill(m) for m in output[:, 1]]
-[hist3.Fill(m) for m in output[:, 2]]
-
-can = TCanvas()
-
-hist1.Draw()
-can.SaveAs("imgs/lambda1.png")
-
-hist2.Draw()
-can.SaveAs("imgs/mu1.png")
-
-hist3.Draw()
-can.SaveAs("imgs/nu1.png")
+test1 = {
+    "lambda": output[:, 0],
+    "mu": output[:, 1],
+    "nu": output[:, 2],
+}
 
 test_tree2 = uproot.open("hist.root:test2")
 
@@ -147,24 +133,11 @@ test_hist_2 = test_tree2["hist"].array().to_numpy()
 
 output = netG(torch.Tensor(test_hist_2).unsqueeze(1)).detach().numpy()
 
-
-hist4 = TH1D("hist4", "; lambda; count [a.u.]", 10, -1., 1.)
-hist5 = TH1D("hist5", "; mu; count [a.u.]", 10, -1., 1.)
-hist6 = TH1D("hist6", "; nu; count [a.u.]", 10, -1., 1.)
-
-[hist4.Fill(m) for m in output[:, 0]]
-[hist5.Fill(m) for m in output[:, 1]]
-[hist6.Fill(m) for m in output[:, 2]]
-
-
-hist4.Draw()
-can.SaveAs("imgs/lambda2.png")
-
-hist5.Draw()
-can.SaveAs("imgs/mu2.png")
-
-hist6.Draw()
-can.SaveAs("imgs/nu2.png")
+test2 = {
+    "lambda": output[:, 0],
+    "mu": output[:, 1],
+    "nu": output[:, 2],
+}
 
 test_tree3 = uproot.open("hist.root:test3")
 
@@ -173,23 +146,11 @@ test_hist_3 = test_tree3["hist"].array().to_numpy()
 
 output = netG(torch.Tensor(test_hist_3).unsqueeze(1)).detach().numpy()
 
-hist7 = TH1D("hist7", "; lambda; count [a.u.]", 10, -1., 1.)
-hist8 = TH1D("hist8", "; mu; count [a.u.]", 10, -1., 1.)
-hist9 = TH1D("hist9", "; nu; count [a.u.]", 10, -1., 1.)
-
-[hist7.Fill(m) for m in output[:, 0]]
-[hist8.Fill(m) for m in output[:, 1]]
-[hist9.Fill(m) for m in output[:, 2]]
-
-
-hist7.Draw()
-can.SaveAs("imgs/lambda3.png")
-
-hist8.Draw()
-can.SaveAs("imgs/mu3.png")
-
-hist9.Draw()
-can.SaveAs("imgs/nu3.png")
+test3 = {
+    "lambda": output[:, 0],
+    "mu": output[:, 1],
+    "nu": output[:, 2],
+}
 
 test_tree4 = uproot.open("hist.root:test4")
 
@@ -199,20 +160,16 @@ test_hist_4 = test_tree4["hist"].array().to_numpy()
 
 output = netG(torch.Tensor(test_hist_4).unsqueeze(1)).detach().numpy()
 
-hist10 = TH1D("hist10", "; lambda; count [a.u.]", 10, -1., 1.)
-hist11 = TH1D("hist11", "; mu; count [a.u.]", 10, -1., 1.)
-hist12 = TH1D("hist12", "; nu; count [a.u.]", 10, -1., 1.)
-
-[hist10.Fill(m) for m in output[:, 0]]
-[hist11.Fill(m) for m in output[:, 1]]
-[hist12.Fill(m) for m in output[:, 2]]
+test4 = {
+    "lambda": output[:, 0],
+    "mu": output[:, 1],
+    "nu": output[:, 2],
+}
 
 
-hist10.Draw()
-can.SaveAs("imgs/lambda4.png")
-
-hist11.Draw()
-can.SaveAs("imgs/mu4.png")
-
-hist12.Draw()
-can.SaveAs("imgs/nu4.png")
+output = uproot.recreate("result.root", compression=uproot.ZLIB(4))
+output["test1"] = test1
+output["test2"] = test2
+output["test3"] = test3
+output["test4"] = test4
+output.close()

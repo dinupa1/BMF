@@ -15,18 +15,27 @@ def xsec(lam, mu, nu, phi, costh):
 pi = np.pi
 
 tree = uproot.open("../data.root:save")
-events = tree.arrays(["true_phi", "true_costh", "phi", "costh"])
+events1 = tree.arrays(["occuD1", "true_phi", "true_costh", "phi", "costh"])
+
+events = events1[events1.occuD1 < 200.]
+
+# print(events.to_numpy().shape)
+# print(events1.to_numpy().shape)
+
+hist_event = 50000
+ntrain = 41
+ntest = 50
 
 train_lam, train_mu, train_nu, train_hist = [], [], [], []
 
-for h in range(26):
-    for i in range(11):
-        for j in range(11):
-            for k in range(11):
-                df = events[100000* h: 100000*(h + 1)]
-                lam = -1. + 0.2* i
-                mu = -1. + 0.2* j
-                nu = -1. + 0.2* k
+for h in range(ntrain):
+    for i in range(21):
+        for j in range(21):
+            for k in range(21):
+                df = events[hist_event* h: hist_event*(h + 1)]
+                lam = -1. + 0.1* i
+                mu = -1. + 0.1* j
+                nu = -1. + 0.1* k
                 train_lam.append(lam)
                 train_mu.append(mu)
                 train_nu.append(nu)
@@ -41,35 +50,13 @@ for h in range(26):
                 bins, edge1, edge2 = hist2d.to_numpy()
                 train_hist.append(bins)
 
-# for i in range(100):
-#     for j in range(100):
-#         for k in range(200):
-#             # event = 40* i + 8* j + k
-#             # event = 20* j + k
-#             # print(event)
-#             event = k
-#             df = events[20000* event: 20000* (event+1)]
-#             train_lam.append(-1. + (2./99)* i)
-#             train_mu.append(-1. + (2./99)* j)
-#             train_nu.append(-1. + (2./199)* k)
-#             hist2d = Hist(
-#                     hist.axis.Regular(20, -pi, pi, name="phi"),
-#                     hist.axis.Regular(20, -0.6, 0.6, name="costh"),
-#                 ).fill(
-#                     df.phi, df.costh, weight=xsec(train_lam[event], train_mu[event], train_nu[event], df.true_phi.to_numpy(), df.true_costh.to_numpy())
-#                 )
-#
-#             bins, edge1, edge2 = hist2d.to_numpy()
-#
-#             train_hist.append(bins)
-
 # we make test histograms
 test_lam_1, test_mu_1, test_nu_1, test_hist_1 = [], [], [], []
-for i in range(30):
-    df = events[100000* (26 + i): 100000* (26+ 1+ i)]
-    test_lam_1.append(0.3)
-    test_mu_1.append(-0.1)
-    test_nu_1.append(0.1)
+for i in range(ntest):
+    df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
+    test_lam_1.append(0.25)
+    test_mu_1.append(-0.15)
+    test_nu_1.append(0.15)
     hist2d = Hist(
         hist.axis.Regular(20, -pi, pi, name="phi"),
         hist.axis.Regular(20, -0.6, 0.6, name="costh"),
@@ -84,11 +71,11 @@ for i in range(30):
 
 # we make test histograms
 test_lam_2, test_mu_2, test_nu_2, test_hist_2 = [], [], [], []
-for i in range(30):
-    df = events[100000* (26 + i): 100000* (26+ 1+ i)]
-    test_lam_2.append(-0.1)
-    test_mu_2.append(0.3)
-    test_nu_2.append(0.5)
+for i in range(ntest):
+    df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
+    test_lam_2.append(-0.25)
+    test_mu_2.append(0.35)
+    test_nu_2.append(0.45)
     hist2d = Hist(
         hist.axis.Regular(20, -pi, pi, name="phi"),
         hist.axis.Regular(20, -0.6, 0.6, name="costh"),
@@ -103,11 +90,11 @@ for i in range(30):
 
 # we make test histograms
 test_lam_3, test_mu_3, test_nu_3, test_hist_3 = [], [], [], []
-for i in range(30):
-    df = events[100000* (26 + i): 100000* (26+ 1+ i)]
-    test_lam_3.append(0.5)
-    test_mu_3.append(0.1)
-    test_nu_3.append(-0.3)
+for i in range(ntest):
+    df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
+    test_lam_3.append(0.45)
+    test_mu_3.append(0.15)
+    test_nu_3.append(-0.35)
     hist2d = Hist(
         hist.axis.Regular(20, -pi, pi, name="phi"),
         hist.axis.Regular(20, -0.6, 0.6, name="costh"),
@@ -122,11 +109,11 @@ for i in range(30):
 
 # we make test histograms
 test_lam_4, test_mu_4, test_nu_4, test_hist_4 = [], [], [], []
-for i in range(30):
-    df = events[100000* (26 + i): 100000* (26+ 1+ i)]
-    test_lam_4.append(-0.01)
-    test_mu_4.append(-0.01)
-    test_nu_4.append(-0.01)
+for i in range(ntest):
+    df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
+    test_lam_4.append(-0.45)
+    test_mu_4.append(0.15)
+    test_nu_4.append(0.25)
     hist2d = Hist(
         hist.axis.Regular(20, -pi, pi, name="phi"),
         hist.axis.Regular(20, -0.6, 0.6, name="costh"),
