@@ -29,7 +29,7 @@ train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True
 real_label = 1.
 fake_label = 0.
 
-num_epochs = 20
+num_epochs = 10
 
 real_losses = []
 fake_losses = []
@@ -113,7 +113,7 @@ plt.close("all")
 netG.eval()
 
 # test histograms
-test_tree = uproot.open("hist.root:test1")
+test_tree = uproot.open("hist.root:test_pT1")
 
 test_label_1 = test_tree.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
 test_hist_1 = test_tree["hist"].array().to_numpy()
@@ -126,50 +126,6 @@ test1 = {
     "nu": output[:, 2],
 }
 
-test_tree2 = uproot.open("hist.root:test2")
-
-test_label_2 = test_tree2.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
-test_hist_2 = test_tree2["hist"].array().to_numpy()
-
-output = netG(torch.Tensor(test_hist_2).unsqueeze(1)).detach().numpy()
-
-test2 = {
-    "lambda": output[:, 0],
-    "mu": output[:, 1],
-    "nu": output[:, 2],
-}
-
-test_tree3 = uproot.open("hist.root:test3")
-
-test_label_3 = test_tree3.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
-test_hist_3 = test_tree3["hist"].array().to_numpy()
-
-output = netG(torch.Tensor(test_hist_3).unsqueeze(1)).detach().numpy()
-
-test3 = {
-    "lambda": output[:, 0],
-    "mu": output[:, 1],
-    "nu": output[:, 2],
-}
-
-test_tree4 = uproot.open("hist.root:test4")
-
-test_label_4 = test_tree4.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
-test_hist_4 = test_tree4["hist"].array().to_numpy()
-
-
-output = netG(torch.Tensor(test_hist_4).unsqueeze(1)).detach().numpy()
-
-test4 = {
-    "lambda": output[:, 0],
-    "mu": output[:, 1],
-    "nu": output[:, 2],
-}
-
-
 output = uproot.recreate("result.root", compression=uproot.ZLIB(4))
 output["test1"] = test1
-output["test2"] = test2
-output["test3"] = test3
-output["test4"] = test4
 output.close()

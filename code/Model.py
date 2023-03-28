@@ -52,6 +52,7 @@ class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
         self.conv = nn.Sequential(
+            nn.BatchNorm2d(1),
             nn.Conv2d(1, 32, kernel_size=5),
             nn.MaxPool2d(2),
             nn.ReLU(),

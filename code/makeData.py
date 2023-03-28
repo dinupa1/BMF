@@ -15,16 +15,16 @@ def xsec(lam, mu, nu, phi, costh):
 pi = np.pi
 
 tree = uproot.open("../data.root:save")
-events1 = tree.arrays(["occuD1", "true_phi", "true_costh", "phi", "costh"])
+events1 = tree.arrays(["occuD1", "true_phi", "true_costh", "mass", "pT", "x1", "xF", "phi", "costh"])
 
 events = events1[events1.occuD1 < 200.]
 
 # print(events.to_numpy().shape)
 # print(events1.to_numpy().shape)
 
-hist_event = 50000
-ntrain = 41
-ntest = 50
+hist_event = 100000
+ntrain = 15
+ntest = 30
 
 train_lam, train_mu, train_nu, train_hist = [], [], [], []
 
@@ -51,80 +51,49 @@ for h in range(ntrain):
                 train_hist.append(bins)
 
 # we make test histograms
-test_lam_1, test_mu_1, test_nu_1, test_hist_1 = [], [], [], []
+test_lam, test_mu, test_nu = [], [], []
+hist_pT1, hist_pT2, hist_pT3, hist_pT4 = [], [], [], []
+hist_xF1, hist_xF2, hist_xF3, hist_xF4 = [], [], [], []
 for i in range(ntest):
     df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
-    test_lam_1.append(0.25)
-    test_mu_1.append(-0.15)
-    test_nu_1.append(0.15)
-    hist2d = Hist(
+    test_lam.append(0.2)
+    test_mu.append(0.2)
+    test_nu.append(0.2)
+    hist4d = Hist(
+        hist.axis.Regular(2, 4., 6., name="mass"),
+        hist.axis.Regular(4, 0., 1.6, name="pT"),
+        hist.axis.Regular(4, 0.4, 0.8, name="x1"),
+        hist.axis.Regular(4, 0.1, 0.9, name="xF"),
         hist.axis.Regular(20, -pi, pi, name="phi"),
-        hist.axis.Regular(20, -0.6, 0.6, name="costh"),
+        hist.axis.Regular(20, -0.6, 0.6, name="costh")
     ).fill(
-        df.phi, df.costh, weight=xsec(test_lam_1[i], test_mu_1[i], test_nu_1[i], df.true_phi.to_numpy(),
-                                      df.true_costh.to_numpy())
+        df.mass, df.pT, df.x1, df.xF, df.phi, df.costh,
+        weight=xsec(test_lam[i], test_mu[i], test_nu[i], df.true_phi.to_numpy(), df.true_costh.to_numpy())
     )
 
-    bins, edge1, edge2 = hist2d.to_numpy()
+    bins, edge1, edge2 = hist4d[:, 0, :, :, :, :].project("phi", "costh").to_numpy()
+    hist_pT1.append(bins)
 
-    test_hist_1.append(bins)
+    bins, edge1, edge2 = hist4d[:, 1, :, :, :, :].project("phi", "costh").to_numpy()
+    hist_pT2.append(bins)
 
-# we make test histograms
-test_lam_2, test_mu_2, test_nu_2, test_hist_2 = [], [], [], []
-for i in range(ntest):
-    df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
-    test_lam_2.append(-0.25)
-    test_mu_2.append(0.35)
-    test_nu_2.append(0.45)
-    hist2d = Hist(
-        hist.axis.Regular(20, -pi, pi, name="phi"),
-        hist.axis.Regular(20, -0.6, 0.6, name="costh"),
-    ).fill(
-        df.phi, df.costh, weight=xsec(test_lam_2[i], test_mu_2[i], test_nu_2[i], df.true_phi.to_numpy(),
-                                      df.true_costh.to_numpy())
-    )
+    bins, edge1, edge2 = hist4d[:, 2, :, :, :, :].project("phi", "costh").to_numpy()
+    hist_pT3.append(bins)
 
-    bins, edge1, edge2 = hist2d.to_numpy()
+    bins, edge1, edge2 = hist4d[:, 3, :, :, :, :].project("phi", "costh").to_numpy()
+    hist_pT4.append(bins)
 
-    test_hist_2.append(bins)
+    bins, edge1, edge2 = hist4d[:, :, :, 0, :, :].project("phi", "costh").to_numpy()
+    hist_xF1.append(bins)
 
-# we make test histograms
-test_lam_3, test_mu_3, test_nu_3, test_hist_3 = [], [], [], []
-for i in range(ntest):
-    df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
-    test_lam_3.append(0.45)
-    test_mu_3.append(0.15)
-    test_nu_3.append(-0.35)
-    hist2d = Hist(
-        hist.axis.Regular(20, -pi, pi, name="phi"),
-        hist.axis.Regular(20, -0.6, 0.6, name="costh"),
-    ).fill(
-        df.phi, df.costh, weight=xsec(test_lam_3[i], test_mu_3[i], test_nu_3[i], df.true_phi.to_numpy(),
-                                      df.true_costh.to_numpy())
-    )
+    bins, edge1, edge2 = hist4d[:, :, :, 1, :, :].project("phi", "costh").to_numpy()
+    hist_xF2.append(bins)
 
-    bins, edge1, edge2 = hist2d.to_numpy()
+    bins, edge1, edge2 = hist4d[:, :, :, 2, :, :].project("phi", "costh").to_numpy()
+    hist_xF3.append(bins)
 
-    test_hist_3.append(bins)
-
-# we make test histograms
-test_lam_4, test_mu_4, test_nu_4, test_hist_4 = [], [], [], []
-for i in range(ntest):
-    df = events[hist_event* (ntrain + i): hist_event* (ntrain+ 1+ i)]
-    test_lam_4.append(-0.45)
-    test_mu_4.append(0.15)
-    test_nu_4.append(0.25)
-    hist2d = Hist(
-        hist.axis.Regular(20, -pi, pi, name="phi"),
-        hist.axis.Regular(20, -0.6, 0.6, name="costh"),
-    ).fill(
-        df.phi, df.costh, weight=xsec(test_lam_4[i], test_mu_4[i], test_nu_4[i], df.true_phi.to_numpy(),
-                                      df.true_costh.to_numpy())
-    )
-
-    bins, edge1, edge2 = hist2d.to_numpy()
-
-    test_hist_4.append(bins)
+    bins, edge1, edge2 = hist4d[:, :, :, 3, :, :].project("phi", "costh").to_numpy()
+    hist_xF4.append(bins)
 
 output = uproot.recreate("hist.root", compression=uproot.ZLIB(4))
 output["train"] = {
@@ -134,32 +103,60 @@ output["train"] = {
     "hist": train_hist
 }
 
-output["test1"] = {
-    "lambda": test_lam_1,
-    "mu": test_mu_1,
-    "nu": test_nu_1,
-    "hist": test_hist_1
+output["test_pT1"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_pT1
 }
 
-output["test2"] = {
-    "lambda": test_lam_2,
-    "mu": test_mu_2,
-    "nu": test_nu_2,
-    "hist": test_hist_2
+output["test_pT2"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_pT2
 }
 
-output["test3"] = {
-    "lambda": test_lam_3,
-    "mu": test_mu_3,
-    "nu": test_nu_3,
-    "hist": test_hist_3
+output["test_pT3"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_pT3
 }
 
-output["test4"] = {
-    "lambda": test_lam_4,
-    "mu": test_mu_4,
-    "nu": test_nu_4,
-    "hist": test_hist_4
+output["test_pT4"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_pT4
+}
+
+output["test_xF1"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_xF1
+}
+
+output["test_xF2"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_xF2
+}
+
+output["test_xF3"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_xF3
+}
+
+output["test_xF4"] = {
+    "lambda": test_lam,
+    "mu": test_mu,
+    "nu": test_nu,
+    "hist": hist_xF4
 }
 
 output.close()

@@ -27,7 +27,6 @@ ROOT.gStyle.SetStatFont(42)
 ROOT.gStyle.SetCanvasDefH(800)
 ROOT.gStyle.SetCanvasDefW(800)
 ROOT.gStyle.SetLegendBorderSize(0)
-ROOT.gStyle.SetLegendBorderSize(0)
 ROOT.gStyle.SetHistMinimumZero(1)
 
 tree = uproot.open("../data.root:save")
