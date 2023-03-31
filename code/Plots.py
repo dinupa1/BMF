@@ -36,21 +36,21 @@ tree1 = uproot.open("result.root:test1")
 test1 = tree1.arrays(["lambda", "mu", "nu"], library="np")
 
 lambda1 = ROOT.TH1D("lambda1", "; lambda [a.u.]; counts [a.u.]", 11, -0.3, 0.9)
-mu1 = ROOT.TH1D("mu1", "; mu [a.u.]; counts [a.u.]", 11, -0.1, 0.6)
-nu1 = ROOT.TH1D("nu1", "; nu [a.u.]; counts [a.u.]", 11, -0.1, 0.6)
+mu1 = ROOT.TH1D("mu1", "; mu [a.u.]; counts [a.u.]", 11, 0.0, 0.8)
+nu1 = ROOT.TH1D("nu1", "; nu [a.u.]; counts [a.u.]", 11, 0.1, 0.8)
 
 [lambda1.Fill(m) for m in test1["lambda"]]
 [mu1.Fill(m) for m in test1["mu"]]
 [nu1.Fill(m) for m in test1["nu"]]
 
 lambda1.Draw()
-can.SaveAs("imgs/lambda1.png")
+can.SaveAs("imgs/lambda4.png")
 
 mu1.Draw()
-can.SaveAs("imgs/mu1.png")
+can.SaveAs("imgs/mu4.png")
 
 nu1.Draw()
-can.SaveAs("imgs/nu1.png")
+can.SaveAs("imgs/nu4.png")
 
 
 # # --------------------------------------------------------------------------

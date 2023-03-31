@@ -18,7 +18,7 @@ batch_size = 64
 optimizerD = torch.optim.Adam(netD.parameters(), lr=0.001)
 optimizerG = torch.optim.Adam(netG.parameters(), lr=0.001)
 
-train_tree = uproot.open("hist.root:train")
+train_tree = uproot.open("hist.root:train_xF3")
 
 train_label = train_tree.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
 train_hist = train_tree["hist"].array().to_numpy()
@@ -113,7 +113,7 @@ plt.close("all")
 netG.eval()
 
 # test histograms
-test_tree = uproot.open("hist.root:test_pT1")
+test_tree = uproot.open("hist.root:test_xF3")
 
 test_label_1 = test_tree.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
 test_hist_1 = test_tree["hist"].array().to_numpy()
