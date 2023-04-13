@@ -7,8 +7,11 @@ from torch.utils.data import TensorDataset, DataLoader
 
 from Model import Generator, Discriminator, data_set
 
-netG = Generator()
-netD = Discriminator()
+use_mps = torch.backends.mps.is_available()
+device = torch.device("mps" if use_mps else "cpu")
+
+netG = Generator().to(device)
+netD = Discriminator().to(device)
 
 criterionG = nn.MSELoss()
 criterionD = nn.BCELoss()
@@ -18,12 +21,12 @@ batch_size = 64
 optimizerD = torch.optim.Adam(netD.parameters(), lr=0.001)
 optimizerG = torch.optim.Adam(netG.parameters(), lr=0.001)
 
-train_tree = uproot.open("hist.root:train_xF3")
+train_tree = uproot.open("clean_mc.root:xF1")
 
 train_label = train_tree.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
 train_hist = train_tree["hist"].array().to_numpy()
 
-train_dataset = data_set(torch.Tensor(train_hist).unsqueeze(1), torch.Tensor(train_label))
+train_dataset = data_set(torch.Tensor(train_hist).unsqueeze(1).to(device), torch.Tensor(train_label).to(device))
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 real_label = 1.
@@ -35,6 +38,7 @@ real_losses = []
 fake_losses = []
 gen_losses = []
 gen_real = []
+
 
 for epoch in range(num_epochs):
     netD.train()
@@ -52,7 +56,7 @@ for epoch in range(num_epochs):
         # train real batch
         optimizerD.zero_grad()
         b_size = inputs.size(0)
-        label = torch.full((b_size,), real_label, dtype=torch.float)
+        label = torch.full((b_size,), real_label, dtype=torch.float, device=device)
         output = netD(targets).view(-1)
         errD_real = criterionD(output, label)
         errD_real.backward()
@@ -113,19 +117,18 @@ plt.close("all")
 netG.eval()
 
 # test histograms
-test_tree = uproot.open("hist.root:test_xF3")
+test_tree = uproot.open("clean_real.root:xF1")
 
-test_label_1 = test_tree.arrays(["lambda", "mu", "nu"], library="pd").to_numpy()
-test_hist_1 = test_tree["hist"].array().to_numpy()
+test_hist = test_tree["hist"].array().to_numpy()
 
-output = netG(torch.Tensor(test_hist_1).unsqueeze(1)).detach().numpy()
+output = netG(torch.Tensor(test_hist).unsqueeze(1).to(device)).cpu().detach().numpy()
 
-test1 = {
+result = {
     "lambda": output[:, 0],
     "mu": output[:, 1],
-    "nu": output[:, 2],
+    "nu": output[:, 2]
 }
 
 output = uproot.recreate("result.root", compression=uproot.ZLIB(4))
-output["test1"] = test1
+output["result"] = result
 output.close()
