@@ -1,0 +1,364 @@
+%
+% dinupa3@gmail.com
+% 13 April 2023
+%
+
+\documentclass[12pt, xcolor={dvipsnames}, aspectratio = 169, sans,mathserif]{beamer}
+
+\usepackage{fontspec}
+\usepackage{fontawesome5}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[absolute,overlay]{textpos}
+\usepackage[font=tiny]{caption}
+
+
+\mode<presentation>
+{
+\usefonttheme{serif}
+% \setmainfont{OpenDyslexicAlta NF}
+\definecolor{nmsured}{RGB}{137,18,22} % custom colors
+\setbeamercolor{title}{bg=White,fg=nmsured}
+\setbeamercolor{frametitle}{bg=White,fg=nmsured}
+\setbeamercolor{section number projected}{bg=nmsured,fg=White}
+\setbeamercolor{subsection number projected}{bg=nmsured,fg=White}
+\setbeamertemplate{items}{\color{nmsured}{$\blacksquare$}}
+\setbeamertemplate{section in toc}[square]
+\setbeamertemplate{subsection in toc}[square]
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{caption}[numbered]
+\setbeamerfont{footnote}{size=\tiny}
+\setbeamercovered{invisible}
+\usefonttheme{professionalfonts}
+%\setbeamertemplate{background}[grid][color=nmsured!15] % set background
+\setbeamertemplate{navigation symbols}{} % remove navigation buttons
+}
+
+\title{NMSU Update}
+\author{Dinupa}
+
+%
+% some custom environments
+%
+\newenvironment{List}[2]
+{
+\begin{textblock}{#1}#2
+\begin{itemize}
+}
+{
+\end{itemize}
+\end{textblock}
+}
+
+\newenvironment{Pic}[2]
+{
+\begin{textblock}{#1} #2
+\begin{figure}
+}
+{
+\end{figure}
+\end{textblock}
+}
+
+\begin{document}
+
+\begin{frame}
+    \maketitle
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{List}{15.0}{(0.5, 0.5)}
+
+  \item We use the cuts for MC, raw and mix data. Some physics cuts are;
+  \begin{verbatim}
+  4.5 < mass && mass < 8.8
+  D < 200.
+  \end{verbatim}
+
+  \item We use the same bin combination for real and MC data.
+  \begin{verbatim}
+  mass = {2, 4.5, 6.5};
+  pT = {3, 0., 1.5};
+  xF = {4, 0., 0.8};
+  phi = {20, -pi, pi};
+  costh = {20, -0.5, 0.5};
+  \end{verbatim}
+
+  \item In this study we have not subtract the flask background.
+
+\end{List}
+\end{frame}
+
+%
+%
+%
+\begin{frame}
+\begin{Pic}{7.0}{(0.5, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_mass0.png}
+  \caption{mass bin 0.}
+\end{Pic}
+
+\begin{Pic}{7.0}{(8.0, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_mass1.png}
+  \caption{mass bin 1.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}
+\begin{Pic}{7.0}{(0.5, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_pT0.png}
+  \caption{pT bin 0.}
+\end{Pic}
+
+\begin{Pic}{7.0}{(8.0, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_pT1.png}
+  \caption{pT bin 1.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}
+\begin{Pic}{7.0}{(0.5, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_pT2.png}
+  \caption{pT bin 2.}
+\end{Pic}
+
+\begin{Pic}{7.0}{(8.0, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_xF0.png}
+  \caption{xF bin 0.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}
+\begin{Pic}{7.0}{(0.5, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_xF1.png}
+  \caption{xF bin 1.}
+\end{Pic}
+
+\begin{Pic}{7.0}{(8.0, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_xF2.png}
+  \caption{xF bin 2.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}
+\begin{Pic}{7.0}{(0.5, 0.5)}
+  \includegraphics[width=7.0cm]{../imgs/phi_costh_xF3.png}
+  \caption{xF bin 3.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{1st mass bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_mass0.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_mass0.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_mass0.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{2nd mass bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_mass1.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_mass1.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_mass1.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{1st pT bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_pT0.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_pT0.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_pT0.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{2nd pT bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_pT1.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_pT1.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_pT1.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{3rd pT bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_pT2.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_pT2.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_pT2.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{1st xF bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_xF0.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_xF0.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_xF0.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{2nd xF bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_xF1.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_xF1.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_xF1.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{3rd xF bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_xF2.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_xF2.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_xF2.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{4th xF bin}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/lambda_xF3.png}
+  \caption{lambda.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mu_xF3.png}
+  \caption{mu.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/nu_xF3.png}
+  \caption{nu.}
+\end{Pic}
+\end{frame}
+
+%
+%
+%
+\begin{frame}{Final}
+\begin{Pic}{5.0}{(0.5, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/mass_final.png}
+  \caption{mass.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(6.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/pT_final.png}
+  \caption{pT.}
+\end{Pic}
+
+\begin{Pic}{5.0}{(11.0, 2.)}
+  \includegraphics[width=5.0cm]{../imgs/xF_final.png}
+  \caption{xF.}
+\end{Pic}
+\end{frame}
+
+\end{document}

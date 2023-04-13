@@ -9,6 +9,5 @@ imgs/
 *.toc
 *.vrb
 *.root
-*.tex
 .idea/
 __pycache__
