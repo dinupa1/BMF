@@ -37,16 +37,16 @@ void PlotResult()
 
   RDataFrame df("result", "result.root");
 
-  auto Hlambda = df.Fill<float>(TH1D("Hlambda", "; lambda [a.u.]; count [a.u.]", 10, -1.2, -0.9), {"lambda"});
+  auto Hlambda = df.Fill<float>(TH1D("Hlambda", "; lambda [a.u.]; count [a.u.]", 10, -0.6, -0.1), {"lambda"});
   Hlambda->Draw();
-  can->SaveAs("imgs/lambda_xF2.png");
+  can->SaveAs("imgs/lambda_xF3.png");
 
-  auto Hmu = df.Fill<float>(TH1D("Hmu", "; mu [a.u.]; count [a.u.]", 10, -0.2, 0.2), {"mu"});
+  auto Hmu = df.Fill<float>(TH1D("Hmu", "; mu [a.u.]; count [a.u.]", 10, -0.5, 0.0), {"mu"});
   Hmu->Draw();
-  can->SaveAs("imgs/mu_xF2.png");
+  can->SaveAs("imgs/mu_xF3.png");
 
-  auto Hnu = df.Fill<float>(TH1D("Hnu", "; nu [a.u.]; count [a.u.]", 10, 0.0, 0.3), {"nu"});
+  auto Hnu = df.Fill<float>(TH1D("Hnu", "; nu [a.u.]; count [a.u.]", 10, -0.2, 0.4), {"nu"});
   Hnu->Draw();
-  can->SaveAs("imgs/nu_xF2.png");
+  can->SaveAs("imgs/nu_xF3.png");
 
 }
