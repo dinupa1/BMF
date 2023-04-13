@@ -11,4 +11,4 @@ imgs/
 *.root
 *.tex
 .idea/
-code/__pycache__/
+__pycache__
