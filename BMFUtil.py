@@ -68,7 +68,7 @@ class AddParams2Input(nn.Module):
         self.params = nn.Parameter(torch.Tensor(params), requires_grad=True)
 
     def forward(self, inputs):
-        batch_params = torch.ones((inputs.size(0), 1)) * self.params
+        batch_params = torch.ones((inputs.size(0), 1), device=inputs.device) * self.params.to(device=inputs.device)
         concatenated = torch.cat([inputs, batch_params], dim=-1)
         return concatenated
 
