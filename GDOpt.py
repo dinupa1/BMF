@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from sklearn.model_selection import train_test_split
 
-from BMFUtil import BMFClassifier, AddParams2Input,BMFLoss, BMFLoader
+from BMFUtil import BMFClassifier, AddParams2Input, BMFLoss, BMFLoader
 from BMFUtil import weight_fn, reweight_fn, train_model, fit_fn
 
 
