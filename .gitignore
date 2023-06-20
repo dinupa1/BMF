@@ -22,3 +22,8 @@ TDCTime.png
 TDCTime.py
 code/
 cuts.h
+*.bib
+*.bbl
+*.blg
+*.dvi
+*.xml
