@@ -62,14 +62,16 @@
 % \subtitle{Subtitle}
 \author{Dinupa Nawarathne}
 \institute{New Mexico State University \\
-  Representing the E-906/SeaQuest Collaboration
+  Representing the E906/SeaQuest Collaboration
 }
 
+\date{New Perspectives Meeting - \today}
+
 \titlegraphic{
-\includegraphics[width= 3.0 cm]{imgs/Fermilab_logo.svg.png}
-\includegraphics[width=1.0cm]{imgs/NMSU_logo.jpg}
-\includegraphics[width=1.5cm]{imgs/SeaQuest.jpg}
-\includegraphics[width=1.3cm]{imgs/Seal_of_the_United_States_Department_of_Energy.svg.png}
+\includegraphics[height=0.8cm]{imgs/Fermilab_logo.svg.png}
+\includegraphics[height=0.8cm]{imgs/NMSU_logo.jpg}
+\includegraphics[height=0.8cm]{imgs/SeaQuest.jpg}
+\includegraphics[height=0.8cm]{imgs/DOE.png}
 }
 
 \begin{frame}
@@ -87,20 +89,24 @@
 \begin{frame}
 \frametitle{Likelihood Ratio Test}
 
-\begin{List}{13.}{(2., 3.0)}
+\begin{List}{13.}{(2., 2.0)}
 
   \item The likelihood ratio test is a highly effective method for assessing the goodness of fit.
 
   \item Let $X_1, X_2, X_3, \ldots, X_n$ be a random sample from a distribution with a parameter $\theta$. Suppose that
-  we have observed $X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n$. To decide between two simple hypotheses $H_0: \theta = \theta_0$
+  we have observed $X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n$. We define the the likelihood function as the probability of
+  the observed samples as a function of $\theta$;
+
+  \begin{equation*}
+  L(x_1, x_2, \ldots, x_n; \theta) = P(X_1=x_1, X_2=x_2, \ldots, X_n=x_n; \theta)
+  \end{equation*}
+
+  \item To decide between two simple hypotheses $H_0: \theta = \theta_0$
   and $H_1: \theta = \theta_1$, we define the likelihood ratio:
 
   \begin{equation*}
   \lambda(x_1, x_2, \ldots, x_n) = \frac{L(x_1, x_2, \ldots, x_n; \theta_0)}{L(x_1, x_2, \ldots, x_n; \theta_1)}
   \end{equation*}
-
-  \item To perform a likelihood ratio test, we choose a constant $c$. We reject $H_0$ if $\lambda < c$ and accept it if
-  $\lambda \geq c$. The value of $c$ can be chosen based on the desired significance level $\alpha$.
 
 \end{List}
 
@@ -109,14 +115,18 @@
 \begin{frame}
 \frametitle{Likelihood Ratio Test}
 
-\begin{List}{13.}{(2., 3.0)}
+\begin{List}{13.}{(2., 2.0)}
 
-  \item Neural networks excel at approximating functions, making them ideal for use as higher-dimensional likelihood functions.
+  \item To perform a likelihood ratio test, we choose a constant $c$. We reject $H_0$ if $\lambda < c$ and accept it if
+  $\lambda \geq c$. The value of $c$ can be chosen based on the desired significance level $\alpha$.
+
+  \item Neural networks excel at approximating non-linear functions, making them ideal for use as higher-dimensional
+  likelihood functions.
 
   \item Our goal is to train the neural network to classify samples accurately. Specifically, we aim to classify samples
   $\omega_{0i} \in \Omega_0$ as $y = 0$ and $\omega_{1i} \in \Omega_1$ as $y = 1$, regardless of the parameter $\theta$.
 
-  \item Subsequently, we can utilize the trained neural network to estimate any unknown parameter $\theta_?$ by employing
+  \item Subsequently, we can utilize the trained neural network to estimate any unknown parameter $\theta_{\text{unknown}}$ by employing
   the gradient descent algorithm.\NPcite{Andreassen:2019nnm}
 
 \end{List}
@@ -130,7 +140,8 @@
 
 \begin{List}{13.}{(2., 2.5)}
 
-  \item Suppose we have a Gaussian distribution $\mathcal{N}(\mu_{\text{?}}, 1)$, where $\mu_{\text{?}}$ is the known parameter.
+  \item Suppose we have a Gaussian distribution $\mathcal{N}(\mu_{\text{unknown}}, 1)$, where $\mu_{\text{unknown}}$ is
+  the known parameter.
 
   \item Our training strategy is to train the neural network to classify samples drawn from two Gaussian distributions:
   $x_{0} \sim \mathcal{N}_{0}(0, 1)$ with the label $y = 0$, and $x_{1} \sim \mathcal{N}_{1}(\mu, 1)$ with the label $y = 1$,
@@ -140,7 +151,7 @@
   The layers are activated using the Rectified Linear Unit (ReLU), while the final layer is activated by the Sigmoid function.
 
   \item The neural network was trained for 200 epochs, employing early stopping with a patience of 10, to minimize the
-  binary cross-entropy loss
+  binary cross-entropy loss.
 
 \end{List}
 
@@ -329,7 +340,7 @@ represented by green nodes, and the output layer is indicated by a red node.}
 
 \begin{Pic}{6.5}{(2.0, 1.0)}
 \includegraphics[width=6.5cm]{imgs/opt_1D.png}
-\caption{We tested the algorithm with $\mu_{?} = 1.3$. As depicted in the plot, the optimal value for $\mu$
+\caption{We tested the algorithm with $\mu_{\text{unknown}} = 1.3$. As depicted in the plot, the optimal value for $\mu$
 converges to the correct value as the epochs progress.}
 \end{Pic}
 
@@ -359,7 +370,7 @@ converges to the correct value as the epochs progress.}
 
 \begin{List}{13.0}{(2.0, 7.0)}
 
-  \item In the "naive" Drell-Yan model, where we ignore the transverse momentum of the quark and assume no gluon emission,
+  \item In the ``naive" Drell-Yan model, where we ignore the transverse momentum of the quark and assume no gluon emission,
   we have $\lambda = 1$, $\mu = \nu = 0$.
 
   \item Measuring the $\cos 2\phi$ angular dependence can be used to extract the Boer-Mulders (BM) function.
@@ -392,7 +403,7 @@ converges to the correct value as the epochs progress.}
 \begin{List}{13.}{(2., 3.)}
 
   \item We generated the Monte Carlo (MC) data using the PYTHIA generator. The generated events were then passed through
-  the E906 detector simulation to obtain the reconstructed detector information. As input features for the neural network,
+  the E906 detector simulation (using GEANT4) to obtain the reconstructed detector information. As input features for the neural network,
   we use the mass, $p_{T}$, $x_{F}$, $\phi$, and $\cos\theta$.
 
   \item We sample the values of $\lambda$, $\mu$ and $\nu$ uniformly  from the ranges of (0.5, 1.5), (−0.5, 0.5), and
@@ -413,7 +424,7 @@ converges to the correct value as the epochs progress.}
   \item The neural network was trained for 200 epochs, employing early stopping with a patience of 20, to minimize the
   binary cross-entropy loss.
 
-  \item We conducted a sanity check using five different combinations of $\lambda$, $\mu$, and $\nu$. The fitted values
+  \item We conducted a sanity check using four different combinations of $\lambda$, $\mu$, and $\nu$. The fitted values
   are presented in table \ref{tabel:1}.
 
   \item In the five test samples, we were able to extract the injected parameters within a $\pm$1.5 standard deviation ($\sigma$) interval.
@@ -461,12 +472,12 @@ Combination & Coefficient & Injected & Fitted \\
 \begin{frame}
 \frametitle{Summary}
 
-\begin{List}{13.}{(2., 2.)}
+\begin{List}{13.}{(2., 1.5)}
 
   \item Neural networks can be used as multi-dimensional likelihood functions, and we can utilize likelihood ratio test
   to extract the optimal parameters for the Drell-Yan angular distribution.
 
-  \item Measuring the $\cos2\theta$ angular dependence with higher accuracy is important for extracting the Boer-Mulders
+  \item Measuring the $\cos2\phi$ angular dependence with higher accuracy is important for extracting the Boer-Mulders
   (BM) functions.
 
   \item BM function describes the transverse-polarization asymmetry of quarks within an unpolarized hadron and results
@@ -475,6 +486,73 @@ Combination & Coefficient & Injected & Fitted \\
 
   \item Our plan is to use this high-dimensional fitting algorithm to extract the Drell-Yan angular coefficients from the
   E906/SeaQuest data with higher accuracy.
+
+  \item Acknowledgement: This work was funded by the DOE Office of Science, Medium-Energy Nuclear Physics Program.
+
+\end{List}
+
+\end{frame}
+
+\begin{frame}{Neural Network}
+
+\begin{List}{13.}{(2., 2.)}
+
+  \item Think of a neural network as a network of interconnected nodes, called neurons, organized in layers. The input
+  layer receives information, such as numerical data, images, or text. This information is then passed through the network,
+  layer by layer, where each neuron performs a simple calculation based on its input and a set of weights.
+
+  \item During training, the neural network adjusts these weights based on the provided input and the desired output.
+  It learns by continuously comparing its predictions to the actual results and updating the weights accordingly, aiming
+  to minimize the difference between them. This process, known as backpropagation, allows the network to learn and improve
+  its performance over time.
+
+\end{List}
+
+\end{frame}
+
+\begin{frame}{Neural Network}
+
+\begin{List}{13.}{(2., 2.)}
+
+  \item Once trained, the neural network can make predictions or classify new, unseen data based on the patterns it has learned.
+  It can handle a wide range of tasks, including image and speech recognition, natural language processing, and predictive modeling.
+
+  \item Learning Rate: The learning rate is a hyperparameter that determines how quickly a neural network adapts its weights during
+  training. It controls the step size taken in the direction of minimizing the loss function. A higher learning rate can lead
+  to faster convergence, but it may also cause overshooting and instability. On the other hand, a lower learning rate can
+  ensure more stable updates, but it may slow down the convergence. Finding an appropriate learning rate is crucial for
+  effective training.
+
+\end{List}
+
+\end{frame}
+
+\begin{frame}{Neural Network}
+
+\begin{List}{13.}{(2., 2.)}
+
+  \item Early Patience (Early Stopping): Early patience, also known as early stopping, is a technique used to prevent overfitting
+  and improve generalization in a neural network. During training, the model's performance is monitored on a validation set. If the
+  validation loss stops improving or starts to worsen after a certain number of epochs, early patience is applied. It involves
+  stopping the training process early and using the model with the best validation performance as the final model. Early patience
+  helps to prevent the model from overfitting to the training data and ensures it generalizes well to unseen data.
+
+\end{List}
+
+\end{frame}
+
+\begin{frame}{Neural Network}
+
+\begin{List}{13.}{(2., 2.)}
+
+  \item The binary cross entropy loss is calculated as follows;
+
+  \begin{equation*}
+  \mathcal{L}(y, \hat{y}) = - (y* log(\hat{y}) + (1-y)* log(1 - \hat{y}))
+  \end{equation*}
+
+  where $y$ represents the true binary label (either 0 or 1) of the training example. $\hat{y}$ represents the predicted probability
+  of the positive class (typically obtained by passing the input through a sigmoid activation function).
 
 \end{List}
 
