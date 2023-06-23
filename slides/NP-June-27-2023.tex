@@ -66,7 +66,7 @@
   FERMILAB-SLIDES-23-124-PPD
 }
 
-\date{New Perspectives Meeting - \today}
+\date{New Perspectives Meeting - June 27, 2023}
 
 \titlegraphic{
 \includegraphics[height=0.8cm]{imgs/Fermilab_logo.svg.png}
@@ -95,7 +95,7 @@
   \item The likelihood ratio test is a highly effective method for assessing the goodness of fit.
 
   \item Let $X_1, X_2, X_3, \ldots, X_n$ be a random sample from a distribution with a parameter $\theta$. Suppose that
-  we have observed $X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n$. We define the the likelihood function as the probability of
+  we have observed $X_1 = x_1, X_2 = x_2, \ldots, X_n = x_n$. We define the the likelihood function as the joint probability of
   the observed samples as a function of $\theta$;
 
   \begin{equation*}
@@ -237,7 +237,7 @@
 represented by green nodes, and the output layer is indicated by a red node.}
 \end{Pic}
 
-\begin{Pic}{4.0}{(9.0, 1.5)}
+\begin{Pic}{4.0}{(9.0, 1.0)}
 \includegraphics[width=4.0cm]{imgs/ReLU.png}
 \caption{ReLU activation function.}
 \end{Pic}
@@ -390,7 +390,7 @@ converges to the correct value as the epochs progress.}
 \frametitle{FermiLab E906/SeaQuest Experiment}
 
 \begin{Pic}{13.}{(2.0, 1.0)}
-\includegraphics[width=9.0cm]{imgs/spectrometer.png}
+\includegraphics[width=10.0cm]{imgs/spectrometer.pdf}
 \caption{FermiLab E906/SeaQuest spectrometer.}
 \end{Pic}
 
@@ -428,7 +428,8 @@ converges to the correct value as the epochs progress.}
   \item We conducted a sanity check using four different combinations of $\lambda$, $\mu$, and $\nu$. The fitted values
   are presented in table \ref{tabel:1}.
 
-  \item In the five test samples, we were able to extract the injected parameters within a $\pm$1.5 standard deviation ($\sigma$) interval.
+  \item In the four test samples, we were able to extract the injected parameters within a $\pm$1.5 standard deviation
+  ($\sigma$) interval. The number of events included in one test sample is close to the number of events in the real data.
 
 \end{List}
 
@@ -491,6 +492,21 @@ Combination & Coefficient & Injected & Fitted \\
   \item Acknowledgement: This work was funded by the DOE Office of Science, Medium-Energy Nuclear Physics Program.
 
 \end{List}
+
+\end{frame}
+
+\begin{frame}{2D Example}
+
+\begin{Pic}{6.0}{(2., 2.)}
+\includegraphics[width=6.cm]{imgs/opt_2D.png}
+\caption{We tested the algorithm with $\mu_{\text{unknown}} = 1.2$ and $\sigma_{\text{unknown}} = 0.7$. As depicted in the plot, the optimal value for $\mu$
+and $\nu$ converges to the correct value as the epochs progress.}
+\end{Pic}
+
+\begin{Pic}{6.0}{(9., 2.)}
+\includegraphics[width=6.cm]{imgs/loss2D.png}
+\caption{The loss reaches its minimum value at the optimal value of $\mu$ and $\nu$.}
+\end{Pic}
 
 \end{frame}
 
