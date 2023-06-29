@@ -15,10 +15,11 @@ class CNNClassifier(nn.Module):
     def __init__(self):
         super(CNNClassifier, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, 3)
-        self.conv2 = nn.Conv2d(6, 3, 2)
-        self.fc1 = nn.Linear(15, 32, bias=True) # 3* 2* 2 + 3 = 11 input dim
-        # self.fc2 = nn.Linear(32, 32, bias=True)
-        self.fc3 = nn.Linear(32, 1, bias=True)
+        self.conv2 = nn.Conv2d(6, 10, 2)
+        self.fc1 = nn.Linear(43, 64, bias=True) # 3* 2* 2 + 3 = 11 input dim
+        self.fc2 = nn.Linear(64, 64, bias=True)
+        # self.fc3 = nn.Linear(64, 64, bias=True)
+        self.fc4 = nn.Linear(64, 1, bias=True)
         self.pool = nn.MaxPool2d(2, 2)
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
@@ -29,8 +30,9 @@ class CNNClassifier(nn.Module):
         x = torch.flatten(x, 1)
         x = torch.cat((x, theta), -1)
         x = self.relu(self.fc1(x))
-        # x = self.relu(self.fc2(x))
-        x = self.sigmoid(self.fc3(x))
+        x = self.relu(self.fc2(x))
+        # x = self.relu(self.fc3(x))
+        x = self.sigmoid(self.fc4(x))
         return x
 
 
@@ -47,7 +49,14 @@ class AddParams2Input(nn.Module):
 
 # Training step
 def train_model(model, train_loader, test_loader, criterion, optimizer, device, epochs, early_stopping_patience):
-    best_loss = float('inf')
+
+    train_params = {
+        "train_loss": [],
+        "val_loss": [],
+        "val_acc": [],
+    }
+
+    best_accuracy = 0
     best_model_weights = None
     patience_counter = 0
 
@@ -67,13 +76,15 @@ def train_model(model, train_loader, test_loader, criterion, optimizer, device, 
             loss.backward()
             optimizer.step()
             running_loss += loss.item() * batch_inputs.size(0)
-
         epoch_loss = running_loss / len(train_loader.dataset)
+        train_params["train_loss"].append(epoch_loss)
 
         # Evaluation
         model.eval()
         with torch.no_grad():
             running_loss = 0.0
+            correct_predictions = 0
+            total_predictions = 0
             for batch_inputs, batch_thetas, batch_labels in test_loader:
                 batch_inputs = batch_inputs.to(device)
                 batch_thetas = batch_thetas.to(device)
@@ -84,13 +95,23 @@ def train_model(model, train_loader, test_loader, criterion, optimizer, device, 
 
                 running_loss += loss.item() * batch_inputs.size(0)
 
-            validation_loss = running_loss / len(test_loader.dataset)
+                predicted_labels = torch.round(outputs)
+                total_predictions += batch_labels.size(0)
+                correct_predictions += (predicted_labels == batch_labels).sum().item()
 
-            print("Epoch {}: Train Loss = {:.4f}, Test Loss = {:.4f}".format(epoch + 1, epoch_loss, validation_loss))
+            validation_loss = running_loss / len(test_loader.dataset)
+            validation_accuracy = correct_predictions / total_predictions
+            train_params["val_loss"].append(validation_loss)
+            train_params["val_acc"].append(validation_accuracy)
+
+            print("Epoch {}: Train Loss = {:.4f}, Test Loss = {:.4f}, Test Accuracy = {:.4f}".format(epoch + 1,
+                                                                                                     epoch_loss,
+                                                                                                     validation_loss,
+                                                                                                     validation_accuracy))
 
             # Check for early stopping
-            if validation_loss < best_loss:
-                best_loss = validation_loss
+            if validation_accuracy > best_accuracy:
+                best_accuracy = validation_accuracy
                 best_model_weights = model.state_dict()
                 patience_counter = 0
             else:
@@ -100,7 +121,10 @@ def train_model(model, train_loader, test_loader, criterion, optimizer, device, 
                 print("Early stopping at epoch {}".format(epoch))
                 break
 
-    return best_model_weights
+        if patience_counter >= early_stopping_patience:
+            break
+
+    return best_model_weights, train_params
 
 
 # Fit the model

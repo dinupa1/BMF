@@ -5,10 +5,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-import torch.nn.functional as F
 
 from sklearn.model_selection import train_test_split
-from sklearn.utils import resample
 
 import uproot
 import awkward as ak
@@ -25,7 +23,7 @@ LAMBDA0, MU0, NU0 = 1., 0., 0.
 
 # Constants
 iterations = 1
-epochs = 2
+epochs = 500
 learning_rate = 0.001
 n_samples = 100000
 n_events = 10000
@@ -94,7 +92,7 @@ for i in range(iterations):
     # print('total trainable params: {}'.format(total_trainable_params))
 
     # Validation data
-    best_model_weights = train_model(fit_model, train_loader, test_loader, criterion, optimizer, device, epochs, early_stopping_patience)
+    best_model_weights, train_params = train_model(fit_model, train_loader, test_loader, criterion, optimizer, device, epochs, early_stopping_patience)
 
     X0_train1, X0_val = train_test_split(X0, test_size=n_val, shuffle=True)
 
@@ -145,3 +143,29 @@ for i in range(iterations):
 print("lambda test : {:.3f} lambda opt : {:.3f} +/- {:.3f}".format(LAMBDA_val, np.mean(opt_vals["lambda"]), np.std(opt_vals["lambda"])))
 print("mu test : {:.3f} mu opt : {:.3f} +/- {:.3f}".format(MU_val, np.mean(opt_vals["mu"]), np.std(opt_vals["mu"])))
 print("nu test : {:.3f} nu opt : {:.3f} +/- {:.3f}".format(NU_val, np.mean(opt_vals["nu"]), np.std(opt_vals["nu"])))
+
+
+fig, ax1 = plt.subplots()
+ax1.plot(train_params["train_loss"], label="train loss", color="red")
+ax1.plot(train_params["val_loss"], label="val. loss", color="blue")
+ax1.set_xlabel("epoch")
+ax1.set_ylabel("loss")
+
+ax2 = ax1.twinx()
+ax2.plot(train_params["val_acc"], label="val. acc.", color="tab:green")
+ax2.set_ylabel("val. acc.")
+ax2.tick_params(axis='y', labelcolor="tab:green")
+ax1.legend(loc='lower left', frameon=False)
+ax2.legend(loc='upper left', frameon=False)
+plt.show()
+plt.close("all")
+
+fig, ax1 = plt.subplots()
+ax1.plot(np.array(fit_vals["lambda"])/LAMBDA_val, label=r"$\lambda$")
+ax1.plot(np.array(fit_vals["mu"])/MU_val, label=r"$\mu$")
+ax1.plot(np.array(fit_vals["nu"])/NU_val, label=r"$\nu$")
+ax1.set_xlabel("epoch")
+ax1.set_ylabel("opt. val. / target")
+ax1.legend(loc='lower left', frameon=False)
+plt.show()
+plt.close("all")

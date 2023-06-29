@@ -23,7 +23,7 @@ data_train, data_val = train_test_split(data, test_size=0.3, shuffle=True)
 data0_train, data1_train = train_test_split(data_train, test_size=0.5, shuffle=True)
 
 # Number of samples
-n_samples = 100000
+n_samples = 1000000
 n_events = 10000
 n_val = 20000
 
