@@ -1,6 +1,5 @@
 articles
 .DS_Store
-imgs/
 *.aux
 *.log
 *.nav
