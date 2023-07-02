@@ -21,9 +21,9 @@ In this repository, our objective is to investigate machine learning algorithms 
 
 ## Method
 
-- An example of neural positive reweighing can be found in this [notebook](put_url).
+- An example of neural positive reweighing can be found in this [notebook](https://github.com/dinupa1/BMF/blob/NeuralPositiveReweighting/NeuralPositiveReweighting.ipynb).
 - An example of a Gaussian example can be found in this [notebook](https://github.com/dinupa1/BMF/blob/GaussianExample/GaussianExample.ipynb).
-- An example of simple neural reweighing can be found in this [notebook](put_url).
+- An example of simple neural reweighing can be found in this [notebook](https://github.com/dinupa1/BMF/blob/NeuralPositiveReweighting/SimpleReweighting.ipynb).
 
 TODO ....
 
