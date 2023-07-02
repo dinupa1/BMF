@@ -14,9 +14,9 @@ To overcome these limitations, we propose a novel approach that utilizes Deep Ne
 
 In this repository, our objective is to investigate machine learning algorithms to accurately extract the $\cos2\phi$ asymmetry.
 
-![Complicated structure of the proton](https://bigthink.com/wp-content/uploads/2022/12/960x0.jpg?resize=768,644)
+![Complicated structure of the proton](imgs/proton_structure.webp)
 
-![Drell-Yan process](https://spinquest.fnal.gov/wp-content/uploads/2019/05/DY_web-768x292.jpg)
+![Drell-Yan process](imgs/Drell-Yan.jpg)
 
 
 ## Method
