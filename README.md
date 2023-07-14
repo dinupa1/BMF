@@ -25,13 +25,13 @@ In this repository, our objective is to investigate machine learning algorithms 
 - An example of a Gaussian example can be found in this [notebook](https://github.com/dinupa1/BMF/blob/GaussianExample/GaussianExample.ipynb).
 - An example of simple neural reweighing can be found in this [notebook](https://github.com/dinupa1/BMF/blob/NeuralPositiveReweighting/SimpleReweighting.ipynb).
 
-TODO ....
+Under development
 
 ## Talks and Presentations
 
 - New Perpectives Meeting, June 2023: [slides](https://github.com/dinupa1/BMF/blob/New-Perspectives-June-2023/slides/NP-June-27-2023.pdf)
 
-TODO ....
+Under development
 
 ## References
 
@@ -43,5 +43,6 @@ TODO ....
 - Neural Networks for Full Phase-space Reweighting and Parameter Tuning, [arXiv:1907.08209](https://arxiv.org/abs/1907.08209)
 - Parameter Estimation using Neural Networks in the Presence of Detector Effects, [arXiv:2010.03569](https://arxiv.org/abs/2010.03569)
 - OmniFold: A Method to Simultaneously Unfold All Observables, [arXiv:1911.09107](https://arxiv.org/abs/1911.09107)
+- How to GAN Event Unweighting, [arXiv:2012.07873 [hep-ph]](https://arxiv.org/abs/2012.07873)
 
-TODO ....
+Under development
