@@ -56,12 +56,16 @@ class BackgroundVDM(nn.Module):
         # Reparameterize and sample from the latent space
         z = self.reparameterize(mu, logvar)
 
-        # Perform diffusion process
+        # Forward diffusion process
         for t in range(timesteps):
-            # print("==> Deffusion step {}".format(t))
+            diffusion_noise = torch.randn_like(z)
+            alpha = torch.tensor(0.1).float()
+            z_new = z + torch.sqrt(alpha)* diffusion_noise # Diffusion step
+            z = z_new
+
+        # Backward diffusion process
+        for t in range(timesteps):
             z_new = self.decode(z)
-            diffusion_noise = torch.randn_like(z_new)
-            z_new = z + 0.1* diffusion_noise # Diffusion step
             z = z_new
 
         # Final output
