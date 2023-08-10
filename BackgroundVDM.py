@@ -58,13 +58,14 @@ class BackgroundVDM(nn.Module):
 
         # Perform diffusion process
         for t in range(timesteps):
+            # print("==> Deffusion step {}".format(t))
             z_new = self.decode(z)
             diffusion_noise = torch.randn_like(z_new)
-            z_new = z + torch.sqrt(0.1)* z_new * diffusion_noise # Diffusion step
+            z_new = z + 0.1* diffusion_noise # Diffusion step
             z = z_new
 
         # Final output
-        reco_x = self.decoder(z)
+        reco_x = self.decode(z)
 
         return reco_x, mu, logvar
 
