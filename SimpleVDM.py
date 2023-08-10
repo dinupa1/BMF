@@ -38,7 +38,7 @@ dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 # Create the VDM
 input_dim = 5
 hidden_dim = 100
-latent_dim = 10
+latent_dim = 5
 time_steps = 1000
 vdm = BackgroundVDM(input_dim, hidden_dim, latent_dim)
 
@@ -55,5 +55,5 @@ for epoch in range(num_epochs):
         loss = loss_vdm(reco_data, batch_data, batch_weight, mu, logvar)
         loss.backward()
         optimizer.step()
-        if epoch % 10 == 0:
-            print(f"===> Epoch [{epoch}/{num_epochs}], Loss: {loss.item()}")
+    if epoch % 10 == 0:
+        print(f"===> Epoch [{epoch}/{num_epochs}], Loss: {loss.item()}")
