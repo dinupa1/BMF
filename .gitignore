@@ -22,5 +22,7 @@ TDCTime.py
 code/
 cuts.h
 *.png
+*.cc
+*.h
 .ipynb_checkpoints
 notes
