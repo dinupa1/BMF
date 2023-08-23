@@ -66,7 +66,7 @@
   Representing the E906/SeaQuest Collaboration
 }
 
-\date{Neutrino Physics and Machine Learning 2023 - August 24, 2023}
+\date{NPML2023 - August 24, 2023}
 
 \titlegraphic{
 \includegraphics[height=0.8cm]{imgs/Fermilab_logo.svg.png}
@@ -351,6 +351,34 @@ h_{1}^{\perp [C]} (x, k_{T}^{2})\epsilon_{T}^{ij}k_{T_{j}} = \frac{M}{2} F.T. \b
 \subsection{Likelihood Ratio fit Method with Deep Neural Networks}
 
 \begin{frame}
+\frametitle{Analysis Procedure}
+
+\begin{List}{14.}{(1., 2.0)}
+
+  \item Experimental data $\rightarrow$ need corrections for detector acceptance, inefficiencies, smearing etc.
+
+  \item Traditional ``Unfolding'': map detector level information $\rightarrow$ particle level
+
+  \begin{itemize}
+    \item Usually, this is done through matrix manipulations
+
+    \item Does not scale well in higher-dimensional parameter space
+  \end{itemize}
+
+  \item Deep neural networks (DNN) $\rightarrow$ excellent non-linear functional approximators;
+
+  \begin{itemize}
+    \item Parameterize DNN classifiers $\rightarrow$ the Drell-Yan angular coefficients at the particle level
+
+    \item Likelihood ratio test $\rightarrow$ extract the Drell-Yan angular coefficients
+  \end{itemize}
+
+  \item DNN approach $\rightarrow$ higher-dimensional phase space $\rightarrow$ directly extract the Drell-Yan coefficients at the particle level
+
+\end{List}
+\end{frame}
+
+\begin{frame}
 \frametitle{Likelihood Ratio Test}
 
 \begin{List}{14.}{(1., 2.)}
@@ -601,7 +629,7 @@ h_{1}^{\perp [C]} (x, k_{T}^{2})\epsilon_{T}^{ij}k_{T_{j}} = \frac{M}{2} F.T. \b
 \end{frame}
 
 \begin{frame}
-\frametitle{Sanity Check}
+\frametitle{Testing DNN approach}
 
 \begin{textblock}{10.}(1., 2.)
 \begin{center}
@@ -634,15 +662,44 @@ Combination & Coefficient & Injected & Fitted \\
 \end{center}
 \end{textblock}
 
-\begin{textblock}{4.}(11.5, 2.)
-\begin{small}
-In the 3 test samples, we were able to extract the injected parameters within a $\pm$1.5 standard deviation ($\sigma$) interval. The number of events included in one test sample is close to the number of events in the real data.
-\end{small}
-\end{textblock}
+\begin{List}{5.}{(11., 2.)}
+  \item Independent events from training data $\rightarrow$ to reduce the biases
+
+  \item 3 test sample $\rightarrow$ extract the injected parameters within a $\pm$1.5 standard deviation ($\sigma$) interval
+\end{List}
 
 \end{frame}
 
 \subsection{Variational Autoencoders to Remove Combinatorial Background Events}
+
+\begin{frame}
+\frametitle{Combinatorial Background}
+
+\begin{List}{14.}{(1., 2.)}
+
+  \item Understanding the background fron the experiment data is really important
+
+  \item Full background simulations $\rightarrow$ computationally expensive
+
+  \item Variational autoencoders;
+
+  \begin{itemize}
+
+    \item Generative model $\rightarrow$ can generated new events based on the trained events
+
+    \item Computation is fast $\rightarrow$ use of GPUs
+
+    \item Can use a higher input dimension
+
+    \item Can control the reconstruction error using KL divergence.
+
+    \item Trained VAE $\rightarrow$ background subtracted events $\rightarrow$ un-binned method
+
+  \end{itemize}
+
+\end{List}
+
+\end{frame}
 
 \begin{frame}
 \frametitle{Combinatorial Background}
@@ -656,7 +713,7 @@ In the 3 test samples, we were able to extract the injected parameters within a 
 
     \item We use an event-mixing method to estimate the combinatoric background from the SeaQuest data.\BeamerCite{SeaQuest:2023tcr}
 
-    \item To remove the combinatorial background, we employ histogram subtraction $\rightarrow$ binned method, which does not scale well in higher dimensions.
+    \item To remove the combinatorial background, we employ histogram subtraction $\rightarrow$ binned method, which does not scale well in higher dimensions
 
 \end{List}
 
@@ -722,6 +779,21 @@ In the 3 test samples, we were able to extract the injected parameters within a 
 Early result $\rightarrow$ enhance the prediction accuracy using diffusion models/ conditional VAEs.
 
 \end{textblock}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Future Trajectory}
+
+\begin{List}{14.}{(1., 2.)}
+
+  \item Full systematic study for the fitting algorithm $\rightarrow$ better understand the detector acceptance
+
+  \item Increase the precision of the fitting algorithm using VAE/GAN\BeamerCite{Diefenbacher:2020rna}
+
+  \item Increase the accuracy of the prediction for background subtracted events with Diffution/CVAE models $\rightarrow$ understanding the systematics
+
+\end{List}
 
 \end{frame}
 
