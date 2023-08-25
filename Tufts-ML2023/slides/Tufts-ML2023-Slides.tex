@@ -350,32 +350,46 @@ h_{1}^{\perp [C]} (x, k_{T}^{2})\epsilon_{T}^{ij}k_{T_{j}} = \frac{M}{2} F.T. \b
 \section{Deep Neural Networks for Extracting the $\cos 2 \phi$ Asymmetry in the Drell-Yan process}
 \subsection{Likelihood Ratio fit Method with Deep Neural Networks}
 
+% \begin{frame}
+% \frametitle{Analysis Procedure}
+%
+% \begin{List}{14.}{(1., 2.0)}
+%
+%   \item Experimental data $\rightarrow$ need corrections for detector acceptance, inefficiencies, smearing etc.
+%
+%   \item Traditional ``Unfolding'': map detector level information $\rightarrow$ particle level \BeamerCite{Brenner:2019lmf}
+%
+%   \begin{itemize}
+%     \item Usually, this is done through matrix manipulations
+%
+%     \item Does not scale well in higher-dimensional parameter space
+%   \end{itemize}
+%
+%   \item Deep neural networks (DNN) $\rightarrow$ excellent non-linear functional approximators;
+%
+%   \begin{itemize}
+%     \item Parameterize DNN classifiers $\rightarrow$ Drell-Yan angular coefficients at the particle level
+%
+%     \item Likelihood ratio test $\rightarrow$ extract the Drell-Yan angular coefficients
+%   \end{itemize}
+%
+%   \item DNN approach $\rightarrow$ higher-dimensional phase space $\rightarrow$ directly extract the Drell-Yan coefficients at the particle level
+%
+% \end{List}
+% \end{frame}
+
 \begin{frame}
 \frametitle{Analysis Procedure}
+\begin{Pic}{14.}{(1., -2.)}
+\includegraphics[width=14.cm]{imgs/Traditional_approach.png}
+\end{Pic}
+\end{frame}
 
-\begin{List}{14.}{(1., 2.0)}
-
-  \item Experimental data $\rightarrow$ need corrections for detector acceptance, inefficiencies, smearing etc.
-
-  \item Traditional ``Unfolding'': map detector level information $\rightarrow$ particle level
-
-  \begin{itemize}
-    \item Usually, this is done through matrix manipulations
-
-    \item Does not scale well in higher-dimensional parameter space
-  \end{itemize}
-
-  \item Deep neural networks (DNN) $\rightarrow$ excellent non-linear functional approximators;
-
-  \begin{itemize}
-    \item Parameterize DNN classifiers $\rightarrow$ the Drell-Yan angular coefficients at the particle level
-
-    \item Likelihood ratio test $\rightarrow$ extract the Drell-Yan angular coefficients
-  \end{itemize}
-
-  \item DNN approach $\rightarrow$ higher-dimensional phase space $\rightarrow$ directly extract the Drell-Yan coefficients at the particle level
-
-\end{List}
+\begin{frame}
+\frametitle{Analysis Procedure}
+\begin{Pic}{14.}{(1., 0.)}
+\includegraphics[width=12.cm]{imgs/DNN_approach.png}
+\end{Pic}
 \end{frame}
 
 \begin{frame}
@@ -418,161 +432,161 @@ h_{1}^{\perp [C]} (x, k_{T}^{2})\epsilon_{T}^{ij}k_{T_{j}} = \frac{M}{2} F.T. \b
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Likelihood Ratio Test}
-
-\begin{Pic}{6.0}{(1., 2.)}
-\scalebox{0.7}{
-\begin{tikzpicture}[scale=1.2, every node/.style={draw, circle, minimum size=1cm}]
-  % Input Layer
-  \node[fill=blue!30] (input1) at (0,0.75) {$\theta$};
-  \node[fill=blue!30] (input2) at (0,-0.75) {$x$};
-
-  % Hidden Layers
-  \node[fill=green!30] (hidden11) at (2, 3.0) {$h_{11}$};
-  \node[fill=green!30] (hidden12) at (2, 1.5) {$h_{12}$};
-  \node[fill=green!30] (hidden13) at (2, 0.0) {$h_{13}$};
-  \node[fill=green!30] (hidden14) at (2,-1.5) {$h_{14}$};
-  \node[fill=green!30] (hidden15) at (2,-3.0) {$h_{15}$};
-
-  \node[fill=green!30] (hidden21) at (4, 3.0) {$h_{21}$};
-  \node[fill=green!30] (hidden22) at (4, 1.5) {$h_{22}$};
-  \node[fill=green!30] (hidden23) at (4, 0.0) {$h_{23}$};
-  \node[fill=green!30] (hidden24) at (4,-1.5) {$h_{24}$};
-  \node[fill=green!30] (hidden25) at (4,-3.0) {$h_{25}$};
-
-  % Output Layer
-  \node[fill=red!30] (output) at (6, 0.0) {$y$};
-
-  % Arrows
-  \draw[->, thick] (input1) -- (hidden11);
-  \draw[->, thick] (input1) -- (hidden12);
-  \draw[->, thick] (input1) -- (hidden13);
-  \draw[->, thick] (input1) -- (hidden14);
-  \draw[->, thick] (input1) -- (hidden15);
-  \draw[->, thick] (input2) -- (hidden11);
-  \draw[->, thick] (input2) -- (hidden12);
-  \draw[->, thick] (input2) -- (hidden13);
-  \draw[->, thick] (input2) -- (hidden14);
-  \draw[->, thick] (input2) -- (hidden15);
-
-  \draw[->, thick] (hidden11) -- (hidden21);
-  \draw[->, thick] (hidden11) -- (hidden22);
-  \draw[->, thick] (hidden11) -- (hidden23);
-  \draw[->, thick] (hidden11) -- (hidden24);
-  \draw[->, thick] (hidden11) -- (hidden25);
-
-  \draw[->, thick] (hidden12) -- (hidden21);
-  \draw[->, thick] (hidden12) -- (hidden22);
-  \draw[->, thick] (hidden12) -- (hidden23);
-  \draw[->, thick] (hidden12) -- (hidden24);
-  \draw[->, thick] (hidden12) -- (hidden25);
-
-  \draw[->, thick] (hidden13) -- (hidden21);
-  \draw[->, thick] (hidden13) -- (hidden22);
-  \draw[->, thick] (hidden13) -- (hidden23);
-  \draw[->, thick] (hidden13) -- (hidden24);
-  \draw[->, thick] (hidden13) -- (hidden25);
-
-  \draw[->, thick] (hidden14) -- (hidden21);
-  \draw[->, thick] (hidden14) -- (hidden22);
-  \draw[->, thick] (hidden14) -- (hidden23);
-  \draw[->, thick] (hidden14) -- (hidden24);
-  \draw[->, thick] (hidden14) -- (hidden25);
-
-  \draw[->, thick] (hidden15) -- (hidden21);
-  \draw[->, thick] (hidden15) -- (hidden22);
-  \draw[->, thick] (hidden15) -- (hidden23);
-  \draw[->, thick] (hidden15) -- (hidden24);
-  \draw[->, thick] (hidden15) -- (hidden25);
-
-  \draw[->, thick] (hidden21) -- (output);
-  \draw[->, thick] (hidden22) -- (output);
-  \draw[->, thick] (hidden23) -- (output);
-  \draw[->, thick] (hidden24) -- (output);
-  \draw[->, thick] (hidden25) -- (output);
-\end{tikzpicture}
-}
-\caption{Example of a neural network architecture: The input layer is depicted with blue nodes, the hidden layers are represented by green nodes, and the output layer is indicated by a red node.}
-\end{Pic}
-
-
-\begin{Pic}{6.0}{(8., 2.)}
-\scalebox{0.7}{
-\begin{tikzpicture}[scale=1.2, every node/.style={draw, circle, minimum size=1cm}]
-  % Input Layer
-  \node[fill=yellow!30] (input1) at (0,0.75) {$\theta$};
-  \node[fill=blue!30] (input2) at (0,-0.75) {$x$};
-
-  % Hidden Layers
-  \node[fill=green!30] (hidden11) at (2, 3.0) {$h_{11}$};
-  \node[fill=green!30] (hidden12) at (2, 1.5) {$h_{12}$};
-  \node[fill=green!30] (hidden13) at (2, 0.0) {$h_{13}$};
-  \node[fill=green!30] (hidden14) at (2,-1.5) {$h_{14}$};
-  \node[fill=green!30] (hidden15) at (2,-3.0) {$h_{15}$};
-
-  \node[fill=green!30] (hidden21) at (4, 3.0) {$h_{21}$};
-  \node[fill=green!30] (hidden22) at (4, 1.5) {$h_{22}$};
-  \node[fill=green!30] (hidden23) at (4, 0.0) {$h_{23}$};
-  \node[fill=green!30] (hidden24) at (4,-1.5) {$h_{24}$};
-  \node[fill=green!30] (hidden25) at (4,-3.0) {$h_{25}$};
-
-  % Output Layer
-  \node[fill=red!30] (output) at (6, 0.0) {$y$};
-
-  % Arrows
-  \draw[->, thick] (input1) -- (hidden11);
-  \draw[->, thick] (input1) -- (hidden12);
-  \draw[->, thick] (input1) -- (hidden13);
-  \draw[->, thick] (input1) -- (hidden14);
-  \draw[->, thick] (input1) -- (hidden15);
-  \draw[->, thick] (input2) -- (hidden11);
-  \draw[->, thick] (input2) -- (hidden12);
-  \draw[->, thick] (input2) -- (hidden13);
-  \draw[->, thick] (input2) -- (hidden14);
-  \draw[->, thick] (input2) -- (hidden15);
-
-  \draw[->, thick] (hidden11) -- (hidden21);
-  \draw[->, thick] (hidden11) -- (hidden22);
-  \draw[->, thick] (hidden11) -- (hidden23);
-  \draw[->, thick] (hidden11) -- (hidden24);
-  \draw[->, thick] (hidden11) -- (hidden25);
-
-  \draw[->, thick] (hidden12) -- (hidden21);
-  \draw[->, thick] (hidden12) -- (hidden22);
-  \draw[->, thick] (hidden12) -- (hidden23);
-  \draw[->, thick] (hidden12) -- (hidden24);
-  \draw[->, thick] (hidden12) -- (hidden25);
-
-  \draw[->, thick] (hidden13) -- (hidden21);
-  \draw[->, thick] (hidden13) -- (hidden22);
-  \draw[->, thick] (hidden13) -- (hidden23);
-  \draw[->, thick] (hidden13) -- (hidden24);
-  \draw[->, thick] (hidden13) -- (hidden25);
-
-  \draw[->, thick] (hidden14) -- (hidden21);
-  \draw[->, thick] (hidden14) -- (hidden22);
-  \draw[->, thick] (hidden14) -- (hidden23);
-  \draw[->, thick] (hidden14) -- (hidden24);
-  \draw[->, thick] (hidden14) -- (hidden25);
-
-  \draw[->, thick] (hidden15) -- (hidden21);
-  \draw[->, thick] (hidden15) -- (hidden22);
-  \draw[->, thick] (hidden15) -- (hidden23);
-  \draw[->, thick] (hidden15) -- (hidden24);
-  \draw[->, thick] (hidden15) -- (hidden25);
-
-  \draw[->, thick] (hidden21) -- (output);
-  \draw[->, thick] (hidden22) -- (output);
-  \draw[->, thick] (hidden23) -- (output);
-  \draw[->, thick] (hidden24) -- (output);
-  \draw[->, thick] (hidden25) -- (output);
-\end{tikzpicture}
-}
-\caption{In the fitting step, the only trainable parameter is the yellow node representing $\theta$.}
-\end{Pic}
-
-\end{frame}
+% \begin{frame}
+% \frametitle{Likelihood Ratio Test}
+%
+% \begin{Pic}{6.0}{(1., 2.)}
+% \scalebox{0.7}{
+% \begin{tikzpicture}[scale=1.2, every node/.style={draw, circle, minimum size=1cm}]
+%   % Input Layer
+%   \node[fill=blue!30] (input1) at (0,0.75) {$\theta$};
+%   \node[fill=blue!30] (input2) at (0,-0.75) {$x$};
+%
+%   % Hidden Layers
+%   \node[fill=green!30] (hidden11) at (2, 3.0) {$h_{11}$};
+%   \node[fill=green!30] (hidden12) at (2, 1.5) {$h_{12}$};
+%   \node[fill=green!30] (hidden13) at (2, 0.0) {$h_{13}$};
+%   \node[fill=green!30] (hidden14) at (2,-1.5) {$h_{14}$};
+%   \node[fill=green!30] (hidden15) at (2,-3.0) {$h_{15}$};
+%
+%   \node[fill=green!30] (hidden21) at (4, 3.0) {$h_{21}$};
+%   \node[fill=green!30] (hidden22) at (4, 1.5) {$h_{22}$};
+%   \node[fill=green!30] (hidden23) at (4, 0.0) {$h_{23}$};
+%   \node[fill=green!30] (hidden24) at (4,-1.5) {$h_{24}$};
+%   \node[fill=green!30] (hidden25) at (4,-3.0) {$h_{25}$};
+%
+%   % Output Layer
+%   \node[fill=red!30] (output) at (6, 0.0) {$y$};
+%
+%   % Arrows
+%   \draw[->, thick] (input1) -- (hidden11);
+%   \draw[->, thick] (input1) -- (hidden12);
+%   \draw[->, thick] (input1) -- (hidden13);
+%   \draw[->, thick] (input1) -- (hidden14);
+%   \draw[->, thick] (input1) -- (hidden15);
+%   \draw[->, thick] (input2) -- (hidden11);
+%   \draw[->, thick] (input2) -- (hidden12);
+%   \draw[->, thick] (input2) -- (hidden13);
+%   \draw[->, thick] (input2) -- (hidden14);
+%   \draw[->, thick] (input2) -- (hidden15);
+%
+%   \draw[->, thick] (hidden11) -- (hidden21);
+%   \draw[->, thick] (hidden11) -- (hidden22);
+%   \draw[->, thick] (hidden11) -- (hidden23);
+%   \draw[->, thick] (hidden11) -- (hidden24);
+%   \draw[->, thick] (hidden11) -- (hidden25);
+%
+%   \draw[->, thick] (hidden12) -- (hidden21);
+%   \draw[->, thick] (hidden12) -- (hidden22);
+%   \draw[->, thick] (hidden12) -- (hidden23);
+%   \draw[->, thick] (hidden12) -- (hidden24);
+%   \draw[->, thick] (hidden12) -- (hidden25);
+%
+%   \draw[->, thick] (hidden13) -- (hidden21);
+%   \draw[->, thick] (hidden13) -- (hidden22);
+%   \draw[->, thick] (hidden13) -- (hidden23);
+%   \draw[->, thick] (hidden13) -- (hidden24);
+%   \draw[->, thick] (hidden13) -- (hidden25);
+%
+%   \draw[->, thick] (hidden14) -- (hidden21);
+%   \draw[->, thick] (hidden14) -- (hidden22);
+%   \draw[->, thick] (hidden14) -- (hidden23);
+%   \draw[->, thick] (hidden14) -- (hidden24);
+%   \draw[->, thick] (hidden14) -- (hidden25);
+%
+%   \draw[->, thick] (hidden15) -- (hidden21);
+%   \draw[->, thick] (hidden15) -- (hidden22);
+%   \draw[->, thick] (hidden15) -- (hidden23);
+%   \draw[->, thick] (hidden15) -- (hidden24);
+%   \draw[->, thick] (hidden15) -- (hidden25);
+%
+%   \draw[->, thick] (hidden21) -- (output);
+%   \draw[->, thick] (hidden22) -- (output);
+%   \draw[->, thick] (hidden23) -- (output);
+%   \draw[->, thick] (hidden24) -- (output);
+%   \draw[->, thick] (hidden25) -- (output);
+% \end{tikzpicture}
+% }
+% \caption{Example of a neural network architecture: The input layer is depicted with blue nodes, the hidden layers are represented by green nodes, and the output layer is indicated by a red node.}
+% \end{Pic}
+%
+%
+% \begin{Pic}{6.0}{(8., 2.)}
+% \scalebox{0.7}{
+% \begin{tikzpicture}[scale=1.2, every node/.style={draw, circle, minimum size=1cm}]
+%   % Input Layer
+%   \node[fill=yellow!30] (input1) at (0,0.75) {$\theta$};
+%   \node[fill=blue!30] (input2) at (0,-0.75) {$x$};
+%
+%   % Hidden Layers
+%   \node[fill=green!30] (hidden11) at (2, 3.0) {$h_{11}$};
+%   \node[fill=green!30] (hidden12) at (2, 1.5) {$h_{12}$};
+%   \node[fill=green!30] (hidden13) at (2, 0.0) {$h_{13}$};
+%   \node[fill=green!30] (hidden14) at (2,-1.5) {$h_{14}$};
+%   \node[fill=green!30] (hidden15) at (2,-3.0) {$h_{15}$};
+%
+%   \node[fill=green!30] (hidden21) at (4, 3.0) {$h_{21}$};
+%   \node[fill=green!30] (hidden22) at (4, 1.5) {$h_{22}$};
+%   \node[fill=green!30] (hidden23) at (4, 0.0) {$h_{23}$};
+%   \node[fill=green!30] (hidden24) at (4,-1.5) {$h_{24}$};
+%   \node[fill=green!30] (hidden25) at (4,-3.0) {$h_{25}$};
+%
+%   % Output Layer
+%   \node[fill=red!30] (output) at (6, 0.0) {$y$};
+%
+%   % Arrows
+%   \draw[->, thick] (input1) -- (hidden11);
+%   \draw[->, thick] (input1) -- (hidden12);
+%   \draw[->, thick] (input1) -- (hidden13);
+%   \draw[->, thick] (input1) -- (hidden14);
+%   \draw[->, thick] (input1) -- (hidden15);
+%   \draw[->, thick] (input2) -- (hidden11);
+%   \draw[->, thick] (input2) -- (hidden12);
+%   \draw[->, thick] (input2) -- (hidden13);
+%   \draw[->, thick] (input2) -- (hidden14);
+%   \draw[->, thick] (input2) -- (hidden15);
+%
+%   \draw[->, thick] (hidden11) -- (hidden21);
+%   \draw[->, thick] (hidden11) -- (hidden22);
+%   \draw[->, thick] (hidden11) -- (hidden23);
+%   \draw[->, thick] (hidden11) -- (hidden24);
+%   \draw[->, thick] (hidden11) -- (hidden25);
+%
+%   \draw[->, thick] (hidden12) -- (hidden21);
+%   \draw[->, thick] (hidden12) -- (hidden22);
+%   \draw[->, thick] (hidden12) -- (hidden23);
+%   \draw[->, thick] (hidden12) -- (hidden24);
+%   \draw[->, thick] (hidden12) -- (hidden25);
+%
+%   \draw[->, thick] (hidden13) -- (hidden21);
+%   \draw[->, thick] (hidden13) -- (hidden22);
+%   \draw[->, thick] (hidden13) -- (hidden23);
+%   \draw[->, thick] (hidden13) -- (hidden24);
+%   \draw[->, thick] (hidden13) -- (hidden25);
+%
+%   \draw[->, thick] (hidden14) -- (hidden21);
+%   \draw[->, thick] (hidden14) -- (hidden22);
+%   \draw[->, thick] (hidden14) -- (hidden23);
+%   \draw[->, thick] (hidden14) -- (hidden24);
+%   \draw[->, thick] (hidden14) -- (hidden25);
+%
+%   \draw[->, thick] (hidden15) -- (hidden21);
+%   \draw[->, thick] (hidden15) -- (hidden22);
+%   \draw[->, thick] (hidden15) -- (hidden23);
+%   \draw[->, thick] (hidden15) -- (hidden24);
+%   \draw[->, thick] (hidden15) -- (hidden25);
+%
+%   \draw[->, thick] (hidden21) -- (output);
+%   \draw[->, thick] (hidden22) -- (output);
+%   \draw[->, thick] (hidden23) -- (output);
+%   \draw[->, thick] (hidden24) -- (output);
+%   \draw[->, thick] (hidden25) -- (output);
+% \end{tikzpicture}
+% }
+% \caption{In the fitting step, the only trainable parameter is the yellow node representing $\theta$.}
+% \end{Pic}
+%
+% \end{frame}
 
 \subsubsection{SeaQuest MC Data Generation}
 
@@ -590,7 +604,7 @@ h_{1}^{\perp [C]} (x, k_{T}^{2})\epsilon_{T}^{ij}k_{T_{j}} = \frac{M}{2} F.T. \b
 \end{List}
 
 \begin{Pic}{7.}{(8., 2.)}
-\includegraphics[width=6.cm]{imgs/mc2real.png}
+    \includegraphics[width=6.cm]{imgs/mc2real.png}
     \caption{SeaQuest MC data is in good agreement with real data.\BeamerCite{SeaQuest:2021zxb}}
 \end{Pic}
 
