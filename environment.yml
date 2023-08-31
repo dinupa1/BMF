@@ -1,0 +1,21 @@
+name:bmf-playground
+channels:
+    - conda-forge
+    - https://download.pytorch.org/whl/rocm5.4.2
+dependencies:
+    - cmake
+    - make
+    - compilers
+    - cuda-toolkit
+    - numpy
+    - matplotlib
+    - scikit-learn
+    - uproot
+    - awkward
+    - root
+    - pip
+    - pip:
+        - torch
+        - torchvision
+        - torchaudio
+
