@@ -22,7 +22,7 @@ double weight_fn(double lambda, double mu, double nu, double phi, double costh)
 
 void MakeBinnedData()
 {
-	auto file = TFile::Open("data/data.root", "READ");
+	auto file = TFile::Open("data.root", "READ");
 	auto tree = (TTree*)file->Get("save");
 	int entries = tree->GetEntries();
 
@@ -47,7 +47,6 @@ void MakeBinnedData()
 	tree->SetBranchAddress("true_costh", &true_costh);
 
 	cout << "===> creating training data " << endl;
-
 	int hist_entries = 10000;
 	int ntrain = 100000;
 
@@ -239,8 +238,8 @@ void MakeBinnedData()
 		auto hist = new TH2D("hist", "; #phi [rad]; cos#theta [a.u.]", 12, -pi, pi, 12, -0.5, 0.5);
 
 		// lets test with lambda = 0.8, mu = 0.1, nu = 0.2
-		double lambda = 0.8;
-		double mu = 0.1;
+		double lambda = 1.0;
+		double mu = 0.0;
 		double nu = 0.2; //nu_array[i];
 
 		for(int j = 0; j < hist_entries; j++)
