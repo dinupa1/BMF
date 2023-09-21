@@ -12,6 +12,9 @@
 #include <TMath.h>
 #include <iostream>
 
+
+
+
 using namespace std;
 
 double weight_fn(double lambda, double mu, double nu, double phi, double costh)
@@ -50,13 +53,11 @@ void MakeBinnedData()
 	int hist_entries = 10000;
 	int ntrain = 100000;
 
-	auto outfile = new TFile("BinMCData1D.root", "RECREATE");
+	auto outfile = new TFile("BinMCData.root", "RECREATE");
 
 	double thetas[3];
 	double bin_count[144];
-	double label;
-
-	auto rand = new TRandom3();
+	double label[2];
 
 	tree->LoadBaskets(99999999999);
 
@@ -67,19 +68,21 @@ void MakeBinnedData()
 
 	vae_tree->Branch("bin_count", 	bin_count, 	"bin_count[144]/D");
 	vae_tree->Branch("thetas", 		thetas, 	"thetas[3]/D");
+	vae_tree->Branch("label", 		label,		"label[2]/D");
 
-	auto lamnda_rand = new TRandom3();
-	auto mu_rand = new TRandom3();
-	auto nu_rand = new TRandom3();
+	auto rand = new TRandom3(1);
+	auto lamnda_rand = new TRandom3(2);
+	auto mu_rand = new TRandom3(3);
+	auto nu_rand = new TRandom3(4);
 
 	// create train data with label = 0.
 	for(int i = 0; i < ntrain; i++)
 	{
 		auto hist = new TH2D("hist", "; #phi [rad]; cos#theta [a.u.]", 12, -pi, pi, 12, -0.5, 0.5);
 
-		double lambda_rnd = lamnda_rand->Rndm(i);
-		double mu_rnd = mu_rand->Rndm(i);
-		double nu_rnd = nu_rand->Rndm(i);
+		double lambda_rnd = lamnda_rand->Rndm();
+		double mu_rnd = mu_rand->Rndm();
+		double nu_rnd = nu_rand->Rndm();
 
 		double lambda = 1.0; //lambda_min + lambda_rnd* (lambda_max - lambda_min);
 		double mu = 0.0; //mu_min + mu_rnd* (mu_max - mu_min);
@@ -134,9 +137,9 @@ void MakeBinnedData()
 	{
 		auto hist = new TH2D("hist", "; #phi [rad]; cos#theta [a.u.]", 12, -pi, pi, 12, -0.5, 0.5);
 
-		double lambda_rnd = lamnda_rand->Rndm(i);
-		double mu_rnd = mu_rand->Rndm(i);
-		double nu_rnd = nu_rand->Rndm(i);
+		double lambda_rnd = lamnda_rand->Rndm();
+		double mu_rnd = mu_rand->Rndm();
+		double nu_rnd = nu_rand->Rndm();
 
 		double lambda = 1.0; //lambda_min + lambda_rnd* (lambda_max - lambda_min);
 		double mu = 0.0; //mu_min + mu_rnd* (mu_max - mu_min);
@@ -144,7 +147,7 @@ void MakeBinnedData()
 
 		for(int j = 0; j < hist_entries; j++)
 		{
-			double r = rand->Rndm(i+j);
+			double r = rand->Rndm();
 
 			tree->GetEntry(TMath::Nint(entries/4. + r* (2.* entries/4. - entries/4.)));
 
@@ -179,9 +182,9 @@ void MakeBinnedData()
 	{
 		auto hist = new TH2D("hist", "; #phi [rad]; cos#theta [a.u.]", 12, -pi, pi, 12, -0.5, 0.5);
 
-		double lambda_rnd = lamnda_rand->Rndm(i);
-		double mu_rnd = mu_rand->Rndm(i);
-		double nu_rnd = nu_rand->Rndm(i);
+		double lambda_rnd = lamnda_rand->Rndm();
+		double mu_rnd = mu_rand->Rndm();
+		double nu_rnd = nu_rand->Rndm();
 
 		double lambda = 1.0; //lambda_min + lambda_rnd* (lambda_max - lambda_min);
 		double mu = 0.0; //mu_min + mu_rnd* (mu_max - mu_min);
@@ -189,7 +192,7 @@ void MakeBinnedData()
 
 		for(int j = 0; j < hist_entries; j++)
 		{
-			double r = rand->Rndm(i+j);
+			double r = rand->Rndm();
 
 			tree->GetEntry(TMath::Nint(2.* entries/4. + r* (3.* entries/4. - 2.* entries/4.)));
 
@@ -244,7 +247,7 @@ void MakeBinnedData()
 
 		for(int j = 0; j < hist_entries; j++)
 		{
-			double r = rand->Rndm(i+j);
+			double r = rand->Rndm();
 
 			tree->GetEntry(TMath::Nint(entries/2.+ r* (entries - entries/2.)));
 
