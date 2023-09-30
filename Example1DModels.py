@@ -68,8 +68,6 @@ class VAEModel(nn.Module):
 				nn.ReLU(),
 				nn.Linear(hidden_dim, input_dim, bias=True),
 				nn.Sigmoid(),
-				# nn.BatchNorm1d(hidden_dim),
-				# nn.ReLU(),
 			)
 
 	def encode(self, x):
@@ -189,21 +187,24 @@ def fit_vae(model, X_data, thetas_data, batch_size, learning_rate, num_epochs, e
 # classifier to paramatrize the latent space
 #
 class Classifier(nn.Module):
-	def __init__(self, input_dim: int = 10, hidden_dim: int = 20, output_dim: int = 1):
+	def __init__(self, input_dim: int = 10, theta_dim: int = 1, hidden_dim: int = 20, output_dim: int = 1):
 		super(Classifier, self).__init__()
 
 		self.fc = nn.Sequential(
-			nn.Linear(input_dim, hidden_dim, bias=True),
+			nn.Linear(input_dim + theta_dim, hidden_dim, bias=True),
 			nn.ReLU(),
 			nn.Linear(hidden_dim, hidden_dim, bias=True),
 			nn.ReLU(),
 			nn.Linear(hidden_dim, hidden_dim, bias=True),
 			nn.ReLU(),
+			# nn.Linear(hidden_dim, hidden_dim, bias=True),
+			# nn.ReLU(),
 			nn.Linear(hidden_dim, output_dim, bias=True),
 			nn.Sigmoid(),
 			)
 
-	def forward(self, x):
+	def forward(self, x, theta):
+		x = torch.cat((x, theta), dim=-1)
 		x = self.fc(x)
 		return x
 
@@ -211,21 +212,21 @@ class Classifier(nn.Module):
 #
 # classifier train function
 #
-def train_classifier(model, X_data, label, batch_size, learning_rate, num_epochs, early_stopping_patience, device):
-
-
-	X_train, X_val, Y_train, Y_val = train_test_split(X_data, label, test_size=0.3, shuffle=True)
+def fit_classifier(model, X_data, thetas, label, batch_size, learning_rate, num_epochs, early_stopping_patience, device):
+	X_train, X_val, thetas_train, thetas_val, Y_train, Y_val = train_test_split(X_data, thetas, label, test_size=0.3, shuffle=True)
 
 	X_train_tensor = torch.from_numpy(X_train).float()
 	X_val_tensor = torch.from_numpy(X_val).float()
 	Y_train_tensor = torch.from_numpy(Y_train).float()
 	Y_val_tensor = torch.from_numpy(Y_val).float()
+	theta_train_tensor = torch.from_numpy(thetas_train).float()
+	theta_val_tensor = torch.from_numpy(thetas_val).float()
 
-	train_dataset = TensorDataset(X_train_tensor, Y_train_tensor)
-	val_dataset = TensorDataset(X_val_tensor, Y_val_tensor)
+	train_dataset = TensorDataset(X_train_tensor, theta_train_tensor, Y_train_tensor)
+	val_dataset = TensorDataset(X_val_tensor, theta_val_tensor, Y_val_tensor)
 
 	train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-	val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=Flase)
+	val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
 	model = model.to(device)
 
@@ -242,13 +243,14 @@ def train_classifier(model, X_data, label, batch_size, learning_rate, num_epochs
 		model.train()
 		running_train, running_val, running_acc = 0.0, 0.0, 0.0
 		n_train, n_val = 0., 0.
-		for inputs, targets in train_dataloader:
+		for inputs, theta, targets in train_dataloader:
 			inputs = inputs.to(device)
+			theta = theta.to(device)
 			targets = targets.to(device)
 
 			optimizer.zero_grad()
 
-			outputs = model(inputs)
+			outputs = model(inputs, theta)
 
 			loss = criterion(outputs, targets)
 
@@ -261,16 +263,17 @@ def train_classifier(model, X_data, label, batch_size, learning_rate, num_epochs
 		train_loss.append(running_train/n_train)
 
 		model.eval()
-		for inputs, targets in val_dataloader:
+		for inputs, theta, targets in val_dataloader:
 			inputs = inputs.to(device)
+			theta = theta.to(device)
 			targets = targets.to(device)
 
-			outputs = model(inputs)
+			outputs = model(inputs, theta)
 
 			loss = criterion(outputs, targets)
 
 			# accuracy accuracy
-			running_acc += accuracy_score(targets.ravel(), outputs.ravel())
+			running_acc += accuracy_score(targets.round().detach().numpy().ravel(), outputs.round().detach().numpy().ravel())
 
 			running_val += loss.item()
 			n_val += 1.
@@ -323,13 +326,19 @@ class AddParams2Input(nn.Module):
 
 	def forward(self, inputs):
 		batch_params = torch.ones((inputs.size(0), 1), device=inputs.device)* self.params.to(device=inputs.device)
-		concatenated = torch.cat([inputs, batch_params], dim=-1)
-		return concatenated
+		# concatenated = torch.cat([inputs, batch_params], dim=-1)
+		return inputs, batch_params
 
 #
 # optimize parameters
 #
-def optimize_theta(classifier, add_params, dataloader, learning_rate, num_epochs, device):
+def optimize_theta(classifier, add_params, X_data, labels, learning_rate, batch_size, num_epochs, device):
+
+	X_tensor = torch.from_numpy(X_data).float()
+	Y_tensor = torch.from_numpy(labels).float()
+
+	dataset = TensorDataset(X_tensor, Y_tensor)
+	dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 	classifier = classifier.to(device)
 	add_params = add_params.to(device)
@@ -346,8 +355,10 @@ def optimize_theta(classifier, add_params, dataloader, learning_rate, num_epochs
 			inputs = inputs.to(device)
 			targets = targets.to(device)
 
-			concat_inputs = add_params(inputs)
-			outputs = classifier(concat_inputs)
+			optimizer.zero_grad()
+
+			inputs, batch_theta = add_params(inputs)
+			outputs = classifier(inputs, batch_theta)
 
 			loss = criterion(outputs, targets)
 
@@ -367,14 +378,16 @@ def optimize_theta(classifier, add_params, dataloader, learning_rate, num_epochs
 	# plt.close("all")
 	plt.show()
 
-	plt.plot(opt_theta)
-	plt.hlines(0.2, 0, len(opt_theta), colors="red", label=r"$\nu = 0.2$ true value")
+	plt.plot(opt_theta, label="Fitted values", color="r")
+	plt.hlines(0.2, 0, len(opt_theta), colors="b", label=r"$\nu = 0.2$ target value")
 	plt.xlabel("epoch")
 	plt.ylabel(r"fitted $\mu$ values")
 	plt.legend(frameon=False)
 	# plt.savefig("notes/09-07-2023/imgs/opt_params.png")
 	# plt.close("all")
 	plt.show()
+
+	return opt_theta
 
 def scan_theta(classifier, dataloader, device):
 
@@ -392,7 +405,9 @@ def scan_theta(classifier, dataloader, device):
 			inputs = inputs.to(device)
 			targets = targets.to(device)
 
-			outputs = classifier(inputs)
+			inputs, theta = add_params(inputs)
+
+			outputs = classifier(inputs, theta)
 
 			loss = criterion(outputs, targets)
 
@@ -411,3 +426,17 @@ def scan_theta(classifier, dataloader, device):
 #
 # Extract theta values
 #
+def extract_theta(classifier, add_params, X_data, labels, learning_rate, batch_size, iterations, num_epochs, device):
+
+	extract_theta = []
+
+	for iter in range(iterations):
+		print("===> Iteration {}".format(iter))
+
+		opt_theta = optimize_theta(classifier, add_params, X_data, labels, learning_rate, batch_size, num_epochs, device)
+
+		extract_theta.append(opt_theta[-1])
+
+	outfile = uproot.recreate("results.root", compression=uproot.ZLIB(4))
+	outfile["extract_theta"] = np.array(extract_theta)
+	outfile.close()
