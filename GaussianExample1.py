@@ -19,10 +19,10 @@ mu_values = np.random.uniform(mu_min, mu_max, n_data_points)
 
 X_data = np.array([(np.random.normal(mu, 1), mu) for mu in mu_values])
 
-learning_rate = 0.001
-latent_dim = 16
-batch_size = 1024
-num_epochs = 30
+learning_rate = 0.0001
+latent_dim = 30
+batch_size = 1000
+num_epochs = 200
 
 model = GaussianVAE(latent_dim)
 

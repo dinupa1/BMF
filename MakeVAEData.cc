@@ -44,7 +44,7 @@ class VAEData{
         virtual ~VAEData(){;}
         int Init(TString outfile_name);
         TH2D* MakeHist(double lambda, double mu, double nu, int event0, int event1);
-        int FillTree(TTree* tree, TH2D* hist, double lambda, double mu, double nu, double label0, double label1);
+        int FillTree(TTree* tree, TH2D* hist, double lambda, double mu, double nu, double lable0, double label1);
         int FillTrainTree(int events);
         int FillSecretTree(int events, double lambda, double mu, double nu);
         int End();
@@ -143,7 +143,7 @@ int VAEData::FillTrainTree(int events)
         double mu = r_mu->Uniform(-0.5, 0.5);
         double nu = r_nu->Uniform(-0.5, 0.5);
 
-        auto hist0 = (TH2D*)MakeHist(1.0, 0.0, 0.0, 0, n_events/3);
+        auto hist0 = (TH2D*)MakeHist(0.0, 0.0, 0.0, 0, n_events/3);
 
         FillTree(train_tree, hist0, lambda, mu, nu, 1.0, 0.0);
 
@@ -174,7 +174,7 @@ int VAEData::FillSecretTree(int events, double lambda, double mu, double nu)
 
         FillTree(secret_tree, hist1_secret, lambda, mu, nu, 0.0, 1.0);
 
-         delete hist1_secret;
+        delete hist1_secret;
 
         if(i%10000 == 0)
         {
@@ -199,8 +199,8 @@ int VAEData::End()
 void MakeVAEData()
 {
     auto vae_data = new VAEData();
-    vae_data->Init("vae_data_-0.8_-0.1_0.2.root");
-    //vae_data->FillTrainTree(100000);
-    vae_data->FillSecretTree(30000, -0.8, -0.1, 0.2);
+    vae_data->Init("vae_data.root");
+    vae_data->FillTrainTree(100000);
+    vae_data->FillSecretTree(30000, 0.8, 0.1, 0.2);
     vae_data->End();
 }

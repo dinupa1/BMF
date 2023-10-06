@@ -14,25 +14,25 @@ class GaussianVAE(nn.Module):
         super(GaussianVAE, self).__init__()
 
         self.fc_encoder = nn.Sequential(
-            nn.Linear(2, 32, bias=True),
+            nn.Linear(2, 50, bias=True),
             nn.ReLU(),
-            nn.Linear(32, 32, bias=True),
+            nn.Linear(50, 50, bias=True),
             nn.ReLU(),
-            nn.Linear(32, 32, bias=True),
+            nn.Linear(50, 50, bias=True),
             nn.ReLU(),
         )
 
-        self.fc_mu = nn.Linear(32, latent_dim, bias=True)
-        self.fc_logvar = nn.Linear(32, latent_dim, bias=True)
+        self.fc_mu = nn.Linear(50, latent_dim, bias=True)
+        self.fc_logvar = nn.Linear(50, latent_dim, bias=True)
 
         self.fc_decoder = nn.Sequential(
-            nn.Linear(latent_dim+1, 32, bias=True),
+            nn.Linear(latent_dim+1, 50, bias=True),
             nn.ReLU(),
-            nn.Linear(32, 32, bias=True),
+            nn.Linear(50, 50, bias=True),
             nn.ReLU(),
-            nn.Linear(32, 32, bias=True),
+            nn.Linear(50, 50, bias=True),
             nn.ReLU(),
-            nn.Linear(32, 1, bias=True),
+            nn.Linear(50, 1, bias=True),
         )
 
     def encode(self, x):
@@ -53,7 +53,7 @@ class GaussianVAE(nn.Module):
     def forward(self, x):
         mu, logvar = self.encode(x)
         z = self.reparameterize(mu, logvar)
-        z = torch.cat((z, x[:, 0].reshape(-1, 1)), dim=-1)
+        z = torch.cat((z, x[:, 1].reshape(-1, 1)), dim=-1)
         r = self.decode(z)
         return r, mu, logvar
 
@@ -70,7 +70,7 @@ class GaussianVAE(nn.Module):
         val_dataset = TensorDataset(X_val_tensor)
 
         train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-        val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
+        val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
         train_loss, val_loss = [], []
 
