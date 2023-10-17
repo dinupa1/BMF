@@ -2,3 +2,5 @@
 imgs
 slides
 *.root
+.idea/
+__pycache__/
