@@ -23,9 +23,9 @@ void FitHist::Init()
     n_events = tree->GetEntries();
 
     tree->SetBranchAddress("true_hist",          true_hist);
-    tree->SetBranchAddress("true_error",         true_error);
+    //tree->SetBranchAddress("true_error",         true_error);
     tree->SetBranchAddress("reco_hist",          reco_hist);
-    tree->SetBranchAddress("reco_error",         reco_error);
+    //tree->SetBranchAddress("reco_error",         reco_error);
     tree->SetBranchAddress("pred_hist",          pred_hist);
     tree->SetBranchAddress("lambda",             &lambda);
     tree->SetBranchAddress("mu",                 &mu);
@@ -51,17 +51,17 @@ void FitHist::DrawFits()
         {
             for(int k = 0; k < 12; k++)
             {
-                hist_true->SetBinContent(j+1, k+1, true_hist[12*j + k]);
-                hist_true->SetBinError(j+1, k+1, true_error[12*j + k]);
-                hist_reco->SetBinContent(j+1, k+1, reco_hist[12*j + k]);
-                hist_pred->SetBinContent(j+1, k+1, pred_hist[12*j + k]);
-                hist_pred->SetBinError(j+1, k+1, reco_error[12*j + k]);
+                hist_true->SetBinContent(j+1, k+1, true_hist[j][k]);
+                //hist_true->SetBinError(j+1, k+1, true_error[j][k]);
+                hist_reco->SetBinContent(j+1, k+1, reco_hist[j][k]);
+                hist_pred->SetBinContent(j+1, k+1, pred_hist[j][k]);
+                //hist_pred->SetBinError(j+1, k+1, true_error[j][k]);
             }
         }
 
         TF2* true_fit = new TF2("true_fit", "[0]* (1. + [1]* y* y + 2.* [2]* y* sqrt(1. - y* y) *cos(x) + 0.5* [3]* (1. - y* y)* cos(2.* x))");
 
-        true_fit->SetParLimits(0, 0., 1.);
+        //true_fit->SetParLimits(0, 0., 1.);
         true_fit->SetParLimits(1, -1., 1.);
         true_fit->SetParLimits(2, -0.5, 0.5);
         true_fit->SetParLimits(3, -0.5, 0.5);
@@ -69,7 +69,7 @@ void FitHist::DrawFits()
 
         TF2* pred_fit = new TF2("pred_fit", "[0]* (1. + [1]* y* y + 2.* [2]* y* sqrt(1. - y* y) *cos(x) + 0.5* [3]* (1. - y* y)* cos(2.* x))");
 
-        pred_fit->SetParLimits(0, 0., 1.);
+        //pred_fit->SetParLimits(0, 0., 1.);
         pred_fit->SetParLimits(1, -1., 1.);
         pred_fit->SetParLimits(2, -0.5, 0.5);
         pred_fit->SetParLimits(3, -0.5, 0.5);
@@ -151,16 +151,16 @@ void FitHist::DrawResults()
         {
             for(int k = 0; k < 12; k++)
             {
-                hist_true->SetBinContent(j+1, k+1, true_hist[12*j + k]);
-                hist_true->SetBinError(j+1, k+1, true_error[12*j + k]);
-                hist_pred->SetBinContent(j+1, k+1, pred_hist[12*j + k]);
-                hist_pred->SetBinError(j+1, k+1, reco_error[12*j + k]);
+                hist_true->SetBinContent(j+1, k+1, true_hist[j][k]);
+                //hist_true->SetBinError(j+1, k+1, true_error[j][k]);
+                hist_pred->SetBinContent(j+1, k+1, pred_hist[j][k]);
+                //hist_pred->SetBinError(j+1, k+1, true_error[j][k]);
             }
         }
 
         TF2* true_fit = new TF2("true_fit", "[0]* (1. + [1]* y* y + 2.* [2]* y* sqrt(1. - y* y) *cos(x) + 0.5* [3]* (1. - y* y)* cos(2.* x))");
 
-        // true_fit->SetParLimits(0, 0.5, 1.);
+        //true_fit->SetParLimits(0, 0., 0.2);
         true_fit->SetParLimits(1, -1., 1.);
         true_fit->SetParLimits(2, -0.5, 0.5);
         true_fit->SetParLimits(3, -0.5, 0.5);
@@ -168,7 +168,7 @@ void FitHist::DrawResults()
 
         TF2* pred_fit = new TF2("pred_fit", "[0]* (1. + [1]* y* y + 2.* [2]* y* sqrt(1. - y* y) *cos(x) + 0.5* [3]* (1. - y* y)* cos(2.* x))");
 
-        // pred_fit->SetParLimits(0, 0.5, 1.);
+        //pred_fit->SetParLimits(0, 0., 0.2);
         pred_fit->SetParLimits(1, -1., 1.);
         pred_fit->SetParLimits(2, -0.5, 0.5);
         pred_fit->SetParLimits(3, -0.5, 0.5);
@@ -229,6 +229,6 @@ void PlotResults()
 
     FitHist* fh = new FitHist();
     fh->Init();
-    //fh->DrawFits();
+    // fh->DrawFits();
     fh->DrawResults();
 }

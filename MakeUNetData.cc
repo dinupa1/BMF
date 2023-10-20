@@ -27,11 +27,11 @@ MakeHist::MakeHist()
 {;}
 
 
-void MakeHist::Init()
+void MakeHist::Init(TString tree_name)
 {
     TFile* file = TFile::Open("simple.root", "READ");
-    data = (TTree*)file->Get("tree");
-    events_2n = data->GetEntries();
+    data = (TTree*)file->Get(tree_name.Data());
+    events = data->GetEntries();
 
     data->SetBranchAddress("fpga1",         &fpga1);
     data->SetBranchAddress("mass",          &mass);
@@ -63,10 +63,10 @@ void MakeHist::FillHist(int ev1, int ev2, double lambda, double mu, double nu)
 
     }
 
-    // double integral_value = reco_hist->Integral();
+    double integral_value = reco_hist->Integral();
 
-    reco_hist->Scale(1./reco_hist->Integral(), "WIDTH");
-    true_hist->Scale(1./true_hist->Integral(), "WIDTH");
+    reco_hist->Scale(1./integral_value, "WIDTH");
+    true_hist->Scale(1./integral_value, "WIDTH");
 
     //cout << "Integral value = " << integral_value << endl;
 
@@ -88,21 +88,21 @@ void MakeTree::Init(TString tree_name, int n)
     rn = new TRandom(n);
 
     tree = new TTree(tree_name.Data(), tree_name.Data());
-    tree->Branch("true_hist",       true_hist,      "true_hist[144]/D");
-    tree->Branch("true_error",      true_error,     "true_error[144]/D");
-    tree->Branch("reco_hist",       reco_hist,      "reco_hist[144]/D");
-    tree->Branch("reco_error",      reco_error,     "reco_error[144]/D");
+    tree->Branch("true_hist",       true_hist,      "true_hist[12][12]/D");
+    tree->Branch("true_error",      true_error,     "true_error[12][12]/D");
+    tree->Branch("reco_hist",       reco_hist,      "reco_hist[12][12]/D");
+    tree->Branch("reco_error",      reco_error,     "reco_error[12][12]/D");
     tree->Branch("lambda",          &lambda,        "lambda/D");
     tree->Branch("mu",              &mu,            "mu/D");
     tree->Branch("nu",              &nu,            "nu/D");
 }
 
 
-void MakeTree::FillTree(MakeHist* mh, int ev1, int ev2, int n_events)
+void MakeTree::FillTree(MakeHist* mh, int n_events)
 {
     for(int i = 0; i < n_events; i++)
     {
-        int event = TMath::Nint(rn->Uniform(ev1, ev2));
+        int event = TMath::Nint(rn->Uniform(0, (mh->events)/2));
 
         lambda = rn->Uniform(-1., 1.);
         mu = rn->Uniform(-0.5, 0.5);
@@ -114,10 +114,10 @@ void MakeTree::FillTree(MakeHist* mh, int ev1, int ev2, int n_events)
         {
             for(int j = 0; j < 12; j++)
             {
-                true_hist[12*i + j] = mh->true_hist->GetBinContent(i+1, j+1);
-                true_error[12*i + j] = mh->true_hist->GetBinError(i+1, j+1);
-                reco_hist[12*i + j] = mh->reco_hist->GetBinContent(i+1, j+1);
-                reco_error[12*i + j] = mh->true_hist->GetBinError(i+1, j+1);
+                true_hist[i][j] = mh->true_hist->GetBinContent(i+1, j+1);
+                true_error[i][j] = mh->true_hist->GetBinError(i+1, j+1);
+                reco_hist[i][j] = mh->reco_hist->GetBinContent(i+1, j+1);
+                reco_error[i][j] = mh->true_hist->GetBinError(i+1, j+1);
             }
         }
 
@@ -132,28 +132,29 @@ void MakeTree::FillTree(MakeHist* mh, int ev1, int ev2, int n_events)
 
 
 
-void MakeVAEData()
+void MakeUNetData()
 {
     //gStyle->SetOptStat(0);
 
-    auto mh = new MakeHist();
-    mh->Init();
+    auto train_mh = new MakeHist();
+    train_mh->Init("train_data");
 
-    int events = mh->events_2n/2;
+    auto val_mh = new MakeHist();
+    val_mh->Init("test_data");
 
-    auto outfite = new TFile("vae.root", "RECREATE");
+    auto outfite = new TFile("unet.root", "RECREATE");
 
     auto train_tree = new MakeTree();
-    train_tree->Init("train_tree", 1);
+    train_tree->Init("train_tree", 2);
 
     cout << "*** create train tree ***" << endl;
-    train_tree->FillTree(mh, 0, events/2, 100000);
+    train_tree->FillTree(train_mh,100000);
 
     auto val_tree = new MakeTree();
-    val_tree->Init("val_tree", 2);
+    val_tree->Init("val_tree", 3);
 
     cout << "*** create val tree ***" << endl;
-    val_tree->FillTree(mh, events, 3* events/2, 40000);
+    val_tree->FillTree(val_mh, 40000);
 
     train_tree->tree->Write();
     val_tree->tree->Write();

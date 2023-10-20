@@ -14,74 +14,111 @@ import awkward as ak
 plt.rc("font", size=14)
 
 
-class DenoisingAE(nn.Module):
-    def __init__(self, latent_dim: int = 16):
-        super(DenoisingAE, self).__init__()
+class DenoisingUNet(nn.Module):
+    def __init__(self):
+        super(DenoisingUNet, self).__init__()
 
-        self.fc_encoder = nn.Sequential(
-            nn.Linear(12* 12, 128, bias=True),
+        kernel = 3
+        pad = 1
+        channel = 20
+
+        self.encoder_conv1 = nn.Sequential(
+            nn.Conv2d(1, channel, kernel_size=kernel, padding=pad),
+            nn.BatchNorm2d(channel),
             nn.ReLU(),
-            nn.Linear(128, 64, bias=True),
+            nn.Conv2d(channel, channel, kernel_size=kernel, padding=pad),
+            nn.BatchNorm2d(channel),
             nn.ReLU(),
-            # nn.Linear(64, 32, bias=True),
-            # nn.ReLU(),
-            nn.Linear(64, latent_dim, bias=True),
+            )
+
+        self.encoder_pool1 = nn.MaxPool2d(2)
+
+        self.encoder_conv2 = nn.Sequential(
+            nn.Conv2d(channel, channel* 2, kernel_size=kernel, padding=pad),
+            nn.BatchNorm2d(channel* 2),
             nn.ReLU(),
-        )
-
-        # self.fc_mu = nn.Linear(32, latent_dim, bias=True)
-        # self.fc_logvar = nn.Linear(32, latent_dim, bias=True)
-
-        self.fc_decoder = nn.Sequential(
-            nn.Linear(latent_dim, 64, bias=True),
+            nn.Conv2d(channel* 2, channel* 2, kernel_size=kernel, padding=pad),
             nn.ReLU(),
-            # nn.Linear(32, 64, bias=True),
-            # nn.ReLU(),
-            nn.Linear(64, 128, bias=True),
+            )
+
+        self.encoder_pool2 = nn.MaxPool2d(2)
+
+        self.bottlenck = nn.Sequential(
+            nn.Conv2d(channel* 2, channel* 4, kernel_size=kernel, padding=pad),
+            nn.BatchNorm2d(channel* 4),
             nn.ReLU(),
-            nn.Linear(128, 12* 12, bias=True),
-            nn.Sigmoid(),
-        )
+            nn.Conv2d(channel* 4, channel* 4, kernel_size=kernel, padding=pad),
+            nn.ReLU(),
+            )
 
-    def encode(self, x):
-        z = self.fc_encoder(x)
-        # mu = self.fc_mu(h)
-        # logvar = self.fc_logvar(h)
-        return z
+        self.decoder_decon1 = nn.ConvTranspose2d(channel* 4, channel* 2, kernel_size=2, stride=2)
 
-    # def reparameterize(self, mu, logvar):
-    #     std = torch.exp(0.5 * logvar)
-    #     eps = torch.randn_like(std)
-    #     return mu + eps * std
+        self.decoder_conv1 = nn.Sequential(
+            nn.Conv2d(channel* 4, channel* 2, kernel_size=kernel, padding=pad),
+            nn.BatchNorm2d(channel* 2),
+            nn.ReLU(),
+            nn.Conv2d(channel* 2, channel* 2, kernel_size=kernel, padding=pad),
+            nn.ReLU(),
+            )
 
-    def decode(self, z):
-        r = self.fc_decoder(z)
-        return r
+        self.decoder_decon2 = nn.ConvTranspose2d(channel* 2, channel, kernel_size=2, stride=2)
+
+        self.decoder_conv2 = nn.Sequential(
+            nn.Conv2d(channel* 2, channel, kernel_size=kernel, padding=pad),
+            nn.BatchNorm2d(channel),
+            nn.ReLU(),
+            nn.Conv2d(channel, channel, kernel_size=kernel, padding=pad),
+            nn.ReLU(),
+            )
+
+         self.outputs = nn.Conv2d(channel, 1, kernel_size=1, padding=0)
+
+
+        # self.outputs = nn.Sequential(
+        #     nn.Conv2d(channel, 1, kernel_size=1, padding=0),
+        #     nn.Sigmoid(),
+        #     )
 
     def forward(self, x):
-        z = self.encode(x)
-        # z = self.reparameterize(mu, logvar)
-        r = self.decode(z)
-        return r
+        # encoder
+        enco_o1 = self.encoder_conv1(x)
+        enco_p1 = self.encoder_pool1(enco_o1)
+
+        enco_o2 = self.encoder_conv2(enco_p1)
+        enco_p2 = self.encoder_pool2(enco_o2)
+
+        # bottlenck
+        bn_out = self.bottlenck(enco_p2)
+
+        # decoder
+        decon_o1 = self.decoder_decon1(bn_out)
+        deco_in1 = torch.cat((decon_o1, enco_o2), dim=1)
+        deco_o1 = self.decoder_conv1(deco_in1)
+
+        decon_o2 = self.decoder_decon2(deco_o1)
+        deco_in2 = torch.cat((decon_o2, enco_o1), dim=1)
+        deco_o2 = self.decoder_conv2(deco_in2)
+
+        # outputs
+        outputs = self.outputs(deco_o2)
+        return outputs
 
 
-class DenoisingLoss(nn.Module):
-    def __init__(self):
-        super(DenoisingLoss, self).__init__()
 
-    def reconstruction(self, src, tgt):
-        # loss_fn = nn.BCELoss(reduction="sum")
-        loss_fn = nn.MSELoss(reduction="sum")
-        return loss_fn(src, tgt)
+class UNetDataset(torch.utils.data.Dataset):
+    def __init__(self, true_hist, reco_hist):
+        self.true_hist = torch.Tensor(true_hist)
+        self.reco_hist = torch.Tensor(reco_hist)
 
-    def kl_divergence(self, mu, logvar):
-        return -0.5* torch.sum(1.+ logvar- mu.pow(2)- logvar.exp())
+    def __getitem__(self, index):
+        return self.true_hist[index], self.reco_hist[index]
 
-    def forward(self, src, mu, logvar, tgt):
-        return (self.reconstruction(src, tgt) + self.kl_divergence(mu, logvar))/tgt.size(0)
+    def __len__(self):
+        return len(self.reco_hist)
 
 
-def fit_denoising_ae(train_tree, batch_size, model, criterion, optimizer, num_epochs, device):
+
+def fit_denoising_unet(train_tree, batch_size, model, criterion, optimizer, num_epochs, device):
 
     # train test split
     true_hist = train_tree["true_hist"].array().to_numpy()
@@ -91,13 +128,14 @@ def fit_denoising_ae(train_tree, batch_size, model, criterion, optimizer, num_ep
     X_train, X_val, Y_train, Y_val = train_test_split(true_hist, reco_hist, test_size=0.3, shuffle=True)
 
     # convert to tensor
-    X_train_tensor = torch.from_numpy(X_train).float()
-    X_val_tensor = torch.from_numpy(X_val).float()
-    Y_train_tensor = torch.from_numpy(Y_train).float()
-    Y_val_tensor = torch.from_numpy(Y_val).float()
+    X_train_tensor = torch.from_numpy(X_train).float().unsqueeze(1)
+    X_val_tensor = torch.from_numpy(X_val).float().unsqueeze(1)
+    Y_train_tensor = torch.from_numpy(Y_train).float().unsqueeze(1)
+    Y_val_tensor = torch.from_numpy(Y_val).float().unsqueeze(1)
 
-    train_dataset = TensorDataset(X_train_tensor, Y_train_tensor)
-    val_dataset = TensorDataset(X_val_tensor, Y_val_tensor)
+
+    train_dataset = UNetDataset(X_train_tensor, Y_train_tensor)
+    val_dataset = UNetDataset(X_val_tensor, Y_val_tensor)
 
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -151,19 +189,22 @@ def fit_denoising_ae(train_tree, batch_size, model, criterion, optimizer, num_ep
     plt.close("all")
 
 
-def denoise_reco_hist(model, X_val):
+def denoise_reco_hist(model, X_val, device):
 
-    X_val_tensor = torch.from_numpy(X_val["reco_hist"].array().to_numpy()).float()
+    X_val_tensor = torch.from_numpy(X_val["reco_hist"].array().to_numpy()).float().unsqueeze(1)
+
+    model = model.to(device)
+    X_val_tensor = X_val_tensor.to(device)
 
     model.eval()
     outputs = model(X_val_tensor)
 
     tree = {
         "true_hist": X_val["true_hist"].array().to_numpy(),
-        "true_error": X_val["true_error"].array().to_numpy(),
+        # "true_error": X_val["true_error"].array().to_numpy(),
         "reco_hist": X_val["reco_hist"].array().to_numpy(),
-        "reco_error": X_val["reco_error"].array().to_numpy(),
-        "pred_hist": outputs.detach().numpy(),
+        # "reco_error": X_val["reco_error"].array().to_numpy(),
+        "pred_hist": outputs.squeeze(1).cpu().detach().numpy(),
         "lambda": X_val["lambda"].array().to_numpy(),
         "mu": X_val["mu"].array().to_numpy(),
         "nu": X_val["nu"].array().to_numpy(),

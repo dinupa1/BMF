@@ -4,20 +4,43 @@ import matplotlib.pyplot as plt
 import uproot
 import awkward as ak
 
+import os
+
+from sklearn.model_selection import train_test_split
+
 data = uproot.open("GMC_lh2_DY_RUN3_All.root:result_mc")
 
 
-events = data.arrays(["fpga1", "mass", "phi", "costh", "true_phi", "true_costh"])
+events = data.arrays(["fpga1", "mass", "phi", "costh", "true_phi", "true_costh"]).to_numpy()
 
-tree = {
-    "fpga1": events.fpga1.to_numpy(),
-    "mass": events.mass.to_numpy(),
-    "phi": events.phi.to_numpy(),
-    "costh": events.costh.to_numpy(),
-    "true_phi": events.true_phi.to_numpy(),
-    "true_costh": events.true_costh.to_numpy(),
+print("===> split data for unet training")
+
+train_events, test_events = train_test_split(events, test_size=0.5, shuffle=True)
+
+train_data = {
+    "fpga1": train_events["fpga1"],
+    "mass": train_events["mass"],
+    "phi": train_events["phi"],
+    "costh": train_events["costh"],
+    "true_phi": train_events["true_phi"],
+    "true_costh": train_events["true_costh"],
 }
 
+test_data = {
+    "fpga1": test_events["fpga1"],
+    "mass": test_events["mass"],
+    "phi": test_events["phi"],
+    "costh": test_events["costh"],
+    "true_phi": test_events["true_phi"],
+    "true_costh": test_events["true_costh"],
+}
+
+
 outfile = uproot.recreate("simple.root", compression=uproot.ZLIB(4))
-outfile["tree"] = tree
+outfile["train_data"] = train_data
+outfile["test_data"] = test_data
 outfile.close()
+
+print("===> make trees for unet training")
+
+os.system("root -b -q MakeUNetData.cc")

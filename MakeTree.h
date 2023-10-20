@@ -22,22 +22,22 @@ class MakeHist
     int fpga1;
     float mass, phi, costh, true_phi, true_costh;
 public:
-    int events_2n;
+    int events;
     TH2D* true_hist;
     TH2D* reco_hist;
     MakeHist();
     virtual ~MakeHist(){};
-    void Init();
+    void Init(TString tree_name);
     void FillHist(int ev1, int ev2, double lambda, double mu, double nu);
 };
 
 
 class MakeTree
 {
-    double true_hist[144];
-    double true_error[144];
-    double reco_hist[144];
-    double reco_error[144];
+    double true_hist[12][12];
+    double true_error[12][12];
+    double reco_hist[12][12];
+    double reco_error[12][12];
     double lambda, mu, nu;
     int h_events = 1000000;
     TRandom* rn;
@@ -46,6 +46,6 @@ public:
     MakeTree();
     virtual ~MakeTree(){};
     void Init(TString tree_name, int n);
-    void FillTree(MakeHist* mh, int ev1, int ev2, int n_events);
+    void FillTree(MakeHist* mh, int n_events);
 };
 #endif /* _H_MakeTree_H_ */
