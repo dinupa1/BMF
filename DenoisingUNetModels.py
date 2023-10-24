@@ -23,7 +23,7 @@ class DenoisingUNet(nn.Module):
         channel = 20
 
         self.encoder_conv1 = nn.Sequential(
-            nn.Conv2d(1, channel, kernel_size=kernel, padding=pad),
+            nn.Conv2d(2, channel, kernel_size=kernel, padding=pad),
             nn.BatchNorm2d(channel),
             nn.ReLU(),
             nn.Conv2d(channel, channel, kernel_size=kernel, padding=pad),
@@ -128,10 +128,10 @@ def fit_denoising_unet(train_tree, batch_size, model, criterion, optimizer, num_
     X_train, X_val, Y_train, Y_val = train_test_split(true_hist, reco_hist, test_size=0.3, shuffle=True)
 
     # convert to tensor
-    X_train_tensor = torch.from_numpy(X_train).float().unsqueeze(1)
-    X_val_tensor = torch.from_numpy(X_val).float().unsqueeze(1)
-    Y_train_tensor = torch.from_numpy(Y_train).float().unsqueeze(1)
-    Y_val_tensor = torch.from_numpy(Y_val).float().unsqueeze(1)
+    X_train_tensor = torch.from_numpy(X_train).float()
+    X_val_tensor = torch.from_numpy(X_val).float()
+    Y_train_tensor = torch.from_numpy(Y_train).float()
+    Y_val_tensor = torch.from_numpy(Y_val).float()
 
 
     train_dataset = UNetDataset(X_train_tensor, Y_train_tensor)
@@ -191,7 +191,7 @@ def fit_denoising_unet(train_tree, batch_size, model, criterion, optimizer, num_
 
 def denoise_reco_hist(model, X_val, device):
 
-    X_val_tensor = torch.from_numpy(X_val["reco_hist"].array().to_numpy()).float().unsqueeze(1)
+    X_val_tensor = torch.from_numpy(X_val["reco_hist"].array().to_numpy()).float()
 
     model = model.to(device)
     X_val_tensor = X_val_tensor.to(device)
@@ -201,10 +201,8 @@ def denoise_reco_hist(model, X_val, device):
 
     tree = {
         "true_hist": X_val["true_hist"].array().to_numpy(),
-        # "true_error": X_val["true_error"].array().to_numpy(),
         "reco_hist": X_val["reco_hist"].array().to_numpy(),
-        # "reco_error": X_val["reco_error"].array().to_numpy(),
-        "pred_hist": outputs.squeeze(1).cpu().detach().numpy(),
+        "pred_hist": outputs.cpu().detach().numpy(),
         "lambda": X_val["lambda"].array().to_numpy(),
         "mu": X_val["mu"].array().to_numpy(),
         "nu": X_val["nu"].array().to_numpy(),

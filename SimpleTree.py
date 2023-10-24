@@ -9,38 +9,22 @@ import os
 from sklearn.model_selection import train_test_split
 
 data = uproot.open("GMC_lh2_DY_RUN3_All.root:result_mc")
+events = data.arrays(["fpga1", "mass", "pT", "xF", "phi", "costh", "true_mass", "true_pT", "true_xF", "true_phi", "true_costh"])
 
-
-events = data.arrays(["fpga1", "mass", "phi", "costh", "true_phi", "true_costh"]).to_numpy()
-
-print("===> split data for unet training")
-
-train_events, test_events = train_test_split(events, test_size=0.5, shuffle=True)
-
-train_data = {
-    "fpga1": train_events["fpga1"],
-    "mass": train_events["mass"],
-    "phi": train_events["phi"],
-    "costh": train_events["costh"],
-    "true_phi": train_events["true_phi"],
-    "true_costh": train_events["true_costh"],
+tree = {
+    "fpga1": events.fpga1[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "mass": events.mass[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "pT": events.pT[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "xF": events.xF[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "phi": events.phi[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "costh": events.costh[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "true_mass": events.true_mass[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "true_pT": events.true_pT[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "true_xF": events.true_xF[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "true_phi": events.true_phi[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
+    "true_costh": events.true_costh[(events.true_mass > 4.5) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],
 }
-
-test_data = {
-    "fpga1": test_events["fpga1"],
-    "mass": test_events["mass"],
-    "phi": test_events["phi"],
-    "costh": test_events["costh"],
-    "true_phi": test_events["true_phi"],
-    "true_costh": test_events["true_costh"],
-}
-
 
 outfile = uproot.recreate("simple.root", compression=uproot.ZLIB(4))
-outfile["train_data"] = train_data
-outfile["test_data"] = test_data
+outfile["tree"] = tree
 outfile.close()
-
-print("===> make trees for unet training")
-
-os.system("root -b -q MakeUNetData.cc")

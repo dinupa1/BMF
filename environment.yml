@@ -1,0 +1,13 @@
+name: bmf-dev-10-24-2023
+channels:
+    - conda-forge
+    - pytorch
+    - nvidia
+dependencies:
+    - python=3.9.15
+    - pytorch
+    - pytorch-cuda=11.7
+    - matplotlib
+    - scikit-learn
+    - uproot
+    - root

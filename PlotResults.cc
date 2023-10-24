@@ -23,9 +23,7 @@ void FitHist::Init()
     n_events = tree->GetEntries();
 
     tree->SetBranchAddress("true_hist",          true_hist);
-    //tree->SetBranchAddress("true_error",         true_error);
     tree->SetBranchAddress("reco_hist",          reco_hist);
-    //tree->SetBranchAddress("reco_error",         reco_error);
     tree->SetBranchAddress("pred_hist",          pred_hist);
     tree->SetBranchAddress("lambda",             &lambda);
     tree->SetBranchAddress("mu",                 &mu);
@@ -51,11 +49,23 @@ void FitHist::DrawFits()
         {
             for(int k = 0; k < 12; k++)
             {
-                hist_true->SetBinContent(j+1, k+1, true_hist[j][k]);
-                //hist_true->SetBinError(j+1, k+1, true_error[j][k]);
-                hist_reco->SetBinContent(j+1, k+1, reco_hist[j][k]);
-                hist_pred->SetBinContent(j+1, k+1, pred_hist[j][k]);
-                //hist_pred->SetBinError(j+1, k+1, true_error[j][k]);
+                double true_cnt = (true_hist[0][j][k] + true_hist[1][j][k])/2.;
+                double true_err = (true_hist[1][j][k] - true_hist[0][j][k])/2.;
+
+                double reco_cnt = (reco_hist[0][j][k] + reco_hist[1][j][k])/2.;
+                double reco_err = (reco_hist[1][j][k] - reco_hist[0][j][k])/2.;
+
+                double pred_cnt = (pred_hist[0][j][k] + pred_hist[1][j][k])/2.;
+                double pred_err = (pred_hist[1][j][k] - pred_hist[0][j][k])/2.;
+
+                hist_true->SetBinContent(j+1, k+1, true_cnt);
+                hist_true->SetBinError(j+1, k+1, true_err);
+
+                hist_reco->SetBinContent(j+1, k+1, reco_cnt);
+                hist_reco->SetBinError(j+1, k+1, reco_err);
+
+                hist_pred->SetBinContent(j+1, k+1, pred_cnt);
+                hist_pred->SetBinError(j+1, k+1, pred_err);
             }
         }
 
@@ -151,10 +161,17 @@ void FitHist::DrawResults()
         {
             for(int k = 0; k < 12; k++)
             {
-                hist_true->SetBinContent(j+1, k+1, true_hist[j][k]);
-                //hist_true->SetBinError(j+1, k+1, true_error[j][k]);
-                hist_pred->SetBinContent(j+1, k+1, pred_hist[j][k]);
-                //hist_pred->SetBinError(j+1, k+1, true_error[j][k]);
+                double true_cnt = (true_hist[0][j][k] + true_hist[1][j][k])/2.;
+                double true_err = (true_hist[1][j][k] - true_hist[0][j][k])/2.;
+
+                double pred_cnt = (pred_hist[0][j][k] + pred_hist[1][j][k])/2.;
+                double pred_err = (pred_hist[1][j][k] - pred_hist[0][j][k])/2.;
+
+                hist_true->SetBinContent(j+1, k+1, true_cnt);
+                hist_true->SetBinError(j+1, k+1, true_err);
+
+                hist_pred->SetBinContent(j+1, k+1, pred_cnt);
+                hist_pred->SetBinError(j+1, k+1, pred_err);
             }
         }
 
@@ -224,11 +241,11 @@ void FitHist::DrawResults()
 
 void PlotResults()
 {
-    // gStyle->SetOptStat(0);
-    // gStyle->SetOptFit();
+    gStyle->SetOptStat(0);
+    gStyle->SetOptFit();
 
     FitHist* fh = new FitHist();
     fh->Init();
-    // fh->DrawFits();
-    fh->DrawResults();
+    fh->DrawFits();
+    // fh->DrawResults();
 }

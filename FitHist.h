@@ -21,11 +21,9 @@ class FitHist
 {
     TTree* tree;
     int n_events;
-    double true_hist[12][12];
-    //double true_error[12][12];
-    double reco_hist[12][12];
-    //double reco_error[12][12];
-    float pred_hist[12][12];
+    double true_hist[2][12][12];
+    double reco_hist[2][12][12];
+    float pred_hist[2][12][12];
     double lambda, mu, nu;
 
 public:

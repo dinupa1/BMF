@@ -10,6 +10,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TH2D.h>
+#include <THnSparse.h>
 #include <TMath.h>
 #include <TSystem.h>
 #include <TCanvas.h>
@@ -20,11 +21,14 @@ class MakeHist
 {
     TTree* data;
     int fpga1;
-    float mass, phi, costh, true_phi, true_costh;
+    float mass, pT, xF, phi, costh, true_mass, true_pT, true_xF, true_phi, true_costh;
+    double pi = TMath::Pi();
 public:
     int events;
     TH2D* true_hist;
     TH2D* reco_hist;
+    int phi_bins = 12;
+    int costh_bins = 12;
     MakeHist();
     virtual ~MakeHist(){};
     void Init(TString tree_name);
@@ -34,10 +38,8 @@ public:
 
 class MakeTree
 {
-    double true_hist[12][12];
-    double true_error[12][12];
-    double reco_hist[12][12];
-    double reco_error[12][12];
+    double true_hist[2][12][12];
+    double reco_hist[2][12][12];
     double lambda, mu, nu;
     int h_events = 1000000;
     TRandom* rn;
