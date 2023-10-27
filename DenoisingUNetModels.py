@@ -71,8 +71,7 @@ class DenoisingUNet(nn.Module):
             nn.ReLU(),
             )
 
-         self.outputs = nn.Conv2d(channel, 1, kernel_size=1, padding=0)
-
+        self.outputs = nn.Conv2d(channel, 2, kernel_size=1, padding=0)
 
         # self.outputs = nn.Sequential(
         #     nn.Conv2d(channel, 1, kernel_size=1, padding=0),

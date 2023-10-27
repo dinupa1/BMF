@@ -19,7 +19,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # for CUDA
 plt.rc("font", size=14)
 
 batch_size = 1024
-learning_rate = 0.00001
+learning_rate = 0.0001
 num_epochs = 100
 
 model = DenoisingUNet()
@@ -33,8 +33,10 @@ print("total trainable params: {}".format(total_trainable_params))
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-train_tree = uproot.open("unet.root:train_tree")
-val_tree = uproot.open("unet.root:val_tree")
+data_file = uproot.open("unet.root")
+
+train_tree = data_file["train_tree"]
+val_tree = data_file["val_tree"]
 
 fit_denoising_unet(train_tree, batch_size, model, criterion, optimizer, num_epochs, device)
 

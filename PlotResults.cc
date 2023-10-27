@@ -142,13 +142,13 @@ void FitHist::DrawResults()
 {
     double pi = TMath::Pi();
 
-    TH1D* lambda_true = new TH1D("lambda_true", "; #lambda [a.u.]; counts", 50, -1., 1.);
-    TH1D* mu_true = new TH1D("mu_true", "; #mu [a.u.]; counts", 50, -1., 1.);
-    TH1D* nu_true = new TH1D("nu_true", "; #nu [a.u.]; counts", 50, -1., 1.);
+    TH1D* lambda_true = new TH1D("lambda_true", "; #lambda [a.u.]; counts", 50, -0.2, 0.2);
+    TH1D* mu_true = new TH1D("mu_true", "; #mu [a.u.]; counts", 50, -0.2, 0.2);
+    TH1D* nu_true = new TH1D("nu_true", "; #nu [a.u.]; counts", 50, -0.2, 0.2);
 
-    TH1D* lambda_pred = new TH1D("lambda_pred", "; #lambda [a.u.]; counts", 50, -1., 1.);
-    TH1D* mu_pred = new TH1D("mu_pred", "; #mu [a.u.]; counts", 50, -1., 1.);
-    TH1D* nu_pred = new TH1D("nu_pred", "; #nu [a.u.]; counts", 50, -1., 1.);
+    TH1D* lambda_pred = new TH1D("lambda_pred", "; #lambda [a.u.]; counts", 50, -0.2, 0.2);
+    TH1D* mu_pred = new TH1D("mu_pred", "; #mu [a.u.]; counts", 50, -0.2, 0.2);
+    TH1D* nu_pred = new TH1D("nu_pred", "; #nu [a.u.]; counts", 50, -0.2, 0.2);
 
     for(int i = 0; i < n_events; i++)
     {
@@ -241,11 +241,11 @@ void FitHist::DrawResults()
 
 void PlotResults()
 {
-    gStyle->SetOptStat(0);
-    gStyle->SetOptFit();
+    // gStyle->SetOptStat(0);
+    // gStyle->SetOptFit();
 
     FitHist* fh = new FitHist();
     fh->Init();
-    fh->DrawFits();
-    // fh->DrawResults();
+    // fh->DrawFits();
+    fh->DrawResults();
 }
