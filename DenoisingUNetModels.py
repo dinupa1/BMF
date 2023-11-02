@@ -117,14 +117,14 @@ class UNetDataset(torch.utils.data.Dataset):
 
 
 
-def fit_denoising_unet(train_tree, batch_size, model, criterion, optimizer, num_epochs, device):
+def fit_denoising_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, num_epochs, device):
 
     # train test split
-    true_hist = train_tree["true_hist"].array().to_numpy()
-    reco_hist = train_tree["reco_hist"].array().to_numpy()
+    X_train = train_tree["reco_hist"].array().to_numpy()
+    Y_train = train_tree["true_hist"].array().to_numpy()
 
-
-    X_train, X_val, Y_train, Y_val = train_test_split(true_hist, reco_hist, test_size=0.3, shuffle=True)
+    X_val = val_tree["reco_hist"].array().to_numpy()
+    Y_val = val_tree["true_hist"].array().to_numpy()
 
     # convert to tensor
     X_train_tensor = torch.from_numpy(X_train).float()

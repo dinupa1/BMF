@@ -25,29 +25,29 @@ class MakeHist
     double pi = TMath::Pi();
 public:
     int events;
-    TH2D* true_hist;
-    TH2D* reco_hist;
-    int phi_bins = 12;
-    int costh_bins = 12;
+
+    double true_count[3][3][4][12][12];
+    double true_error[3][3][4][12][12];
+    double reco_count[3][3][4][12][12];
+    double reco_error[3][3][4][12][12];
+
     MakeHist();
     virtual ~MakeHist(){};
     void Init(TString tree_name);
-    void FillHist(int ev1, int ev2, double lambda, double mu, double nu);
+    void FillHist(double lambda, double mu, double nu, int seed);
 };
 
 
 class MakeTree
 {
-    double true_hist[2][12][12];
-    double reco_hist[2][12][12];
+    double true_hist[2][72][72];
+    double reco_hist[2][72][72];
     double lambda, mu, nu;
-    int h_events = 1000000;
-    TRandom* rn;
 public:
     TTree* tree;
     MakeTree();
     virtual ~MakeTree(){};
-    void Init(TString tree_name, int n);
-    void FillTree(MakeHist* mh, int n_events);
+    void Init(TString tree_name);
+    void FillTree(MakeHist* mh, int n_events, int seed);
 };
 #endif /* _H_MakeTree_H_ */

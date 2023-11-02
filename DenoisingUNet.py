@@ -37,7 +37,8 @@ data_file = uproot.open("unet.root")
 
 train_tree = data_file["train_tree"]
 val_tree = data_file["val_tree"]
+test_tree = data_file["test_tree"]
 
-fit_denoising_unet(train_tree, batch_size, model, criterion, optimizer, num_epochs, device)
+fit_denoising_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, num_epochs, device)
 
-denoise_reco_hist(model, val_tree, device)
+denoise_reco_hist(model, test_tree, device)
