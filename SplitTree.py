@@ -1,3 +1,7 @@
+#
+# dinupa3@gmail.com
+#
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -11,7 +15,8 @@ from sklearn.model_selection import train_test_split
 data = uproot.open("simple.root:tree")
 events = data.arrays(["fpga1", "mass", "pT", "xF", "phi", "costh", "true_mass", "true_pT", "true_xF", "true_phi", "true_costh"]).to_numpy()
 
-train_events, test_events = train_test_split(events, test_size=0.5, shuffle=True)
+train_val_events, test_events = train_test_split(events, test_size=0.3, shuffle=True)
+train_events, val_events = train_test_split(train_val_events, test_size=0.3, shuffle=True)
 
 train_data = {
     "fpga1": train_events["fpga1"],
@@ -25,6 +30,20 @@ train_data = {
     "true_xF": train_events["true_xF"],
     "true_phi": train_events["true_phi"],
     "true_costh": train_events["true_costh"],
+}
+
+val_data = {
+    "fpga1": val_events["fpga1"],
+    "mass": val_events["mass"],
+    "pT": val_events["pT"],
+    "xF": val_events["xF"],
+    "phi": val_events["phi"],
+    "costh": val_events["costh"],
+    "true_mass": val_events["true_mass"],
+    "true_pT": val_events["true_pT"],
+    "true_xF": val_events["true_xF"],
+    "true_phi": val_events["true_phi"],
+    "true_costh": val_events["true_costh"],
 }
 
 test_data = {
@@ -44,5 +63,6 @@ test_data = {
 
 outfile = uproot.recreate("split.root", compression=uproot.ZLIB(4))
 outfile["train_data"] = train_data
+outfile["val_data"] = val_data
 outfile["test_data"] = test_data
 outfile.close()
