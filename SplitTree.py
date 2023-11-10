@@ -11,8 +11,8 @@ from sklearn.model_selection import train_test_split
 data = uproot.open("simple.root:tree")
 events = data.arrays(["fpga1", "mass", "pT", "xF", "phi", "costh", "true_mass", "true_pT", "true_xF", "true_phi", "true_costh"]).to_numpy()
 
-train_val_events, test_events = train_test_split(events, test_size=0.4, shuffle=True)
-train_events, val_events = train_test_split(train_val_events, test_size=0.4, shuffle=True)
+train_val_events, test_events = train_test_split(events, test_size=0.3, shuffle=True)
+train_events, val_events = train_test_split(train_val_events, test_size=0.3, shuffle=True)
 
 train_data = {
     "fpga1": train_events["fpga1"],

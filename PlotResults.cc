@@ -241,11 +241,11 @@ void FitHist::DrawResults()
 
 void PlotResults()
 {
-    // gStyle->SetOptStat(0);
-    // gStyle->SetOptFit();
+    gStyle->SetOptStat(0);
+    gStyle->SetOptFit();
 
     FitHist* fh = new FitHist();
     fh->Init();
-    // fh->DrawFits();
-    fh->DrawResults();
+    fh->DrawFits();
+    // fh->DrawResults();
 }
