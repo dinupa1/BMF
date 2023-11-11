@@ -72,7 +72,7 @@ def make_tree(tree_name, num_events):
         tree["mu"].append(theta1[i])
         tree["nu"].append(theta2[i])
 
-        if (i+1)%1000==0:
+        if (i+1)%10==0:
             print("epoch {} lambda = {:.3f} mu = {:.3f} nu = {:.3f}".format(i+1, theta0[i], theta1[i], theta2[i]))
 
     return tree
