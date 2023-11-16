@@ -348,7 +348,7 @@ void MakeHist::FillHist(float lambda, float mu, float nu, TRandom3* event)
 
         if(n_reco == reco_events)
         {
-            cout << "===> Filled hitogram with " << n_reco << " events <===" << endl;
+            // cout << "===> Filled hitogram with " << n_reco << " events <===" << endl;
             break;
         }
     }

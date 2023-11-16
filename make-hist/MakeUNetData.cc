@@ -47,19 +47,19 @@ int MakeUNetData()
     train_tree->Init("train_tree");
 
     cout << "===> create train tree <===" << endl;
-    train_tree->FillTree(train_mh, 10, event);
+    train_tree->FillTree(train_mh, 70000, event);
 
     auto val_tree = new MakeTree();
     val_tree->Init("val_tree");
 
     cout << "===> create val tree <===" << endl;
-    val_tree->FillTree(val_mh, 10, event);
+    val_tree->FillTree(val_mh, 30000, event);
 
     auto test_tree = new MakeTree();
     test_tree->Init("test_tree");
 
     cout << "===> create test tree <===" << endl;
-    test_tree->FillTree(test_mh, 10, event);
+    test_tree->FillTree(test_mh, 40000, event);
 
     train_tree->tree->Write();
     val_tree->tree->Write();

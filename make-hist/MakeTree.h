@@ -171,8 +171,8 @@ void MakeTree::FillTree(MakeHist* mh, int n_events, TRandom3* event)
             }
         }
 
-        // if (i+1%1000==0) {cout << "===> event : " << i+1 << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;}
-        cout << "===> event : " << i << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;
+        if (i+1%100==0) {cout << "===> event : " << i+1 << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;}
+        // cout << "===> event : " << i << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;
 
         tree->Fill();
     }
