@@ -13,7 +13,7 @@
 #include "MakeHist.h"
 #include "MakeTree.h"
 
-int MakeUNetData()
+int main()
 {
 
     auto event = new TRandom3();
