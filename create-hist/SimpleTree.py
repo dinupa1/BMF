@@ -1,15 +1,17 @@
+#
+# dinupa3@gmail.com
+#
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 import uproot
 import awkward as ak
 
-import os
-
-from sklearn.model_selection import train_test_split
-
 data = uproot.open("GMC_lh2_DY_RUN3_All.root:result_mc")
 events = data.arrays(["fpga1", "mass", "pT", "xF", "phi", "costh", "true_mass", "true_pT", "true_xF", "true_phi", "true_costh"])
+
+print("===> applying simple cuts to events <===")
 
 tree = {
     "fpga1": events.fpga1[(events.true_mass > 4.0) & (-0.6 < events.true_costh) & (events.true_costh < 0.6)],

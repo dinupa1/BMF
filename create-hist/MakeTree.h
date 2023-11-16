@@ -1,18 +1,15 @@
-//
-// dinupa3@gmail.com
-//
+/*
+ * dinupa3@gmail.com
+ */
 
 #include <TFile.h>
 #include <TTree.h>
 #include <TMath.h>
 #include <TCanvas.h>
+#include <TRandom3.h>
 #include <iostream>
 
-#include "MakeHist.h"
-
 using namespace std;
-
-auto theta = new TRandom3();
 
 #ifndef _H_MakeTree_H_
 #define _H_MakeTree_H_
@@ -23,22 +20,13 @@ class MakeTree
     float reco_hist[2][72][72];
     float lambda, mu, nu;
 
-    float true_count[5184];
-    float true_error[5184];
-    float reco_count[5184];
-    float reco_error[5184];
-
-    void read_phi_costh( MakeHist* mh, int i, int j, int k);
-    void read_mass_pT_xF(MakeHist* mh);
-    void fill_hist();
 public:
     TTree* tree;
     MakeTree();
     virtual ~MakeTree(){};
     void Init(TString tree_name);
-    void FillTree(MakeHist* mh, int n_events);
+    void FillTree(MakeHist* mh, int n_events, TRandom3* event);
 };
-#endif /* _H_MakeTree_H_ */
 
 MakeTree::MakeTree()
 {;}
@@ -54,69 +42,139 @@ void MakeTree::Init(TString tree_name)
 }
 
 
-void MakeTree::read_phi_costh( MakeHist* mh, int i, int j, int k)
-{
-    for(int l = 0; l < 12; l++)
-    {
-        for(int m = 0; m < 12; m++)
-        {
-            true_count[1728* i+ 576* j+ 144* k+ 12* l + m] = mh->true_count[i][j][k][l][m];
-            true_error[1728* i+ 576* j+ 144* k+ 12* l + m] = sqrt(mh->true_error2[i][j][k][l][m]);
-            reco_count[1728* i+ 576* j+ 144* k+ 12* l + m] = mh->reco_count[i][j][k][l][m];
-            reco_error[1728* i+ 576* j+ 144* k+ 12* l + m] = sqrt(mh->reco_error2[i][j][k][l][m]);
-        }
-    }
-}
-
-
-void MakeTree::read_mass_pT_xF(MakeHist* mh)
-{
-    for(int i = 0; i < 3; i++)
-    {
-        for(int j = 0; j < 3; j++)
-        {
-            for(int k = 0; k < 4; k++)
-            {
-                read_phi_costh(mh, i, j, k);
-            }
-        }
-    }
-}
-
-
-void MakeTree::fill_hist()
-{
-    for(int i = 0; i < 72; i++)
-    {
-        for(int j = 0; j < 72; j++)
-        {
-            true_hist[0][i][j] = true_count[72*i + j] - true_error[72*i + j];
-            true_hist[1][i][j] = true_count[72*i + j] + true_error[72*i + j];
-
-            reco_hist[0][i][j] = reco_count[72*i + j] - reco_error[72*i + j];
-            reco_hist[1][i][j] = reco_count[72*i + j] + reco_error[72*i + j];
-        }
-    }
-}
-
-
-void MakeTree::FillTree(MakeHist* mh, int n_events)
+void MakeTree::FillTree(MakeHist* mh, int n_events, TRandom3* event)
 {
     for(int i = 0; i < n_events; i++)
     {
-        lambda = theta->Uniform(-1., 1.);
-        mu = theta->Uniform(-0.5, 0.5);
-        nu = theta->Uniform(-0.5, 0.5);
+        lambda = event->Uniform(-1., 1.);
+        mu = event->Uniform(-0.5, 0.5);
+        nu = event->Uniform(-0.5, 0.5);
 
-        mh->FillHist(lambda, mu, nu);
+        mh->FillHist(lambda, mu, nu, event);
 
-        read_mass_pT_xF(mh);
+        for(int ii = 0; ii < 72; ii += 4)
+        {
+            for(int jj = 0; jj < 72; jj += 4)
+            {
+                /*
+                 * fill particle level info.
+                 */
 
-        fill_hist();
+                // ii = 0
+                true_hist[0][ii+0][jj+0] = mh->true_count[72*(ii+0) + (jj+0)];
+                true_hist[1][ii+0][jj+0] = mh->true_error2[72*(ii+0) + (jj+0)];
 
-        if (i+1%100==0) {cout << "===> event : " << i+1 << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;}
-        // cout << "===> event : " << i << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;
+                true_hist[0][ii+0][jj+1] = mh->true_count[72*(ii+0) + (jj+1)];
+                true_hist[1][ii+0][jj+1] = mh->true_error2[72*(ii+0) + (jj+1)];
+
+                true_hist[0][ii+0][ii+2] = mh->true_count[72*(ii+0) + (jj+2)];
+                true_hist[1][ii+0][ii+2] = mh->true_error2[72*(ii+0) + (jj+2)];
+
+                true_hist[0][ii+0][ii+3] = mh->true_count[72*(ii+0) + (jj+3)];
+                true_hist[1][ii+0][ii+3] = mh->true_error2[72*(ii+0) + (jj+3)];
+
+                // ii = 1
+                true_hist[0][ii+1][jj+0] = mh->true_count[72*(ii+1) + (jj+0)];
+                true_hist[1][ii+1][jj+0] = mh->true_error2[72*(ii+1) + (jj+0)];
+
+                true_hist[0][ii+1][jj+1] = mh->true_count[72*(ii+1) + (jj+1)];
+                true_hist[1][ii+1][jj+1] = mh->true_error2[72*(ii+1) + (jj+1)];
+
+                true_hist[0][ii+1][ii+2] = mh->true_count[72*(ii+1) + (jj+2)];
+                true_hist[1][ii+1][ii+2] = mh->true_error2[72*(ii+1) + (jj+2)];
+
+                true_hist[0][ii+1][ii+3] = mh->true_count[72*(ii+1) + (jj+3)];
+                true_hist[1][ii+1][ii+3] = mh->true_error2[72*(ii+1) + (jj+3)];
+
+                // ii = 2
+                true_hist[0][ii+2][jj+0] = mh->true_count[72*(ii+2) + (jj+0)];
+                true_hist[1][ii+2][jj+0] = mh->true_error2[72*(ii+2) + (jj+0)];
+
+                true_hist[0][ii+2][jj+1] = mh->true_count[72*(ii+2) + (jj+1)];
+                true_hist[1][ii+2][jj+1] = mh->true_error2[72*(ii+2) + (jj+1)];
+
+                true_hist[0][ii+2][ii+2] = mh->true_count[72*(ii+2) + (jj+2)];
+                true_hist[1][ii+2][ii+2] = mh->true_error2[72*(ii+2) + (jj+2)];
+
+                true_hist[0][ii+2][ii+3] = mh->true_count[72*(ii+2) + (jj+3)];
+                true_hist[1][ii+2][ii+3] = mh->true_error2[72*(ii+2) + (jj+3)];
+
+                // ii = 3
+                true_hist[0][ii+3][jj+0] = mh->true_count[72*(ii+3) + (jj+0)];
+                true_hist[1][ii+3][jj+0] = mh->true_error2[72*(ii+3) + (jj+0)];
+
+                true_hist[0][ii+3][jj+1] = mh->true_count[72*(ii+3) + (jj+1)];
+                true_hist[1][ii+3][jj+1] = mh->true_error2[72*(ii+3) + (jj+1)];
+
+                true_hist[0][ii+3][ii+2] = mh->true_count[72*(ii+3) + (jj+2)];
+                true_hist[1][ii+3][ii+2] = mh->true_error2[72*(ii+3) + (jj+2)];
+
+                true_hist[0][ii+3][ii+3] = mh->true_count[72*(ii+3) + (jj+3)];
+                true_hist[1][ii+3][ii+3] = mh->true_error2[72*(ii+3) + (jj+3)];
+
+                /*
+                 * fill detector level
+                 */
+
+                // ii = 0
+                reco_hist[0][ii+0][jj+0] = mh->reco_count[72*(ii+0) + (jj+0)];
+                reco_hist[1][ii+0][jj+0] = mh->reco_error2[72*(ii+0) + (jj+0)];
+
+                reco_hist[0][ii+0][jj+1] = mh->reco_count[72*(ii+0) + (jj+1)];
+                reco_hist[1][ii+0][jj+1] = mh->reco_error2[72*(ii+0) + (jj+1)];
+
+                reco_hist[0][ii+0][ii+2] = mh->reco_count[72*(ii+0) + (jj+2)];
+                reco_hist[1][ii+0][ii+2] = mh->reco_error2[72*(ii+0) + (jj+2)];
+
+                reco_hist[0][ii+0][ii+3] = mh->reco_count[72*(ii+0) + (jj+3)];
+                reco_hist[1][ii+0][ii+3] = mh->reco_error2[72*(ii+0) + (jj+3)];
+
+                // ii = 1
+                reco_hist[0][ii+1][jj+0] = mh->reco_count[72*(ii+1) + (jj+0)];
+                reco_hist[1][ii+1][jj+0] = mh->reco_error2[72*(ii+1) + (jj+0)];
+
+                reco_hist[0][ii+1][jj+1] = mh->reco_count[72*(ii+1) + (jj+1)];
+                reco_hist[1][ii+1][jj+1] = mh->reco_error2[72*(ii+1) + (jj+1)];
+
+                reco_hist[0][ii+1][ii+2] = mh->reco_count[72*(ii+1) + (jj+2)];
+                reco_hist[1][ii+1][ii+2] = mh->reco_error2[72*(ii+1) + (jj+2)];
+
+                reco_hist[0][ii+1][ii+3] = mh->reco_count[72*(ii+1) + (jj+3)];
+                reco_hist[1][ii+1][ii+3] = mh->reco_error2[72*(ii+1) + (jj+3)];
+
+                // ii = 2
+                reco_hist[0][ii+2][jj+0] = mh->reco_count[72*(ii+2) + (jj+0)];
+                reco_hist[1][ii+2][jj+0] = mh->reco_error2[72*(ii+2) + (jj+0)];
+
+                reco_hist[0][ii+2][jj+1] = mh->reco_count[72*(ii+2) + (jj+1)];
+                reco_hist[1][ii+2][jj+1] = mh->reco_error2[72*(ii+2) + (jj+1)];
+
+                reco_hist[0][ii+2][ii+2] = mh->reco_count[72*(ii+2) + (jj+2)];
+                reco_hist[1][ii+2][ii+2] = mh->reco_error2[72*(ii+2) + (jj+2)];
+
+                reco_hist[0][ii+2][ii+3] = mh->reco_count[72*(ii+2) + (jj+3)];
+                reco_hist[1][ii+2][ii+3] = mh->reco_error2[72*(ii+2) + (jj+3)];
+
+                // ii = 3
+                reco_hist[0][ii+3][jj+0] = mh->reco_count[72*(ii+3) + (jj+0)];
+                reco_hist[1][ii+3][jj+0] = mh->reco_error2[72*(ii+3) + (jj+0)];
+
+                reco_hist[0][ii+3][jj+1] = mh->reco_count[72*(ii+3) + (jj+1)];
+                reco_hist[1][ii+3][jj+1] = mh->reco_error2[72*(ii+3) + (jj+1)];
+
+                reco_hist[0][ii+3][ii+2] = mh->reco_count[72*(ii+3) + (jj+2)];
+                reco_hist[1][ii+3][ii+2] = mh->reco_error2[72*(ii+3) + (jj+2)];
+
+                reco_hist[0][ii+3][ii+3] = mh->reco_count[72*(ii+3) + (jj+3)];
+                reco_hist[1][ii+3][ii+3] = mh->reco_error2[72*(ii+3) + (jj+3)];
+
+            }
+        }
+
+        // if (i+1%1000==0) {cout << "===> event : " << i+1 << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;}
+        cout << "===> event : " << i << " lambda : " << lambda << " mu : " << mu << " nu : " << nu << endl;
 
         tree->Fill();
     }
 }
+#endif /* _H_MakeTree_H_ */

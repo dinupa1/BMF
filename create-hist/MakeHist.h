@@ -1,6 +1,6 @@
-//
-// dinupa3@gmail.com
-//
+/*
+ * dinupa3@gmail.com
+ */
 
 #include <TFile.h>
 #include <TTree.h>
@@ -18,8 +18,6 @@ float weight_fn(float lambda, float mu, float nu, float phi, float costh)
     return weight/(1. + costh* costh);
 }
 
-auto event = new TRandom3();
-
 #ifndef _H_MakeHist_H_
 #define _H_MakeHist_H_
 
@@ -36,6 +34,8 @@ class MakeHist
     static const int phi_bins = 12;
     static const int costh_bins = 12;
 
+    static const int num_bins = mass_bins* pT_bins* xF_bins* phi_bins* costh_bins;
+
     double mass_edges[mass_bins+1] = {4.0, 5.5, 6.5, 10.0};
     double pT_edges[pT_bins+1] = {0.0, 0.5, 1.5, 3.5};
     double xF_edges[xF_bins+1] = {-0.2, 0.1, 0.4, 0.7, 1.0};
@@ -44,22 +44,19 @@ class MakeHist
 
     void fill_true_phi_costh(int i, int j, int k, float event_weight);
     void fill_reco_phi_costh(int i, int j, int k, float event_weight);
-    void fill_true_mass_pT_xF(float event_weight);
-    void fill_reco_mass_pT_xF(float event_weight);
 
 public:
     int num_events;
-    float true_count[mass_bins][pT_bins][xF_bins][phi_bins][costh_bins];
-    float true_error2[mass_bins][pT_bins][xF_bins][phi_bins][costh_bins];
-    float reco_count[mass_bins][pT_bins][xF_bins][phi_bins][costh_bins];
-    float reco_error2[mass_bins][pT_bins][xF_bins][phi_bins][costh_bins];
+    float true_count[num_bins];
+    float true_error2[num_bins];
+    float reco_count[num_bins];
+    float reco_error2[num_bins];
 
     MakeHist();
     virtual ~MakeHist(){};
     void Init(TString tree_name);
-    void FillHist(float lambda, float mu, float nu);
+    void FillHist(float lambda, float mu, float nu, TRandom3* event);
 };
-#endif /* _H_MakeHist_H_ */
 
 
 MakeHist::MakeHist()
@@ -91,14 +88,102 @@ void MakeHist::Init(TString tree_name)
 
 void MakeHist::fill_true_phi_costh(int i, int j, int k, float event_weight)
 {
-    for(int ii = 0; ii < phi_bins; ii++)
+    for(int ii = 0; ii < phi_bins; ii+=3)
     {
-        if(!(phi_edges[ii] < true_phi && true_phi <= phi_edges[ii+1])){continue;}
-        for(int jj = 0; jj < costh_bins; jj++)
+        for(int jj = 0; jj < costh_bins; jj+=3)
         {
-            if(!(costh_edges[jj] < true_costh && true_costh <= costh_edges[jj+1])){continue;}
-            true_count[i][j][k][ii][jj] += event_weight;
-            true_error2[i][j][k][ii][jj] += event_weight* event_weight;
+            // ii = 0
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+0] < true_phi && true_phi <= phi_edges[ii+0+1] &&
+                costh_edges[jj+0] < true_costh && true_costh <= costh_edges[ii+0+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+0)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+0)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+0] < true_phi && true_phi <= phi_edges[ii+0+1] &&
+                costh_edges[jj+1] < true_costh && true_costh <= costh_edges[ii+1+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+1)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+1)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+0] < true_phi && true_phi <= phi_edges[ii+0+1] &&
+                costh_edges[jj+2] < true_costh && true_costh <= costh_edges[ii+2+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+2)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+2)] += event_weight* event_weight;
+                }
+
+            // ii = 1
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+1] < true_phi && true_phi <= phi_edges[ii+1+1] &&
+                costh_edges[jj+0] < true_costh && true_costh <= costh_edges[ii+0+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+0)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+0)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+1] < true_phi && true_phi <= phi_edges[ii+1+1] &&
+                costh_edges[jj+1] < true_costh && true_costh <= costh_edges[ii+1+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+1)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+1)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+1] < true_phi && true_phi <= phi_edges[ii+1+1] &&
+                costh_edges[jj+2] < true_costh && true_costh <= costh_edges[ii+2+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+2)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+2)] += event_weight* event_weight;
+                }
+
+            // ii = 2
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+2] < true_phi && true_phi <= phi_edges[ii+2+1] &&
+                costh_edges[jj+0] < true_costh && true_costh <= costh_edges[ii+0+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+0)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+0)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+2] < true_phi && true_phi <= phi_edges[ii+2+1] &&
+                costh_edges[jj+1] < true_costh && true_costh <= costh_edges[ii+1+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+1)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+1)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1] &&
+                pT_edges[j] < true_pT && true_pT <= pT_edges[j+1] &&
+                xF_edges[k] < true_xF && true_xF <= xF_edges[k+1] &&
+                phi_edges[ii+2] < true_phi && true_phi <= phi_edges[ii+2+1] &&
+                costh_edges[jj+2] < true_costh && true_costh <= costh_edges[ii+2+1])
+                {
+                    true_count[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+2)] += event_weight;
+                    true_error2[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+2)] += event_weight* event_weight;
+                }
         }
     }
 }
@@ -106,60 +191,119 @@ void MakeHist::fill_true_phi_costh(int i, int j, int k, float event_weight)
 
 void MakeHist::fill_reco_phi_costh(int i, int j, int k, float event_weight)
 {
-    for(int ii = 0; ii < phi_bins; ii++)
+    for(int ii = 0; ii < phi_bins; ii+=3)
     {
-        if(!(phi_edges[ii] < phi && phi <= phi_edges[ii+1])){continue;}
-        for(int jj = 0; jj < costh_bins; jj++)
+        for(int jj = 0; jj < costh_bins; jj+=3)
         {
-            if(!(costh_edges[jj] < costh && costh <= costh_edges[jj+1])){continue;}
-            reco_count[i][j][k][ii][jj] += event_weight;
-            reco_error2[i][j][k][ii][jj] += event_weight* event_weight;
+            // ii = 0
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+0] < phi && phi <= phi_edges[ii+0+1] &&
+                costh_edges[jj+0] < costh && costh <= costh_edges[ii+0+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+0)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+0)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+0] < phi && phi <= phi_edges[ii+0+1] &&
+                costh_edges[jj+1] < costh && costh <= costh_edges[ii+1+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+1)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+1)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+0] < phi && phi <= phi_edges[ii+0+1] &&
+                costh_edges[jj+2] < costh && costh <= costh_edges[ii+2+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+2)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+0) + (jj+2)] += event_weight* event_weight;
+                }
+
+            // ii = 1
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+1] < phi && phi <= phi_edges[ii+1+1] &&
+                costh_edges[jj+0] < costh && costh <= costh_edges[ii+0+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+0)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+0)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+1] < phi && phi <= phi_edges[ii+1+1] &&
+                costh_edges[jj+1] < costh && costh <= costh_edges[ii+1+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+1)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+1)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+1] < phi && phi <= phi_edges[ii+1+1] &&
+                costh_edges[jj+2] < costh && costh <= costh_edges[ii+2+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+2)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+1) + (jj+2)] += event_weight* event_weight;
+                }
+
+            // ii = 2
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+2] < phi && phi <= phi_edges[ii+2+1] &&
+                costh_edges[jj+0] < costh && costh <= costh_edges[ii+0+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+0)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+0)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+2] < phi && phi <= phi_edges[ii+2+1] &&
+                costh_edges[jj+1] < costh && costh <= costh_edges[ii+1+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+1)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+1)] += event_weight* event_weight;
+                }
+
+            if(mass_edges[i] < mass && mass <= mass_edges[i+1] &&
+                pT_edges[j] < pT && pT <= pT_edges[j+1] &&
+                xF_edges[k] < xF && xF <= xF_edges[k+1] &&
+                phi_edges[ii+2] < phi && phi <= phi_edges[ii+2+1] &&
+                costh_edges[jj+2] < costh && costh <= costh_edges[ii+2+1])
+                {
+                    reco_count[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+2)] += event_weight;
+                    reco_error2[1728* i+ 576* j+ 144* k+ 12* (ii+2) + (jj+2)] += event_weight* event_weight;
+                }
         }
     }
 }
 
 
-void MakeHist::fill_true_mass_pT_xF(float event_weight)
-{
-    for(int i = 0; i < mass_bins; i++)
-    {
-        if(!(mass_edges[i] < true_mass && true_mass <= mass_edges[i+1])){continue;}
-        for(int j = 0; j < pT_bins; j++)
-        {
-            if(!(pT_edges[j] < true_pT && true_pT <= pT_edges[j+1])){continue;}
-            for(int k = 0; k < xF_bins ; k++)
-            {
-                if(!(xF_edges[k] < true_xF && true_xF <= xF_edges[k+1])){continue;}
-                fill_true_phi_costh(i, j, k, event_weight);
-            }
-        }
-    }
-}
-
-
-
-void MakeHist::fill_reco_mass_pT_xF(float event_weight)
-{
-    for(int i = 0; i < mass_bins; i++)
-    {
-        if(!(mass_edges[i] < mass && mass <= mass_edges[i+1])){continue;}
-        for(int j = 0; j < pT_bins; j++)
-        {
-            if(!(pT_edges[j] < pT && pT <= pT_edges[j+1])){continue;}
-            for(int k = 0; k < xF_bins ; k++)
-            {
-                if(!(xF_edges[k] < xF && xF <= xF_edges[k+1])){continue;}
-                fill_reco_phi_costh(i, j, k, event_weight);
-            }
-        }
-    }
-}
-
-
-void MakeHist::FillHist(float lambda, float mu, float nu)
+void MakeHist::FillHist(float lambda, float mu, float nu, TRandom3* event)
 {
     int reco_events = 10000;
     int n_reco = 0;
+
+    for(int i = 0; i < num_bins; i++)
+    {
+        true_count[i] = 0.0;
+        true_error2[i] = 0.0;
+        reco_count[i] = 0.0;
+        reco_error2[i] = 0.0;
+    }
 
     for(int i = 0; i < num_events; i++)
     {
@@ -169,20 +313,44 @@ void MakeHist::FillHist(float lambda, float mu, float nu)
         float pT_rand = event->Uniform(0., 3.5);
         float xF_rand =event->Uniform(-0.2, 1.0);
 
-        float radius_rand = sqrt(mass_rand* mass_rand + pT_rand* pT_rand + xF_rand* xF_rand);
-        float radius_true = sqrt(true_mass* true_mass + true_pT* true_pT + true_xF* true_xF);
+        if(mass_rand <= true_mass && pT_rand <= true_pT && xF_rand <= true_xF)
+        {
+            double event_weight = weight_fn(lambda, mu, nu, true_phi, true_costh);
 
-        if(!(mass_rand <= true_mass)){continue;} // rejection sampling method
-        float event_weight = weight_fn(lambda, mu, nu, true_phi, true_costh);
+            // particle level data
+            for(int mm = 0; mm < mass_bins; mm++)
+            {
+                for(int nn = 0; nn < pT_bins; nn++)
+                {
+                    for(int pp = 0; pp < xF_bins; pp++)
+                    {
+                        fill_true_phi_costh(mm, nn, pp, event_weight);
+                    }
+                }
+            }
 
-        // particle level info.
-        fill_true_mass_pT_xF(event_weight);
+            // detector level data
+            if(fpga1==1 && mass > 0.)
+            {
+                for(int mm = 0; mm < mass_bins; mm++)
+                {
+                    for(int nn = 0; nn < pT_bins; nn++)
+                    {
+                        for(int pp = 0; pp < xF_bins; pp++)
+                        {
+                            fill_reco_phi_costh(mm, nn, pp, event_weight);
+                        }
+                    }
+                }
+                n_reco += 1;
+            }
+        }
 
-        // detector level info.
-        if(!(fpga1 == 1 && mass > 0.)){continue;}
-        fill_reco_mass_pT_xF(event_weight);
-        n_reco += 1;
-
-        if(n_reco == reco_events){break;}
+        if(n_reco == reco_events)
+        {
+            cout << "===> Filled hitogram with " << n_reco << " events <===" << endl;
+            break;
+        }
     }
 }
+#endif /* _H_MakeHist_H_ */

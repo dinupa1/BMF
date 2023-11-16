@@ -18,7 +18,7 @@ FitHist::FitHist()
 
 void FitHist::Init()
 {
-    TFile* file = TFile::Open("results.root", "READ");
+    TFile* file = TFile::Open("results0.root", "READ");
     tree = (TTree*)file->Get("tree");
     n_events = tree->GetEntries();
 
@@ -99,18 +99,18 @@ void FitHist::DrawFits()
         can->SaveAs(reco_name.Data());
 
         // covariace matrix
-        auto true_cov = true_rp->GetCovarianceMatrix();
-
-        TString true_cov_name = Form("imgs/true_cov_%d.png", i);
-        true_cov.Draw("COLZ");
-        can->SaveAs(true_cov_name.Data());
+        // auto true_cov = true_rp->GetCovarianceMatrix();
+        //
+        // TString true_cov_name = Form("imgs/true_cov_%d.png", i);
+        // true_cov.Draw("COLZ");
+        // can->SaveAs(true_cov_name.Data());
 
         // corelation matrix
-        auto true_cor = true_rp->GetCorrelationMatrix();
+        // auto true_cor = true_rp->GetCorrelationMatrix();
 
-        TString true_cor_name = Form("imgs/true_cor_%d.png", i);
-        true_cor.Draw("COLZ");
-        can->SaveAs(true_cor_name.Data());
+        // TString true_cor_name = Form("imgs/true_cor_%d.png", i);
+        // true_cor.Draw("COLZ");
+        // can->SaveAs(true_cor_name.Data());
 
         TFitResultPtr pred_rp = hist_pred->Fit(pred_fit, "S");
 
@@ -119,18 +119,18 @@ void FitHist::DrawFits()
         can->SaveAs(pred_name.Data());
 
         // covariace matrix
-        auto pred_cov = pred_rp->GetCovarianceMatrix();
+        // auto pred_cov = pred_rp->GetCovarianceMatrix();
 
-        TString pred_cov_name = Form("imgs/pred_cov_%d.png", i);
-        pred_cov.Draw("COLZ");
-        can->SaveAs(pred_cov_name.Data());
+        // TString pred_cov_name = Form("imgs/pred_cov_%d.png", i);
+        // pred_cov.Draw("COLZ");
+        // can->SaveAs(pred_cov_name.Data());
 
         // corelation matrix
-        auto pred_cor = pred_rp->GetCorrelationMatrix();
-
-        TString pred_cor_name = Form("imgs/pred_cor_%d.png", i);
-        pred_cor.Draw("COLZ");
-        can->SaveAs(pred_cor_name.Data());
+        // auto pred_cor = pred_rp->GetCorrelationMatrix();
+        //
+        // TString pred_cor_name = Form("imgs/pred_cor_%d.png", i);
+        // pred_cor.Draw("COLZ");
+        // can->SaveAs(pred_cor_name.Data());
 
         delete hist_true;
         delete hist_reco;
@@ -142,13 +142,13 @@ void FitHist::DrawResults()
 {
     double pi = TMath::Pi();
 
-    TH1D* lambda_true = new TH1D("lambda_true", "; #lambda [a.u.]; counts", 50, -0.2, 0.2);
-    TH1D* mu_true = new TH1D("mu_true", "; #mu [a.u.]; counts", 50, -0.2, 0.2);
-    TH1D* nu_true = new TH1D("nu_true", "; #nu [a.u.]; counts", 50, -0.2, 0.2);
+    TH1D* lambda_true = new TH1D("lambda_true", "; #Delta #lambda [a.u.]; counts", 50, -0.1, 0.15);
+    TH1D* mu_true = new TH1D("mu_true", "; #Delta #mu [a.u.]; counts", 50, -0.04, 0.04);
+    TH1D* nu_true = new TH1D("nu_true", "; #Delta #nu [a.u.]; counts", 50, -0.06, 0.06);
 
-    TH1D* lambda_pred = new TH1D("lambda_pred", "; #lambda [a.u.]; counts", 50, -0.2, 0.2);
-    TH1D* mu_pred = new TH1D("mu_pred", "; #mu [a.u.]; counts", 50, -0.2, 0.2);
-    TH1D* nu_pred = new TH1D("nu_pred", "; #nu [a.u.]; counts", 50, -0.2, 0.2);
+    TH1D* lambda_pred = new TH1D("lambda_pred", "; #Delta #lambda [a.u.]; counts", 50, -0.15, 0.15);
+    TH1D* mu_pred = new TH1D("mu_pred", "; #Delta #mu [a.u.]; counts", 50, -0.1, 0.1);
+    TH1D* nu_pred = new TH1D("nu_pred", "; #Delta #nu [a.u.]; counts", 50, -0.1, 0.1);
 
     for(int i = 0; i < n_events; i++)
     {
@@ -220,20 +220,54 @@ void FitHist::DrawResults()
     }
 
     TCanvas* can = new TCanvas();
-    lambda_true->Draw();
-    can->SaveAs("imgs/lambda_true.png");
 
-    mu_true->Draw();
-    can->SaveAs("imgs/mu_true.png");
+    int b_max;
+    double x_max, y_max, rms;
 
-    nu_true->Draw();
-    can->SaveAs("imgs/nu_true.png");
+    // lambda_true->Fit("gaus");
+    // lambda_true->Draw();
+    // can->SaveAs("imgs/lambda_true.png");
+    //
+    // mu_true->Fit("gaus");
+    // mu_true->Draw();
+    // can->SaveAs("imgs/mu_true.png");
+    //
+    // nu_true->Fit("gaus");
+    // nu_true->Draw();
+    // can->SaveAs("imgs/nu_true.png");
+
+    // auto gaus_fit = new TF1("gaus_fit", "gaus", -0.04, 0.08);
+    // b_max = lambda_pred->GetMaximumBin();
+    // y_max = lambda_pred->GetBinContent(b_max);
+    // x_max = lambda_pred->GetBinCenter(b_max);
+    // rms = lambda_pred->GetRMS();
+    // gaus_fit->SetParameter(0, y_max);
+    // gaus_fit->SetParLimits(1, x_max-rms, x_max+rms);
+    // lambda_pred->Fit(gaus_fit, "R");
 
     lambda_pred->Draw();
     can->SaveAs("imgs/lambda_pred.png");
 
+    // auto gaus_fit1 = new TF1("gaus_fit1", "gaus", -0.02, 0.03);
+    // b_max = mu_pred->GetMaximumBin();
+    // y_max = mu_pred->GetBinContent(b_max);
+    // x_max = mu_pred->GetBinCenter(b_max);
+    // rms = mu_pred->GetRMS();
+    // gaus_fit1->SetParameter(0, y_max);
+    // gaus_fit1->SetParLimits(1, x_max-rms, x_max+rms);
+    // mu_pred->Fit(gaus_fit1, "R");
+
     mu_pred->Draw();
     can->SaveAs("imgs/mu_pred.png");
+
+    // auto gaus_fit2 = new TF1("gaus_fit2", "gaus", -0.03, 0.04);
+    // b_max = nu_pred->GetMaximumBin();
+    // y_max = nu_pred->GetBinContent(b_max);
+    // x_max = nu_pred->GetBinCenter(b_max);
+    // rms = nu_pred->GetRMS();
+    // gaus_fit2->SetParameter(0, y_max);
+    // gaus_fit2->SetParLimits(1, x_max-rms, x_max+rms);
+    // nu_pred->Fit(gaus_fit2, "R");
 
     nu_pred->Draw();
     can->SaveAs("imgs/nu_pred.png");
@@ -241,11 +275,13 @@ void FitHist::DrawResults()
 
 void PlotResults()
 {
-    gStyle->SetOptStat(0);
-    gStyle->SetOptFit();
+    gStyle->SetPalette(71);
+    // gStyle->SetOptStat(0);
+    // gStyle->SetOptFit();
+    gStyle->SetTitleSize(.05, "X");
 
     FitHist* fh = new FitHist();
     fh->Init();
-    fh->DrawFits();
-    // fh->DrawResults();
+    //fh->DrawFits();
+    fh->DrawResults();
 }
