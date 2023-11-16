@@ -21,13 +21,13 @@ int main()
     /*
      * apply simple cuts
      */
-    gSystem->Exec("python create-hist/SimpleTree.py");
+    gSystem->Exec("python SimpleTree.py");
 
 
     /*
      * split events randomly
      */
-    gSystem->Exec("python create-hist/SplitTree.py");
+    gSystem->Exec("python SplitTree.py");
 
     /*
      * make tree with histograms
@@ -69,7 +69,7 @@ int main()
     /*
      * save to torch tensor
      */
-    gSystem->Exec("python create-hist/SaveTensor.py");
+    gSystem->Exec("python SaveTensor.py");
 
     return 0;
 
