@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 import uproot
 import awkward as ak
 
-data = uproot.open("GMC_lh2_DY_RUN3_All.root:result_mc")
+DIR="/seaquest/users/dinupa/bmf-data/"
+
+data = uproot.open(DIR+"GMC_lh2_DY_RUN3_All.root:result_mc")
 events = data.arrays(["fpga1", "mass", "pT", "xF", "phi", "costh", "true_mass", "true_pT", "true_xF", "true_phi", "true_costh"])
 
 print("===> applying simple cuts to events <===")

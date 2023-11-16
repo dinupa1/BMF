@@ -21,13 +21,13 @@ int MakeUNetData()
     /*
      * apply simple cuts
      */
-    // gSystem->Exec("python create-hist/SimpleTree.py");
+    gSystem->Exec("python create-hist/SimpleTree.py");
 
 
     /*
      * split events randomly
      */
-    // gSystem->Exec("python create-hist/SplitTree.py");
+    gSystem->Exec("python create-hist/SplitTree.py");
 
     /*
      * make tree with histograms
