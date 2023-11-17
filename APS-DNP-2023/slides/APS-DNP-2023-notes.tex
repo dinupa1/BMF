@@ -1,0 +1,65 @@
+\documentclass[8pt, xcolor={dvipsnames}, sans, mathserif]{beamer}
+
+\usepackage{fontspec}
+\usepackage{fontawesome5}
+\usepackage{mathrsfs}
+\usepackage{amsmath, amssymb}
+\usepackage{braket}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[absolute,overlay]{textpos}
+\usepackage[font=tiny, skip=0.5pt]{caption}
+
+\captionsetup[figure]{labelformat=empty}
+
+% Define the custom theme
+\mode<presentation>
+
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{caption}[default]
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamerfont{footnote}{size=\tiny}
+
+
+% Some custom commands
+\newenvironment{List}[2]
+{\begin{textblock}{#1}#2
+\begin{itemize}}
+{\end{itemize}
+\end{textblock}}
+
+\newenvironment{Pic}[2]
+{\begin{textblock}{#1}#2
+\begin{figure}}
+{\end{figure}
+\end{textblock}}
+
+\begin{document}
+
+
+\begin{frame}
+\begin{List}{15.}{(0.1, 0.1)}
+
+  \item Proton spin 1/2 fermion made with 3 quarks: uud
+
+  \item EMC: quarks contributes only about 20\% of the proton spin
+
+  \item what contribute to the proton spin
+
+  \item 25\% of the proton spin comes from intrinsic spin of the quarks, about 50\% comes from the angular momentum of the quarks
+
+  \item g contributes to the about 30\% of the total angular momentum of the proton
+
+\end{List}
+\end{frame}
+
+\begin{frame}
+\begin{List}{15.}{(0.5, 0.5)}
+
+  \item
+
+\end{List}
+\end{frame}
+
+\end{document}
