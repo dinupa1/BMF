@@ -5,7 +5,6 @@
 *.pt
 build/
 __pycache__/
-*.png
 *.aux
 *.log
 *.bav
@@ -13,3 +12,4 @@ __pycache__/
 *.snm
 *.toc
 slides/
+*.png
