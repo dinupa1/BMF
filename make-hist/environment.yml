@@ -1,0 +1,11 @@
+name: bmf-playground
+channels:
+    - conda-forge
+    - pytorch
+dependencies:
+    - numpy
+    - matplotlib
+    - scikit-learn
+    - uproot
+    - pytorch
+    - root

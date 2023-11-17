@@ -4,3 +4,5 @@ slides
 *.root
 .idea/
 __pycache__/
+*.pt
+build/

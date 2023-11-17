@@ -13,7 +13,7 @@
 #include "MakeHist.h"
 #include "MakeTree.h"
 
-int main()
+int MakeUNetData()
 {
 
     auto event = new TRandom3();
@@ -21,13 +21,13 @@ int main()
     /*
      * apply simple cuts
      */
-    gSystem->Exec("python SimpleTree.py");
+    // gSystem->Exec("python SimpleTree.py");
 
 
     /*
      * split events randomly
      */
-    gSystem->Exec("python SplitTree.py");
+    // gSystem->Exec("python SplitTree.py");
 
     /*
      * make tree with histograms
@@ -69,7 +69,7 @@ int main()
     /*
      * save to torch tensor
      */
-    gSystem->Exec("python SaveTensor.py");
+    // gSystem->Exec("python SaveTensor.py");
 
     return 0;
 
