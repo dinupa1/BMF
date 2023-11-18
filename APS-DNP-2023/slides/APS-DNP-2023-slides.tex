@@ -15,6 +15,9 @@
 % Define the custom theme
 \mode<presentation>
 
+% \usefonttheme{serif}
+% \setmainfont{Roboto}
+
 \setbeamertemplate{footline}[frame number]
 \setbeamertemplate{caption}[default]
 \setbeamertemplate{navigation symbols}{}
@@ -40,14 +43,14 @@
 \newcommand{\NewCaption}[3]{\caption{{#1}, \textcolor{blue}{\href{#2}{#3}}}}
 
 % Title of the slides
-\title{Extracting the $\cos2\phi$ Asymmetry in the Drell-Yan process using U-Nets}
+\title{Utilizing Deep Neural Networks for the Extraction of Drell-Yan Angular Coefficients in $pp$ Collisions with a 120 GeV Beam Energy}
 % \subtitle{Subtitle}
 \author{Dinupa Nawarathne}
 \institute{New Mexico State University \\
   Representing the FermiLab SeaQuest/E906 Collaboration
 }
 
-\date{APS-DNP-2023 - November 29, 2023}
+\date{APS-DNP-2023, November 29, 2023}
 
 \titlegraphic{
 \includegraphics[height=0.8cm]{imgs/Fermilab_logo.svg.png}
@@ -100,7 +103,7 @@
 
   \item Proton is a spin $\frac{1}{2}$ fermion.
 
-  \item Total spin of the proton $\rightarrow$ internal structure of proton
+  \item Total spin of the proton $\rightarrow$ internal structure of proton.
 
 \end{List}
 
@@ -128,9 +131,9 @@ h_{1}^{\perp [C]} (x, k_{T}^{2})\epsilon_{T}^{ij}k_{T_{j}} = \frac{M}{2} F.T. \b
 
 \begin{List}{8.}{(7., 7.)}
 
-  \item BMF : Describes the net polarization of quarks inside an unpolarized proton
+  \item BMF : Describes the net polarization of quarks inside an unpolarized proton.
 
-  \item $h_{1}^{\perp}$ $\rightarrow$ quark distribution that quantifies a particular spin-orbit correlation
+  \item $h_{1}^{\perp}$ $\rightarrow$ quark distribution that quantifies a particular spin-orbit correlation.
 
 \end{List}
 
@@ -164,34 +167,34 @@ h_{1}^{\perp [C]} (x, k_{T}^{2})\epsilon_{T}^{ij}k_{T_{j}} = \frac{M}{2} F.T. \b
 
 \begin{List}{7.}{(0.5, 7.)}
 
-  \item Useful for probing the internal structure of the proton
+  \item Useful for probing the internal structure of the proton.
 
-  \item Collins-Soper frame: using the beam proton direction to construct the azimuthal and polar angles
+  \item Collins-Soper frame: rest frame of di-muons $\rightarrow$ using the beam proton direction to construct the azimuthal and polar angles.
 
-  \item Extraction of the $\nu$ parameter $\rightarrow$ BM function
+  \item Extraction of the $\nu$ parameter $\rightarrow$ BM function.
 
 \end{List}
 \end{frame}
 
-\subsection{Evidence for Non-zero BM Function}
-\begin{frame}
-\frametitle{Evidence for Non-zero BM Function}
-
-\begin{Pic}{6.}{(0.5, 1.)}
-  \NewCaption{L.Y. Zhu et al.}{https://arxiv.org/abs/hep-ex/0609005}{arXiv:hep-ex/0609005}
-  \includegraphics[width=6.cm]{imgs/nu_E866.png}
-\end{Pic}
-
-\begin{Pic}{9.}{(7., 1.)}
-  \NewCaption{Vincenzo Barone et al.}{https://arxiv.org/abs/0912.5194}{arXiv:0912.5194}
-  \includegraphics[width=9.cm]{imgs/BM.png}
-\end{Pic}
-
-\begin{List}{15.}{(0.5, 11.)}
-  \item ``NA10", ``E615" and ``HERMES" experiments provide evidence for a non-zero BM function.
-\end{List}
-
-\end{frame}
+% \subsection{Evidence for Non-zero BM Function}
+% \begin{frame}
+% \frametitle{Evidence for Non-zero BM Function}
+%
+% \begin{Pic}{6.}{(0.5, 1.)}
+%   \NewCaption{L.Y. Zhu et al.}{https://arxiv.org/abs/hep-ex/0609005}{arXiv:hep-ex/0609005}
+%   \includegraphics[width=6.cm]{imgs/nu_E866.png}
+% \end{Pic}
+%
+% \begin{Pic}{9.}{(7., 1.)}
+%   \NewCaption{Vincenzo Barone et al.}{https://arxiv.org/abs/0912.5194}{arXiv:0912.5194}
+%   \includegraphics[width=9.cm]{imgs/BM.png}
+% \end{Pic}
+%
+% \begin{List}{15.}{(0.5, 11.)}
+%   \item ``NA10", ``E615" and ``HERMES" experiments provide evidence for a non-zero BM function.
+% \end{List}
+%
+% \end{frame}
 
 \section{FermiLab SeaQuest/E906 Experiment}
 
