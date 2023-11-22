@@ -77,13 +77,14 @@
 \begin{frame}
 \frametitle{Internal Structure of the Proton \& Transverse Momentum Distributions}
 
-\begin{Pic}{7.}{(0.1, 2.0)}
+\begin{Pic}{6.}{(0.1, 2.0)}
   \NewCaption{J. Ashman et al. }{https://www.sciencedirect.com/science/article/pii/0370269388915237}{DOI:10.1016/0370-2693(88)91523-7}
-  \includegraphics[width=7.cm]{imgs/EMC.png}
+  \includegraphics[width=6.cm]{imgs/EMC.png}
 \end{Pic}
 
-\begin{Pic}{4.}{(7., 2.)}
-  \includegraphics[width=4.cm]{imgs/spin_decomp.png}
+\begin{Pic}{4.5}{(6., 1.)}
+  \NewCaption{K. F. Liu}{https://arxiv.org/abs/2112.08416}{arXiv:2112.08416}
+  \includegraphics[width=4.5cm]{imgs/J_vbar_211.png}
 \end{Pic}
 
 \begin{List}{5.}{(10.6, 2.)}
@@ -94,12 +95,12 @@
 
 \end{List}
 
-\begin{Pic}{6.}{(9.5, 7.)}
+\begin{Pic}{6.}{(9.5, 7.2)}
   \NewCaption{A. Accardi et al}{https://arxiv.org/abs/1212.1701}{arXiv:1212.1701}
   \includegraphics[width=6.cm]{imgs/TMD.png}
 \end{Pic}
 
-\begin{List}{9.}{(0.1, 12.)}
+\begin{List}{9.}{(0.1, 11.)}
 
   \item  TMDs : distributions of the hadron's quark or gluon momenta that are perpendicular to the momentum transfer between the beam and the hadron.
 \end{List}
@@ -107,6 +108,7 @@
 \end{frame}
 
 \subsection{Boer-Mulders Function \& Drell-Yan Process}
+
 \begin{frame}
 \frametitle{Boer-Mulders Function \& Drell-Yan Process}
 
@@ -209,6 +211,7 @@
 \end{frame}
 
 \subsection{Autoencoders and U-Nets}
+
 \begin{frame}
 \frametitle{Autoencoders and U-Nets}
 
@@ -240,6 +243,7 @@
 \end{frame}
 
 \subsection{Data Creation}
+
 \begin{frame}
 \frametitle{Data Creation}
 
@@ -248,13 +252,13 @@
   \includegraphics[width=5.5cm]{imgs/mc2real.png}
 \end{Pic}
 
-\begin{List}{9.}{(0.5, 2.0)}
+\begin{List}{9.}{(0.1, 2.0)}
 
   \item Monte-Carlo data was generated using ``PYTHIA" generator and events were passed trough E906 detector simulation using ``GEANT4".
 
-  \item $\lambda$, $\mu$ and $\nu$ values were sampled uniformly in the ranges [-1, 1], [-0.5, 0.5] and [-0.5, 0.5] respectively.
+  \item Each histogram has specific $\lambda$, $\mu$, and $\nu$ values, which were sampled uniformly from the ranges [-1, 1], [-0.5, 0.5], and [-0.5, 0.5] respectively.
 
-  \item DY angular coefficients were injected to the histograms by weighting the events using;
+  \item DY angular coefficients were injected to a histograms by weighting the events using;
 
   \begin{equation*}
 w = \frac{1  + \lambda \cos^{2}\theta + \mu \sin 2 \theta \cos \phi + \dfrac{1}{2}\nu \sin^{2}\theta \cos 2 \phi}{1 + \cos^{2}\theta}
@@ -272,8 +276,10 @@ w = \frac{1  + \lambda \cos^{2}\theta + \mu \sin 2 \theta \cos \phi + \dfrac{1}{
   \includegraphics[width=12.cm]{imgs/U_net_arch.png}
 \end{Pic}
 
-\begin{textblock}{10.}(5., 14.5)
+\begin{textblock}{11.}(4., 15.)
+\begin{scriptsize}
 Model was trained in  Fermilab Elastic Analysis Facility (\textcolor{blue}{\href{https://eafjupyter.readthedocs.io/en/latest/index.html}{EAF}}) using Nvidia A100 GPU.
+\end{scriptsize}
 \end{textblock}
 
 \end{frame}
@@ -297,6 +303,13 @@ Model was trained in  Fermilab Elastic Analysis Facility (\textcolor{blue}{\href
   \caption{Unfolded}
   \includegraphics[width=8.cm]{imgs/pred_fit_1.png}
 \end{Pic}
+
+\begin{textblock}{8.}(7., 14.)
+\begin{scriptsize}
+Note that particle level - generated truth info., detector level - reconstruct info., unfolded - U-Net output
+\end{scriptsize}
+\end{textblock}
+
 \end{frame}
 
 
@@ -358,9 +371,10 @@ Model was trained in  Fermilab Elastic Analysis Facility (\textcolor{blue}{\href
   \item Unfolded $\phi$-$\cos\theta$ histograms are fitted using;
 
 \begin{scriptsize}
-\begin{equation*}
+\begin{equation}
+\label{eq:1}
 f(\phi, \cos\theta) = A(1  + \lambda \cos^{2}\theta + \mu \sin 2 \theta \cos \phi + \dfrac{1}{2}\nu \sin^{2}\theta \cos 2 \phi)
-\end{equation*}
+\end{equation}
 \end{scriptsize}
 
   \item X axis;  $\Delta = \text{Injected} - \text{Unfolded}$
@@ -371,8 +385,27 @@ f(\phi, \cos\theta) = A(1  + \lambda \cos^{2}\theta + \mu \sin 2 \theta \cos \ph
 \begin{frame}
 \frametitle{Comparison of Few Unfolded Fit Results}
 
+\begin{textblock}{15.}(0.5, 2.)
 \begin{center}
-\begin{tabular}{|c  c  c|}
+% \begin{tabular}{|c c c c|}
+% \hline
+%  & Injected & Particle level & Unfolded \\
+% \hline
+% $\lambda$ & -0.566 & -0.584 $\pm$ 0.008 & -0.579 $\pm$ 0.007 \\
+% $\mu$ & -0.184 & -0.178 $\pm$ 0.002 & -0.177 $\pm$ 0.002 \\
+% $\nu$ & -0.246 & -0.238 $\pm$ 0.003 & -0.241 $\pm$ 0.003 \\
+% \hline
+% $\lambda$ & -0.036 & -0.037 $\pm$ 0.009 & -0.035 $\pm$ 0.009 \\
+% $\mu$ & -0.373 & -0.367 $\pm$ 0.002 & -0.370 $\pm$ 0.002 \\
+% $\nu$ & -0.026 & -0.021 $\pm$ 0.003 & -0.033 $\pm$ 0.003 \\
+% \hline
+% $\lambda$ & 0.722 & 0.701 $\pm$ 0.011 & 0.689 $\pm$ 0.011 \\
+% $\mu$ & 0.003 & 0.006 $\pm$ 0.002 & -0.004 $\pm$ 0.002 \\
+% $\nu$ & 0.018 & 0.016 $\pm$ 0.003 & 0.019 $\pm$ 0.003 \\
+% \hline
+% \end{tabular}
+
+\begin{tabular}{|c c c|}
 \hline
  & Particle level & Unfolded \\
 \hline
@@ -386,10 +419,20 @@ $\nu$ & -0.021 $\pm$ 0.003 & -0.033 $\pm$ 0.003 \\
 \hline
 $\lambda$ & 0.701 $\pm$ 0.011 & 0.689 $\pm$ 0.011 \\
 $\mu$ & 0.006 $\pm$ 0.002 & -0.004 $\pm$ 0.002 \\
-$\nu$ & 0.0156 $\pm$ 0.003 & 0.019 $\pm$ 0.003 \\
+$\nu$ & 0.016 $\pm$ 0.003 & 0.019 $\pm$ 0.003 \\
 \hline
 \end{tabular}
 \end{center}
+\end{textblock}
+
+\begin{scriptsize}
+\begin{List}{15.}{(0.5, 13.)}
+  \item Note that these $\lambda$, $\mu$, and $\nu$ values does not represent any physics information.
+
+  \item To extract the $\lambda$, $\mu$, and $\nu$ values, a fit was performed using equation \ref{eq:1} for both particle and detector levels.
+\end{List}
+\end{scriptsize}
+
 \end{frame}
 
 \section{Summary}
