@@ -21,3 +21,5 @@ TDCTime.png
 TDCTime.py
 code/
 cuts.h
+build
+*.pt
