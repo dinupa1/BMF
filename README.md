@@ -12,7 +12,7 @@ We use U-Nets as the model architecture for the unfolding procedure. U-Nets made
 
 Consider the DY angular cross-section:
 
-\[ \frac{d\sigma}{d\Omega} \propto 1  + \lambda \cos^{2}\theta + \mu \sin 2 \theta \cos \phi + \frac{1}{2}\nu \sin^{2}\theta \cos 2 \phi \]
+$\frac{d\sigma}{d\Omega} \propto 1  + \lambda \cos^{2}\theta + \mu \sin 2 \theta \cos \phi + \frac{1}{2}\nu \sin^{2}\theta \cos 2 \phi$
 
 The input to the model consists of three channels: $\phi$ vs $\cos\theta$, $\cos\phi$ vs. $\cos\theta$, and $\cos2\phi$ vs. $\cos\theta$. The target (segmented data) is a 3D histogram of $mass$, $p_{T}$, and $x_{F}$ which contains DY angular coefficients and their errors. DY angular coefficients have been injected into the input histograms as Gaussian distributions with the mean as the DY angular coefficient and the width as its error.
 
