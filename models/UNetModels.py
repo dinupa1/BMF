@@ -139,7 +139,7 @@ def fit_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, sche
 
         model.eval()
         running_acc = []
-        with torh.no_grad():
+        with torch.no_grad():
         	for inputs, targets in val_dataloader:
         		inputs = inputs.to(device)
         		targets = targets.to(device)
@@ -170,7 +170,7 @@ def unet_prediction(model, test_tree, device):
     X_test_tensor = test_tree["X_det"].to(device)
 
     model.eval()
-    with torh.no_grad():
+    with torch.no_grad():
     	outputs = model(X_test_tensor)
 
     tree = {
