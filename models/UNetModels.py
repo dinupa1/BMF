@@ -111,7 +111,7 @@ class UNetDataset(torch.utils.data.Dataset):
 		return len(self.targets)
 
 
-def fit_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, num_epochs, device):
+def fit_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, scheduler, num_epochs, device):
 
     train_dataset = TensorDataset(train_tree["X_det"], train_tree["X_par"])
     val_dataset = TensorDataset(val_tree["X_det"], val_tree["X_par"])
@@ -144,18 +144,19 @@ def fit_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, num_
 
         model.eval()
         running_acc = []
-        for inputs, targets in val_dataloader:
-            inputs = inputs.to(device)
-            targets = targets.to(device)
+        with torh.no_grad():
+        	for inputs, targets in val_dataloader:
+        		inputs = inputs.to(device)
+        		targets = targets.to(device)
 
-            outputs = model(inputs)
-            loss = criterion(outputs, targets)
+        		outputs = model(inputs)
+        		loss = criterion(outputs, targets)
 
-            running_acc.append(loss.item())
+        		running_acc.append(loss.item())
+        	epoch_val = np.nanmean(running_acc)
+        	val_loss.append(epoch_val)
 
-        epoch_val = np.nanmean(running_acc)
-        val_loss.append(epoch_val)
-
+        scheduler.step()
         print("---> Epoch = {}/{} train loss = {:.3f} val. loss = {:.3f}".format(epoch, num_epochs, epoch_loss, epoch_val))
 
     plt.plot(training_loss, label="train")
@@ -174,7 +175,8 @@ def unet_prediction(model, test_tree, device):
     X_test_tensor = test_tree["X_det"].to(device)
 
     model.eval()
-    outputs = model(X_test_tensor)
+    with torh.no_grad():
+    	outputs = model(X_test_tensor)
 
     tree = {
     	"X_par": test_tree["X_par"],
