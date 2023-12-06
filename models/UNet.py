@@ -9,8 +9,6 @@ from torch.optim.lr_scheduler import StepLR
 from UNetModels import UNet
 from UNetModels import fit_unet, unet_prediction
 
-from sklearn.model_selection import train_test_split
-
 # Check if GPU is available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # for CUDA
 

@@ -6,11 +6,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
-from sklearn.model_selection import train_test_split
-
-import uproot
-import awkward as ak
-
 plt.rc("font", size=14)
 
 class ConvBlock(nn.Module):
