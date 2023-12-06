@@ -72,32 +72,14 @@ void MakeTree::FillTree(int n_events, TTree* data, TRandom3* event)
 			X_par[5][1][ii] = mh->nu_par->Project3D("ye")->GetBinError(ii+1);
 			X_par[5][2][ii] = mh->nu_par->Project3D("ze")->GetBinError(ii+1);
 		}
-/*
-		for(int ii = 0; ii < 3; ii++)
-		{
-			for(int jj = 0; jj < 3; jj++)
-			{
-				for(int kk = 0; kk < 3; kk++)
-				{
-					X_par[0][ii][jj][kk] = mh->lambda_par->GetBinContent(ii+1, jj+1, kk+1);
-					X_par[1][ii][jj][kk] = mh->lambda_par->GetBinError(ii+1, jj+1, kk+1);
-
-					X_par[2][ii][jj][kk] = mh->mu_par->GetBinContent(ii+1, jj+1, kk+1);
-					X_par[3][ii][jj][kk] = mh->mu_par->GetBinError(ii+1, jj+1, kk+1);
-
-					X_par[4][ii][jj][kk] = mh->nu_par->GetBinContent(ii+1, jj+1, kk+1);
-					X_par[5][ii][jj][kk] = mh->nu_par->GetBinError(ii+1, jj+1, kk+1);
-				}
-			}
-		}*/
 
 		/*
 		* Fill detector level distributions
 		*/
 
-		for(int ii = 0; ii < 12; ii += 3)
+		for(int ii = 0; ii < 12; ii += 4)
 		{
-			for(int jj = 0; jj < 12; jj += 3)
+			for(int jj = 0; jj < 12; jj += 4)
 			{
 
 				/*
@@ -107,60 +89,84 @@ void MakeTree::FillTree(int n_events, TTree* data, TRandom3* event)
 				X_det[0][ii+0][jj+0] = mh->phi_costheta->GetBinContent(ii+1+0, jj+1+0);
 				X_det[0][ii+0][jj+1] = mh->phi_costheta->GetBinContent(ii+1+0, jj+1+1);
 				X_det[0][ii+0][jj+2] = mh->phi_costheta->GetBinContent(ii+1+0, jj+1+2);
+				X_det[0][ii+0][jj+3] = mh->phi_costheta->GetBinContent(ii+1+0, jj+1+3);
 
 				X_det[0][ii+1][jj+0] = mh->phi_costheta->GetBinContent(ii+1+1, jj+1+0);
 				X_det[0][ii+1][jj+1] = mh->phi_costheta->GetBinContent(ii+1+1, jj+1+1);
 				X_det[0][ii+1][jj+2] = mh->phi_costheta->GetBinContent(ii+1+1, jj+1+2);
+				X_det[0][ii+1][jj+3] = mh->phi_costheta->GetBinContent(ii+1+1, jj+1+3);
 
 				X_det[0][ii+2][jj+0] = mh->phi_costheta->GetBinContent(ii+1+2, jj+1+0);
 				X_det[0][ii+2][jj+1] = mh->phi_costheta->GetBinContent(ii+1+2, jj+1+1);
 				X_det[0][ii+2][jj+2] = mh->phi_costheta->GetBinContent(ii+1+2, jj+1+2);
+				X_det[0][ii+2][jj+3] = mh->phi_costheta->GetBinContent(ii+1+2, jj+1+3);
+
+				X_det[0][ii+3][jj+0] = mh->phi_costheta->GetBinContent(ii+1+3, jj+1+0);
+				X_det[0][ii+3][jj+1] = mh->phi_costheta->GetBinContent(ii+1+3, jj+1+1);
+				X_det[0][ii+3][jj+2] = mh->phi_costheta->GetBinContent(ii+1+3, jj+1+2);
+				X_det[0][ii+3][jj+3] = mh->phi_costheta->GetBinContent(ii+1+3, jj+1+3);
 
 				/*
-				* sin2theta vs. cosphi
+				* cosphi vs. costh
 				*/
 
-				X_det[1][ii+0][jj+0] = mh->sin2theta_cosphi->GetBinContent(ii+1+0, jj+1+0);
-				X_det[1][ii+0][jj+1] = mh->sin2theta_cosphi->GetBinContent(ii+1+0, jj+1+1);
-				X_det[1][ii+0][jj+2] = mh->sin2theta_cosphi->GetBinContent(ii+1+0, jj+1+2);
+				X_det[1][ii+0][jj+0] = mh->cosphi_costheta->GetBinContent(ii+1+0, jj+1+0);
+				X_det[1][ii+0][jj+1] = mh->cosphi_costheta->GetBinContent(ii+1+0, jj+1+1);
+				X_det[1][ii+0][jj+2] = mh->cosphi_costheta->GetBinContent(ii+1+0, jj+1+2);
+				X_det[1][ii+0][jj+3] = mh->cosphi_costheta->GetBinContent(ii+1+0, jj+1+3);
 
-				X_det[1][ii+1][jj+0] = mh->sin2theta_cosphi->GetBinContent(ii+1+1, jj+1+0);
-				X_det[1][ii+1][jj+1] = mh->sin2theta_cosphi->GetBinContent(ii+1+1, jj+1+1);
-				X_det[1][ii+1][jj+2] = mh->sin2theta_cosphi->GetBinContent(ii+1+1, jj+1+2);
+				X_det[1][ii+1][jj+0] = mh->cosphi_costheta->GetBinContent(ii+1+1, jj+1+0);
+				X_det[1][ii+1][jj+1] = mh->cosphi_costheta->GetBinContent(ii+1+1, jj+1+1);
+				X_det[1][ii+1][jj+2] = mh->cosphi_costheta->GetBinContent(ii+1+1, jj+1+2);
+				X_det[1][ii+1][jj+3] = mh->cosphi_costheta->GetBinContent(ii+1+1, jj+1+3);
 
-				X_det[1][ii+2][jj+0] = mh->sin2theta_cosphi->GetBinContent(ii+1+2, jj+1+0);
-				X_det[1][ii+2][jj+1] = mh->sin2theta_cosphi->GetBinContent(ii+1+2, jj+1+1);
-				X_det[1][ii+2][jj+2] = mh->sin2theta_cosphi->GetBinContent(ii+1+2, jj+1+2);
+				X_det[1][ii+2][jj+0] = mh->cosphi_costheta->GetBinContent(ii+1+2, jj+1+0);
+				X_det[1][ii+2][jj+1] = mh->cosphi_costheta->GetBinContent(ii+1+2, jj+1+1);
+				X_det[1][ii+2][jj+2] = mh->cosphi_costheta->GetBinContent(ii+1+2, jj+1+2);
+				X_det[1][ii+2][jj+3] = mh->cosphi_costheta->GetBinContent(ii+1+2, jj+1+3);
+
+				X_det[1][ii+3][jj+0] = mh->cosphi_costheta->GetBinContent(ii+1+3, jj+1+0);
+				X_det[1][ii+3][jj+1] = mh->cosphi_costheta->GetBinContent(ii+1+3, jj+1+1);
+				X_det[1][ii+3][jj+2] = mh->cosphi_costheta->GetBinContent(ii+1+3, jj+1+2);
+				X_det[1][ii+3][jj+3] = mh->cosphi_costheta->GetBinContent(ii+1+3, jj+1+3);
 
 				/*
-				* sintheta2 vs. cos2phi
+				* cos2phi vs. costh
 				*/
 
-				X_det[2][ii+0][jj+0] = mh->sintheta2_cos2phi->GetBinContent(ii+1+0, jj+1+0);
-				X_det[2][ii+0][jj+1] = mh->sintheta2_cos2phi->GetBinContent(ii+1+0, jj+1+1);
-				X_det[2][ii+0][jj+2] = mh->sintheta2_cos2phi->GetBinContent(ii+1+0, jj+1+2);
+				X_det[2][ii+0][jj+0] = mh->cos2phi_costheta->GetBinContent(ii+1+0, jj+1+0);
+				X_det[2][ii+0][jj+1] = mh->cos2phi_costheta->GetBinContent(ii+1+0, jj+1+1);
+				X_det[2][ii+0][jj+2] = mh->cos2phi_costheta->GetBinContent(ii+1+0, jj+1+2);
+				X_det[2][ii+0][jj+3] = mh->cos2phi_costheta->GetBinContent(ii+1+0, jj+1+3);
 
-				X_det[2][ii+1][jj+0] = mh->sintheta2_cos2phi->GetBinContent(ii+1+1, jj+1+0);
-				X_det[2][ii+1][jj+1] = mh->sintheta2_cos2phi->GetBinContent(ii+1+1, jj+1+1);
-				X_det[2][ii+1][jj+2] = mh->sintheta2_cos2phi->GetBinContent(ii+1+1, jj+1+2);
+				X_det[2][ii+1][jj+0] = mh->cos2phi_costheta->GetBinContent(ii+1+1, jj+1+0);
+				X_det[2][ii+1][jj+1] = mh->cos2phi_costheta->GetBinContent(ii+1+1, jj+1+1);
+				X_det[2][ii+1][jj+2] = mh->cos2phi_costheta->GetBinContent(ii+1+1, jj+1+2);
+				X_det[2][ii+1][jj+3] = mh->cos2phi_costheta->GetBinContent(ii+1+1, jj+1+3);
 
-				X_det[2][ii+2][jj+0] = mh->sintheta2_cos2phi->GetBinContent(ii+1+2, jj+1+0);
-				X_det[2][ii+2][jj+1] = mh->sintheta2_cos2phi->GetBinContent(ii+1+2, jj+1+1);
-				X_det[2][ii+2][jj+2] = mh->sintheta2_cos2phi->GetBinContent(ii+1+2, jj+1+2);
+				X_det[2][ii+2][jj+0] = mh->cos2phi_costheta->GetBinContent(ii+1+2, jj+1+0);
+				X_det[2][ii+2][jj+1] = mh->cos2phi_costheta->GetBinContent(ii+1+2, jj+1+1);
+				X_det[2][ii+2][jj+2] = mh->cos2phi_costheta->GetBinContent(ii+1+2, jj+1+2);
+				X_det[2][ii+2][jj+3] = mh->cos2phi_costheta->GetBinContent(ii+1+2, jj+1+3);
+
+				X_det[2][ii+3][jj+0] = mh->cos2phi_costheta->GetBinContent(ii+1+3, jj+1+0);
+				X_det[2][ii+3][jj+1] = mh->cos2phi_costheta->GetBinContent(ii+1+3, jj+1+1);
+				X_det[2][ii+3][jj+2] = mh->cos2phi_costheta->GetBinContent(ii+1+3, jj+1+2);
+				X_det[2][ii+3][jj+3] = mh->cos2phi_costheta->GetBinContent(ii+1+3, jj+1+3);
 			}
 		}
 
 		tree->Fill();
 
 		delete mh;
-		delete mh->phi_costheta;
+		/*delete mh->phi_costheta;
 		delete mh->sin2theta_cosphi;
 		delete mh->sintheta2_cos2phi;
 		delete mh->lambda_par;
 		delete mh->mu_par;
-		delete mh->nu_par;
+		delete mh->nu_par;*/
 
-		if(i==1000){cout << "===> starting event " << i << " <===" << endl;}
+		if(i%1000==0){cout << "===> starting event " << i << " <===" << endl;}
 	}
 }
 #endif /* _H_MakeTree_H_ */

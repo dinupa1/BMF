@@ -10,6 +10,7 @@
 #include<TH2D.h>
 #include<TMath.h>
 #include<TRandom3.h>
+#include<TCanvas.h>
 #include<iostream>
 
 using namespace std;
@@ -34,12 +35,13 @@ public:
 	TH3D* mu_par;
 	TH3D* nu_par;
 	TH2D* phi_costheta; // phi vs. costh histogram in the detector level
-	TH2D* sin2theta_cosphi; // sin2theta vs. cosphi in the detector level
-	TH2D* sintheta2_cos2phi; // sinth2 vs. cos2phi in the detector level
+	TH2D* cosphi_costheta;
+	TH2D* cos2phi_costheta;
 
 	MakeHist(TRandom3* event);
-	virtual ~MakeHist(){};
+	virtual ~MakeHist();
 	void FillHist(TTree* data, TRandom3* event);
+	void DrawHist();
 };
 
 
@@ -49,9 +51,9 @@ MakeHist::MakeHist(TRandom3* event)
 	mu_par = new TH3D("mu_par", "theta_par", N_BINS, mass_edges, N_BINS, pT_edges, N_BINS, xF_edges);
 	nu_par = new TH3D("nu_par", "theta_par", N_BINS, mass_edges, N_BINS, pT_edges, N_BINS, xF_edges);
 
-	phi_costheta = new TH2D("phi_costh", "; #phi [rad]; cos#theta [a.u.]", 12, -PI, PI, 12, 0.6, 0.6);
-	sin2theta_cosphi = new TH2D("sin2theta_cosphi", "; sin2#theta [a.u.]; cos#phi [a.u.]", 12, -1., 1., 12, -1., 1.);
-	sintheta2_cos2phi = new TH2D("sintheta_cos2phi", "; sin#theta [a.u.]; cos2#phi [a.u.]", 12, -1., 1., 12, -1., 1.);
+	phi_costheta = new TH2D("phi_costh", "; #phi [rad]; cos#theta [a.u.]", 12, -PI, PI, 16, 0.6, 0.6);
+	cosphi_costheta = new TH2D("cosphi_costh", "; cos#phi [a.u.]; cos#theta [a.u.]", 12, -1., 1., 16, 0.6, 0.6);
+	cos2phi_costheta = new TH2D("cos2phi_costh", "; cos2#phi [a.u.]; cos#theta [a.u.]", 12, -1., 1., 16, 0.6, 0.6);
 
 	/*
 	* Fill theta for each bin
@@ -76,6 +78,15 @@ MakeHist::MakeHist(TRandom3* event)
 	}
 }
 
+MakeHist::~MakeHist()
+{
+	delete lambda_par;
+	delete mu_par;
+	delete nu_par;
+	delete phi_costheta;
+	delete cosphi_costheta;
+	delete cos2phi_costheta;
+}
 
 void MakeHist::FillHist(TTree* data, TRandom3* event)
 {
@@ -140,8 +151,8 @@ void MakeHist::FillHist(TTree* data, TRandom3* event)
 							double theta_weight = weight_fn(lambda, mu, nu, true_phi, true_costh);
 
 							phi_costheta->Fill(phi, costh, theta_weight);
-							sin2theta_cosphi->Fill(2.* costh* sqrt(1. - costh* costh), cos(phi), theta_weight);
-							sintheta2_cos2phi->Fill(1. - costh* costh, cos(2.* phi), theta_weight);
+							cosphi_costheta->Fill(cos(phi), costh, theta_weight);
+							cos2phi_costheta->Fill(cos(2.* phi), costh, theta_weight);
 							n_fill +=1;
 						}
 					}
@@ -156,7 +167,37 @@ void MakeHist::FillHist(TTree* data, TRandom3* event)
 	*/
 
 	phi_costheta->Scale(1./phi_costheta->Integral());
-	sin2theta_cosphi->Scale(1./sin2theta_cosphi->Integral());
-	sintheta2_cos2phi->Scale(1./sintheta2_cos2phi->Integral());
+	cosphi_costheta->Scale(1./cosphi_costheta->Integral());
+	cos2phi_costheta->Scale(1./cos2phi_costheta->Integral());
+}
+
+void MakeHist::DrawHist()
+{
+	TCanvas* can = new TCanvas();
+
+	phi_costheta->Draw("COLZ");
+	can->SaveAs("imgs/phi_costheta.png");
+
+	cosphi_costheta->Draw("COLZ");
+	can->SaveAs("imgs/cosphi_costheta.png");
+
+	cos2phi_costheta->Draw("COLZ");
+	can->SaveAs("imgs/cos2phi_costheta.png");
+
+	auto lambda_mass = (TH1D*)lambda_par->Project3D("xe");
+	lambda_mass->SetNameTitle("lambda_mass", "; mass [GeV]; #lambda [a.u.]");
+	lambda_mass->Draw("E1");
+	can->SaveAs("imgs/lambda_mass.png");
+
+
+	auto lambda_pT = (TH1D*)lambda_par->Project3D("ye");
+	lambda_pT->SetNameTitle("lambda_pT", "; p_{T} [GeV]; #lambda [a.u.]");
+	lambda_pT->Draw("E1");
+	can->SaveAs("imgs/lambda_pT.png");
+
+	auto lambda_xF = (TH1D*)lambda_par->Project3D("ze");
+	lambda_xF->SetNameTitle("lambda_xF", "; x_{F} [a.u.]; #lambda [a.u.]");
+	lambda_xF->Draw("E1");
+	can->SaveAs("imgs/lambda_xF.png");
 }
 #endif /* _H_MakeHist_H_ */

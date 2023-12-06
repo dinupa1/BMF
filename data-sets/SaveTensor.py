@@ -5,10 +5,10 @@ import awkward as ak
 
 import torch
 
-
-train_tree = uproot.open("unet.root:train_tree")
-val_tree = uproot.open("unet.root:val_tree")
-test_tree = uproot.open("unet.root:test_tree")
+data_file = uproot.open("unet.root")
+train_tree = data_file["train_tree"]
+val_tree = data_file["val_tree"]
+test_tree = data_file["test_tree"]
 
 tensor_tree = {
 	"train_tree": {

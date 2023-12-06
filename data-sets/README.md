@@ -28,7 +28,7 @@ cd build
 root -b -e 'gSystem->CompileMacro("../MakeUNetData.cc", "kfgO", "make-unet-data");' -q
 
 cd ..
-root -b -e 'gSystem->Load("build/make-unet-data.so"); MakeUNetData(70000, 30000, 40000);'
+root -b -e 'gSystem->Load("build/make-unet-data.so"); MakeUNetData(70000, 30000, 40000);' -q
 ```
 
 ## Save to tensor dataset
