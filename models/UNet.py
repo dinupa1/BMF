@@ -35,6 +35,6 @@ train_tree = tree["train_tree"]
 val_tree = tree["val_tree"]
 test_tree = tree["test_tree"]
 
-fit_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, num_epochs, device)
+fit_unet(train_tree, val_tree, batch_size, model, criterion, optimizer, scheduler, num_epochs, device)
 
 unet_prediction(model, test_tree, device)
