@@ -25,4 +25,4 @@ tensor_tree = {
 	}
 }
 
-torch.save(tensor_tree, "unet-tensor.pt")
+torch.save(tensor_tree, "../models/unet-tensor.pt")

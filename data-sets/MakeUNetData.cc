@@ -10,8 +10,8 @@
 #include<TString.h>
 #include<iostream>
 
-#include "MakeHist.hh"
-#include "MakeTree.hh"
+#include "src/MakeHist.cc"
+#include "src/MakeTree.cc"
 
 using namespace std;
 

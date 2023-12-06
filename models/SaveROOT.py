@@ -9,6 +9,6 @@ save = {
 	"X_preds": tree["X_preds"],
 }
 
-outfile = uproot.recreate("results.root", compression=uproot.ZLIB(4))
+outfile = uproot.recreate("../plots/results.root", compression=uproot.ZLIB(4))
 outfile["save"] = save
 outfile.close()

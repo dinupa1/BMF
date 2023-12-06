@@ -29,7 +29,7 @@ print("total trainable params: {}".format(total_trainable_params))
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
-tree = torch.load("../data-sets/unet-tensor.pt")
+tree = torch.load("unet-tensor.pt")
 
 train_tree = tree["train_tree"]
 val_tree = tree["val_tree"]
