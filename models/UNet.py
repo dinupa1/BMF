@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.optim.lr_scheduler.StepLR as StepLR
+from torch.optim.lr_scheduler import StepLR
 
 from UNetModels import UNet
 from UNetModels import fit_unet, unet_prediction
