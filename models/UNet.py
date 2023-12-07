@@ -16,7 +16,7 @@ plt.rc("font", size=14)
 
 batch_size = 1024
 learning_rate = 0.0001
-num_epochs = 1000
+num_epochs = 200
 
 model = UNet()
 
@@ -27,7 +27,7 @@ print("total trainable params: {}".format(total_trainable_params))
 
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-scheduler = StepLR(optimizer, step_size=100, gamma=0.1)
+scheduler = StepLR(optimizer, step_size=50, gamma=0.1)
 
 tree = torch.load("unet-tensor.pt")
 

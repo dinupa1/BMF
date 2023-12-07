@@ -23,6 +23,7 @@ class PlotHist
 public:
 	PlotHist();
 	virtual ~PlotHist(){};
-	void DrawResolution();
+	void DrawResolution(int theta_dim, TString hist_title, double x_min, double x_max);
+	void DrawHist();
 };
 #endif /* _H_PlotHist_H_ */
