@@ -74,7 +74,7 @@ class UNet(nn.Module):
 		self.dec2 = DecoderBlock(32, 16)
 
 		# Regression
-		self.reg = nn.Conv2d(16, 6, kernel_size=4, padding=0, stride=3)
+		self.reg = nn.Conv2d(16, 9, kernel_size=4, padding=0, stride=3)
 
 	def forward(self, inputs):
 		# Encoder
