@@ -63,18 +63,18 @@ class UNet(nn.Module):
 		super(UNet, self).__init__()
 
 		# Encoder
-		self.enc1 = EncoderBlock(3, 8)
-		self.enc2 = EncoderBlock(8, 16)
+		self.enc1 = EncoderBlock(3, 16)
+		self.enc2 = EncoderBlock(16, 32)
 
 		# Latent space
-		self.latent = ConvBlock(16, 32)
+		self.latent = ConvBlock(32, 64)
 
 		# Decoder
-		self.dec1 = DecoderBlock(32, 16)
-		self.dec2 = DecoderBlock(16, 8)
+		self.dec1 = DecoderBlock(64, 32)
+		self.dec2 = DecoderBlock(32, 16)
 
 		# Regression
-		self.reg = nn.Conv2d(8, 6, kernel_size=4, padding=0, stride=3)
+		self.reg = nn.Conv2d(16, 6, kernel_size=4, padding=0, stride=3)
 
 	def forward(self, inputs):
 		# Encoder

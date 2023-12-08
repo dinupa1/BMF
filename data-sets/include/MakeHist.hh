@@ -31,9 +31,9 @@ class MakeHist
 	double xF_edges[4] = {-0.1, 0.3, 0.5, 1.0};
 
 public:
-	TH3D* lambda_par; // injected lambda, mu, nu values
-	TH3D* mu_par;
-	TH3D* nu_par;
+	float lambda_par[3][3][3]; // injected lambda, mu, nu values
+	float mu_par[3][3][3];
+	float nu_par[3][3][3];
 	TH2D* phi_costheta; // phi vs. costh histogram in the detector level
 	TH2D* cosphi_costheta;
 	TH2D* cos2phi_costheta;

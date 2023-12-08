@@ -19,7 +19,7 @@ MakeTree::MakeTree(TString out_tree)
 
 	tree = new TTree(out_tree.Data(), out_tree.Data());
 	tree->Branch("X_det",		X_det,		"X_det[3][12][12]/F");
-	tree->Branch("X_par",		X_par,		"X_par[6][3][3]/F");
+	tree->Branch("X_par",		X_par,		"X_par[9][3][3]/F");
 }
 
 void MakeTree::FillTree(int n_events, TTree* data, TRandom3* event)
@@ -35,29 +35,15 @@ void MakeTree::FillTree(int n_events, TTree* data, TRandom3* event)
 
 		for(int ii = 0; ii < 3; ii++)
 		{
-			X_par[0][0][ii] = mh->lambda_par->Project3D("xe")->GetBinContent(ii+1);
-			X_par[0][1][ii] = mh->lambda_par->Project3D("ye")->GetBinContent(ii+1);
-			X_par[0][2][ii] = mh->lambda_par->Project3D("ze")->GetBinContent(ii+1);
-
-			X_par[1][0][ii] = mh->lambda_par->Project3D("xe")->GetBinError(ii+1);
-			X_par[1][1][ii] = mh->lambda_par->Project3D("ye")->GetBinError(ii+1);
-			X_par[1][2][ii] = mh->lambda_par->Project3D("ze")->GetBinError(ii+1);
-
-			X_par[2][0][ii] = mh->mu_par->Project3D("xe")->GetBinContent(ii+1);
-			X_par[2][1][ii] = mh->mu_par->Project3D("ye")->GetBinContent(ii+1);
-			X_par[2][2][ii] = mh->mu_par->Project3D("ze")->GetBinContent(ii+1);
-
-			X_par[3][0][ii] = mh->mu_par->Project3D("xe")->GetBinError(ii+1);
-			X_par[3][1][ii] = mh->mu_par->Project3D("ye")->GetBinError(ii+1);
-			X_par[3][2][ii] = mh->mu_par->Project3D("ze")->GetBinError(ii+1);
-
-			X_par[4][0][ii] = mh->nu_par->Project3D("xe")->GetBinContent(ii+1);
-			X_par[4][1][ii] = mh->nu_par->Project3D("ye")->GetBinContent(ii+1);
-			X_par[4][2][ii] = mh->nu_par->Project3D("ze")->GetBinContent(ii+1);
-
-			X_par[5][0][ii] = mh->nu_par->Project3D("xe")->GetBinError(ii+1);
-			X_par[5][1][ii] = mh->nu_par->Project3D("ye")->GetBinError(ii+1);
-			X_par[5][2][ii] = mh->nu_par->Project3D("ze")->GetBinError(ii+1);
+			for(int jj = 0; jj < 3; jj++)
+			{
+				for(int kk = 0; kk < 3; kk++)
+				{
+					X_par[ii][jj][kk] = mh->lambda_par[ii][jj][kk];
+					X_par[3+ii][jj][kk] = mh->mu_par[ii][jj][kk];
+					X_par[6+ii][jj][kk] = mh->nu_par[ii][jj][kk];
+				}
+			}
 		}
 
 		/*
