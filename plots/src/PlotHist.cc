@@ -23,404 +23,206 @@ PlotHist::PlotHist()
 	tree->SetBranchAddress("X_preds",	X_preds);
 }
 
-void PlotHist::DrawResolution(int theta_dim, TString hist_title, double x_min, double x_max)
+void PlotHist::DeltaHist(int ii)
 {
-	TCanvas* can = new TCanvas();
+	TString lambda_par_name = Form("lambda_par_%d", ii);
+	TH3D* lambda_par = new TH3D(lambda_par_name.Data(), "", 3, mass_edges, 3, pT_edges, 3, xF_edges);
+
+	TString mu_par_name = Form("mu_par_%d", ii);
+	TH3D* mu_par = new TH3D(mu_par_name.Data(), "", 3, mass_edges, 3, pT_edges, 3, xF_edges);
+
+	TString nu_par_name = Form("nu_par_%d", ii);
+	TH3D* nu_par = new TH3D(nu_par_name.Data(), "", 3, mass_edges, 3, pT_edges, 3, xF_edges);
+
+	TString lambda_preds_name = Form("lambda_preds_%d", ii);
+	TH3D* lambda_preds = new TH3D(lambda_preds_name.Data(), "", 3, mass_edges, 3, pT_edges, 3, xF_edges);
+
+	TString mu_preds_name = Form("mu_preds_%d", ii);
+	TH3D* mu_preds = new TH3D(mu_preds_name.Data(), "", 3, mass_edges, 3, pT_edges, 3, xF_edges);
+
+	TString nu_preds_name = Form("nu_preds_%d", ii);
+	TH3D* nu_preds = new TH3D(nu_preds_name.Data(), "", 3, mass_edges, 3, pT_edges, 3, xF_edges);
 
 	for(int i = 0; i < 3; i++)
 	{
 		for(int j = 0; j < 3; j++)
 		{
-			TString hist_name = Form("hist_%d_%d_%d", theta_dim, i, j);
-			TH1D* hist = new TH1D(hist_name.Data(), hist_title.Data(), 20, x_max, x_min);
-
-			for(int ii = 0; ii < nevents; ii++)
+			for(int k = 0; k < 3; k++)
 			{
-				tree->GetEntry(ii);
-				hist->Fill(X_par[theta_dim][i][j] - X_preds[theta_dim][i][j]);
-			}
+				lambda_par->SetBinContent(i+1, j+1, k+1, X_par[i][j][k]);
+				mu_par->SetBinContent(i+1, j+1, k+1, X_par[3+i][j][k]);
+				nu_par->SetBinContent(i+1, j+1, k+1, X_par[6+i][j][k]);
 
-			TString can_name = Form("imgs/hist_%d_%d_%d.png", theta_dim, i, j);
-			hist->Draw("E1");
-			can->SaveAs(can_name.Data());
+				lambda_preds->SetBinContent(i+1, j+1, k+1, X_preds[i][j][k]);
+				mu_preds->SetBinContent(i+1, j+1, k+1, X_preds[3+i][j][k]);
+				nu_preds->SetBinContent(i+1, j+1, k+1, X_preds[6+i][j][k]);
+			}
 		}
+	}
+
+	/*
+	*/
+
+	TH3D* delta_lambda = (TH3D*)lambda_par->Clone();
+	TH1D* delta_lambda_mass = (TH1D*)delta_lambda->ProjectionX();
+	TH1D* delta_lambda_pT = (TH1D*)delta_lambda->ProjectionY();
+	TH1D* delta_lambda_xF = (TH1D*)delta_lambda->ProjectionZ();
+
+	TH3D* delta_lambda_preds = (TH3D*)lambda_preds->Clone();
+	TH1D* delta_lambda_mass_preds = (TH1D*)delta_lambda_preds->ProjectionX();
+	TH1D* delta_lambda_pT_preds = (TH1D*)delta_lambda_preds->ProjectionY();
+	TH1D* delta_lambda_xF_preds = (TH1D*)delta_lambda_preds->ProjectionZ();
+
+	delta_lambda_mass->Add(delta_lambda_mass_preds, -1);
+	delta_lambda_pT->Add(delta_lambda_pT_preds, -1);
+	delta_lambda_xF->Add(delta_lambda_xF_preds, -1);
+
+	/*
+	*/
+
+	TH3D* delta_mu = (TH3D*)mu_par->Clone();
+	TH1D* delta_mu_mass = (TH1D*)delta_mu->ProjectionX();
+	TH1D* delta_mu_pT = (TH1D*)delta_mu->ProjectionY();
+	TH1D* delta_mu_xF = (TH1D*)delta_mu->ProjectionZ();
+
+	TH3D* delta_mu_preds = (TH3D*)mu_preds->Clone();
+	TH1D* delta_mu_mass_preds = (TH1D*)delta_mu_preds->ProjectionX();
+	TH1D* delta_mu_pT_preds = (TH1D*)delta_mu_preds->ProjectionY();
+	TH1D* delta_mu_xF_preds = (TH1D*)delta_mu_preds->ProjectionZ();
+
+	delta_mu_mass->Add(delta_mu_mass_preds, -1);
+	delta_mu_pT->Add(delta_mu_pT_preds, -1);
+	delta_mu_xF->Add(delta_mu_xF_preds, -1);
+
+	/*
+	*/
+
+	TH3D* delta_nu = (TH3D*)nu_par->Clone();
+	TH1D* delta_nu_mass = (TH1D*)delta_nu->ProjectionX();
+	TH1D* delta_nu_pT = (TH1D*)delta_nu->ProjectionY();
+	TH1D* delta_nu_xF = (TH1D*)delta_nu->ProjectionZ();
+
+	TH3D* delta_nu_preds = (TH3D*)nu_preds->Clone();
+	TH1D* delta_nu_mass_preds = (TH1D*)delta_nu_preds->ProjectionX();
+	TH1D* delta_nu_pT_preds = (TH1D*)delta_nu_preds->ProjectionY();
+	TH1D* delta_nu_xF_preds = (TH1D*)delta_nu_preds->ProjectionZ();
+
+	delta_nu_mass->Add(delta_nu_mass_preds, -1);
+	delta_nu_pT->Add(delta_nu_pT_preds, -1);
+	delta_nu_xF->Add(delta_nu_xF_preds, -1);
+
+	for(int i = 0; i < 3; i++)
+	{
+		lambda_array[0][i] = delta_lambda_mass->GetBinContent(i+1);
+		lambda_array[1][i] = delta_lambda_pT->GetBinContent(i+1);
+		lambda_array[2][i] = delta_lambda_xF->GetBinContent(i+1);
+
+		mu_array[0][i] = delta_mu_mass->GetBinContent(i+1);
+		mu_array[1][i] = delta_mu_pT->GetBinContent(i+1);
+		mu_array[2][i] = delta_mu_xF->GetBinContent(i+1);
+
+		nu_array[0][i] = delta_nu_mass->GetBinContent(i+1);
+		nu_array[1][i] = delta_nu_pT->GetBinContent(i+1);
+		nu_array[2][i] = delta_nu_xF->GetBinContent(i+1);
 	}
 }
 
-void PlotHist::DrawHist()
+void PlotHist::DrawResolution()
 {
-	const int nhist = 5;
+	for(int i = 0; i < 3; i++)
+	{
+		TString lambda_mass_name = Form("lambda_mass_%d", i);
+		lambda_mass[i] = new TH1D(lambda_mass_name.Data(), "mass ; #Delta #lambda [a.u.]; counts [a.u.]", 20, -8., 8.);
 
-	/*
-	* injected
-	*/
+		TString lambda_pT_name = Form("lambda_pT_%d", i);
+		lambda_pT[i] = new TH1D(lambda_pT_name.Data(), "p_{T}; #Delta #lambda [a.u.]; counts [a.u.]", 20, -8., 8.);
 
-	TH1D* lambda_mass_par[nhist];
-	TH1D* mu_mass_par[nhist];
-	TH1D* nu_mass_par[nhist];
+		TString lambda_xF_name = Form("lambda_xF_%d", i);
+		lambda_xF[i] = new TH1D(lambda_xF_name.Data(), "x_{F}; #Delta #lambda [a.u.]; counts [a.u.]", 20, -8., 8.);
 
-	TH1D* lambda_pT_par[nhist];
-	TH1D* mu_pT_par[nhist];
-	TH1D* nu_pT_par[nhist];
+		TString mu_mass_name = Form("mu_mass_%d", i);
+		mu_mass[i] = new TH1D(mu_mass_name.Data(), "mass; #Delta #mu [a.u.]; counts [a.u.]", 20, -4., 4.);
 
-	TH1D* lambda_xF_par[nhist];
-	TH1D* mu_xF_par[nhist];
-	TH1D* nu_xF_par[nhist];
+		TString mu_pT_name = Form("mu_pT_%d", i);
+		mu_pT[i] = new TH1D(mu_pT_name.Data(), "pT; #Delta #mu [a.u.]; counts [a.u.]", 20, -4., 4.);
 
-	/*
-	* prediction
-	*/
+		TString mu_xF_name = Form("mu_xF_%d", i);
+		mu_xF[i] = new TH1D(mu_xF_name.Data(), "xF; #Delta #mu [a.u.]; counts [a.u.]", 20, -4., 4.);
 
-	TH1D* lambda_mass_preds[nhist];
-	TH1D* mu_mass_preds[nhist];
-	TH1D* nu_mass_preds[nhist];
+		TString nu_mass_name = Form("nu_mass_%d", i);
+		nu_mass[i] = new TH1D(nu_mass_name.Data(), "mass; #Delta #nu [a.u.]; counts [a.u.]", 20, -4., 4.);
 
-	TH1D* lambda_pT_preds[nhist];
-	TH1D* mu_pT_preds[nhist];
-	TH1D* nu_pT_preds[nhist];
+		TString nu_pT_name = Form("nu_pT_%d", i);
+		nu_pT[i] = new TH1D(nu_pT_name.Data(), "pT; #Delta #nu [a.u.]; counts [a.u.]", 20, -4., 4.);
 
-	TH1D* lambda_xF_preds[nhist];
-	TH1D* mu_xF_preds[nhist];
-	TH1D* nu_xF_preds[nhist];
+		TString nu_xF_name = Form("nu_xF_%d", i);
+		nu_xF[i] = new TH1D(nu_xF_name.Data(), "xF; #Delta #nu [a.u.]; counts [a.u.]", 20, -4., 4.);
+	}
 
-	double mass_edges[4] = {4., 5.5, 6.5, 9.};
-	double pT_edges[4] = {0., 0.5, 1., 2.5};
-	double xF_edges[4] = {-0.1, 0.3, 0.5, 1.0};
-
-	/*
-	* fill histogram
-	*/
-
-	for(int i = 0; i < nhist; i++)
+	for(int i = 0; i < nevents; i++)
 	{
 		tree->GetEntry(i);
-
-		/*
-		* injected
-		*/
-
-		/*
-		* mass
-		*/
-
-		TString lambda_mass_par_name = Form("lambda_mass_par_%d", i);
-		lambda_mass_par[i] = new TH1D(lambda_mass_par_name.Data(), "; mass [GeV]; #lambda", 3, mass_edges);
-
-		TString mu_mass_par_name = Form("mu_mass_par_%d", i);
-		mu_mass_par[i] = new TH1D(mu_mass_par_name.Data(), "; mass [GeV]; #mu", 3, mass_edges);
-
-		TString nu_mass_par_name = Form("nu_mass_par_%d", i);
-		nu_mass_par[i] = new TH1D(nu_mass_par_name.Data(), "; mass [GeV]; #nu", 3, mass_edges);
-
-		/*
-		* pT
-		*/
-
-		TString lambda_pT_par_name = Form("lambda_pT_par_%d", i);
-		lambda_pT_par[i] = new TH1D(lambda_pT_par_name.Data(), "; pT [GeV]; #lambda", 3, pT_edges);
-
-		TString mu_pT_par_name = Form("mu_pT_par_%d", i);
-		mu_pT_par[i] = new TH1D(mu_pT_par_name.Data(), "; pT [GeV]; #mu", 3, pT_edges);
-
-		TString nu_pT_par_name = Form("nu_pT_par_%d", i);
-		nu_pT_par[i] = new TH1D(nu_pT_par_name.Data(), "; pT [GeV]; #nu", 3, pT_edges);
-
-		/*
-		* xF
-		*/
-
-		TString lambda_xF_par_name = Form("lambda_xF_par_%d", i);
-		lambda_xF_par[i] = new TH1D(lambda_xF_par_name.Data(), "; xF; #lambda", 3, xF_edges);
-
-		TString mu_xF_par_name = Form("mu_xF_par_%d", i);
-		mu_xF_par[i] = new TH1D(mu_xF_par_name.Data(), "; xF; #mu", 3, xF_edges);
-
-		TString nu_xF_par_name = Form("nu_xF_par_%d", i);
-		nu_xF_par[i] = new TH1D(nu_xF_par_name.Data(), "; xF; #nu", 3, xF_edges);
-
-
-		/*
-		* predicted
-		*/
-
-		/*
-		* mass
-		*/
-
-		TString lambda_mass_preds_name = Form("lambda_mass_preds_%d", i);
-		lambda_mass_preds[i] = new TH1D(lambda_mass_preds_name.Data(), "; mass [GeV]; #lambda", 3, mass_edges);
-
-		TString mu_mass_preds_name = Form("mu_mass_preds_%d", i);
-		mu_mass_preds[i] = new TH1D(mu_mass_preds_name.Data(), "; mass [GeV]; #mu", 3, mass_edges);
-
-		TString nu_mass_preds_name = Form("nu_mass_prreds_%d", i);
-		nu_mass_preds[i] = new TH1D(nu_mass_preds_name.Data(), "; mass [GeV]; #nu", 3, mass_edges);
-
-		/*
-		* pT
-		*/
-
-		TString lambda_pT_preds_name = Form("lambda_pT_preds_%d", i);
-		lambda_pT_preds[i] = new TH1D(lambda_pT_preds_name.Data(), "; pT [GeV]; #lambda", 3, pT_edges);
-
-		TString mu_pT_preds_name = Form("mu_pT_preds_%d", i);
-		mu_pT_preds[i] = new TH1D(mu_pT_preds_name.Data(), "; pT [GeV]; #mu", 3, pT_edges);
-
-		TString nu_pT_preds_name = Form("nu_pT_preds_%d", i);
-		nu_pT_preds[i] = new TH1D(nu_pT_preds_name.Data(), "; pT [GeV]; #nu", 3, pT_edges);
-
-		/*
-		* xF
-		*/
-
-		TString lambda_xF_preds_name = Form("lambda_xF_preds_%d", i);
-		lambda_xF_preds[i] = new TH1D(lambda_xF_preds_name.Data(), "; xF; #lambda", 3, xF_edges);
-
-		TString mu_xF_preds_name = Form("mu_xF_preds_%d", i);
-		mu_xF_preds[i] = new TH1D(mu_xF_preds_name.Data(), "; xF; #mu", 3, xF_edges);
-
-		TString nu_xF_preds_name = Form("nu_xF_preds_%d", i);
-		nu_xF_preds[i] = new TH1D(nu_xF_preds_name.Data(), "; xF; #nu", 3, xF_edges);
+		DeltaHist(i);
 
 		for(int j = 0; j < 3; j++)
 		{
-			lambda_mass_par[i]->SetBinContent(j+1, X_par[0][0][j]);
-			lambda_mass_par[i]->SetBinError(j+1, X_par[1][0][j]);
+			lambda_mass[j]->Fill(lambda_array[0][j]);
+			lambda_pT[j]->Fill(lambda_array[1][j]);
+			lambda_xF[j]->Fill(lambda_array[2][j]);
 
-			lambda_pT_par[i]->SetBinContent(j+1, X_par[0][1][j]);
-			lambda_pT_par[i]->SetBinError(j+1, X_par[1][1][j]);
+			mu_mass[j]->Fill(mu_array[0][j]);
+			mu_pT[j]->Fill(mu_array[1][j]);
+			mu_xF[j]->Fill(mu_array[2][j]);
 
-			lambda_xF_par[i]->SetBinContent(j+1, X_par[0][2][j]);
-			lambda_xF_par[i]->SetBinError(j+1, X_par[1][2][j]);
-
-			mu_mass_par[i]->SetBinContent(j+1, X_par[2][0][j]);
-			mu_mass_par[i]->SetBinError(j+1, X_par[3][0][j]);
-
-			mu_pT_par[i]->SetBinContent(j+1, X_par[2][1][j]);
-			mu_pT_par[i]->SetBinError(j+1, X_par[3][1][j]);
-
-			mu_xF_par[i]->SetBinContent(j+1, X_par[2][2][j]);
-			mu_xF_par[i]->SetBinError(j+1, X_par[3][2][j]);
-
-
-			nu_mass_par[i]->SetBinContent(j+1, X_par[4][0][j]);
-			nu_mass_par[i]->SetBinError(j+1, X_par[5][0][j]);
-
-			nu_pT_par[i]->SetBinContent(j+1, X_par[4][1][j]);
-			nu_pT_par[i]->SetBinError(j+1, X_par[5][1][j]);
-
-			nu_xF_par[i]->SetBinContent(j+1, X_par[4][2][j]);
-			nu_xF_par[i]->SetBinError(j+1, X_par[5][2][j]);
-
-
-			lambda_mass_preds[i]->SetBinContent(j+1, X_preds[0][0][j]);
-			lambda_mass_preds[i]->SetBinError(j+1, X_preds[1][0][j]);
-
-			lambda_pT_preds[i]->SetBinContent(j+1, X_preds[0][1][j]);
-			lambda_pT_preds[i]->SetBinError(j+1, X_preds[1][1][j]);
-
-			lambda_xF_preds[i]->SetBinContent(j+1, X_preds[0][2][j]);
-			lambda_xF_preds[i]->SetBinError(j+1, X_preds[1][2][j]);
-
-			mu_mass_preds[i]->SetBinContent(j+1, X_preds[2][0][j]);
-			mu_mass_preds[i]->SetBinError(j+1, X_preds[3][0][j]);
-
-			mu_pT_preds[i]->SetBinContent(j+1, X_preds[2][1][j]);
-			mu_pT_preds[i]->SetBinError(j+1, X_preds[3][1][j]);
-
-			mu_xF_preds[i]->SetBinContent(j+1, X_preds[2][2][j]);
-			mu_xF_preds[i]->SetBinError(j+1, X_preds[3][2][j]);
-
-
-			nu_mass_preds[i]->SetBinContent(j+1, X_preds[4][0][j]);
-			nu_mass_preds[i]->SetBinError(j+1, X_preds[5][0][j]);
-
-			nu_pT_preds[i]->SetBinContent(j+1, X_preds[4][1][j]);
-			nu_pT_preds[i]->SetBinError(j+1, X_preds[5][1][j]);
-
-			nu_xF_preds[i]->SetBinContent(j+1, X_preds[4][2][j]);
-			nu_xF_preds[i]->SetBinError(j+1, X_preds[5][2][j]);
+			nu_mass[j]->Fill(nu_array[0][j]);
+			nu_pT[j]->Fill(nu_array[1][j]);
+			nu_xF[j]->Fill(nu_array[2][j]);
 		}
 	}
 
-	/*
-	* draw the histograms
-	*/
-
 	TCanvas* can = new TCanvas();
 
-	for(int i = 0; i < nhist; i++)
+	for(int i = 0; i < 3; i++)
 	{
-		lambda_mass_par[i]->SetMaximum(5.);
-		lambda_mass_par[i]->SetMinimum(-5.);
+		TString lambda_mass_can = Form("imgs/lambda_mass_%d.png", i);
+		lambda_mass[i]->Draw("E1");
+		can->SaveAs(lambda_mass_can.Data());
 
-		lambda_mass_par[i]->SetMarkerStyle(8);
-		lambda_mass_par[i]->SetMarkerColor(2);
+		TString lambda_pT_can = Form("imgs/lambda_pT_%d.png", i);
+		lambda_pT[i]->Draw("E1");
+		can->SaveAs(lambda_pT_can.Data());
 
-		lambda_mass_preds[i]->SetMaximum(5.);
-		lambda_mass_preds[i]->SetMinimum(-5.);
-
-		lambda_mass_preds[i]->SetMarkerStyle(21);
-		lambda_mass_preds[i]->SetMarkerColor(4);
-
-		lambda_mass_par[i]->Draw("E1");
-		lambda_mass_preds[i]->Draw("SAME");
-
-		TString can_lambda_mass = Form("imgs/lambda_mass_%d.png", i);
-		can->SaveAs(can_lambda_mass.Data());
-
-		lambda_pT_par[i]->SetMaximum(5.);
-		lambda_pT_par[i]->SetMinimum(-5.);
-
-		lambda_pT_par[i]->SetMarkerStyle(8);
-		lambda_pT_par[i]->SetMarkerColor(2); // red
-
-		lambda_pT_preds[i]->SetMaximum(5.);
-		lambda_pT_preds[i]->SetMinimum(-5.);
-
-		lambda_pT_preds[i]->SetMarkerStyle(21);
-		lambda_pT_preds[i]->SetMarkerColor(4); // blue
-
-		lambda_pT_par[i]->Draw("E1");
-		lambda_pT_preds[i]->Draw("SAME");
-
-		TString can_lambda_pT = Form("imgs/lambda_pT_%d.png", i);
-		can->SaveAs(can_lambda_pT.Data());
-
-
-		lambda_xF_par[i]->SetMaximum(5.);
-		lambda_xF_par[i]->SetMinimum(-5.);
-
-		lambda_xF_par[i]->SetMarkerStyle(8);
-		lambda_xF_par[i]->SetMarkerColor(2);
-
-		lambda_xF_preds[i]->SetMaximum(5.);
-		lambda_xF_preds[i]->SetMinimum(-5.);
-
-		lambda_xF_preds[i]->SetMarkerStyle(21);
-		lambda_xF_preds[i]->SetMarkerColor(4);
-
-		lambda_xF_par[i]->Draw("E1");
-		lambda_xF_preds[i]->Draw("SAME");
-
-		TString can_lambda_xF = Form("imgs/lambda_xF_%d.png", i);
-		can->SaveAs(can_lambda_xF.Data());
+		TString lambda_xF_can = Form("imgs/lambda_xF_%d.png", i);
+		lambda_xF[i]->Draw("E1");
+		can->SaveAs(lambda_xF_can.Data());
 
 		/*
 		*/
 
-		mu_mass_par[i]->SetMaximum(5.);
-		mu_mass_par[i]->SetMinimum(-5.);
+		TString mu_mass_can = Form("imgs/mu_mass_%d.png", i);
+		mu_mass[i]->Draw("E1");
+		can->SaveAs(mu_mass_can.Data());
 
-		mu_mass_par[i]->SetMarkerStyle(8);
-		mu_mass_par[i]->SetMarkerColor(2);
+		TString mu_pT_can = Form("imgs/mu_pT_%d.png", i);
+		mu_pT[i]->Draw("E1");
+		can->SaveAs(mu_pT_can.Data());
 
-		mu_mass_preds[i]->SetMaximum(5.);
-		mu_mass_preds[i]->SetMinimum(-5.);
-
-		mu_mass_preds[i]->SetMarkerStyle(21);
-		mu_mass_preds[i]->SetMarkerColor(4);
-
-		mu_mass_par[i]->Draw("E1");
-		mu_mass_preds[i]->Draw("SAME");
-
-		TString can_mu_mass = Form("imgs/mu_mass_%d.png", i);
-		can->SaveAs(can_mu_mass.Data());
-
-		mu_pT_par[i]->SetMaximum(5.);
-		mu_pT_par[i]->SetMinimum(-5.);
-
-		mu_pT_par[i]->SetMarkerStyle(8);
-		mu_pT_par[i]->SetMarkerColor(2);
-
-		mu_pT_preds[i]->SetMaximum(5.);
-		mu_pT_preds[i]->SetMinimum(-5.);
-
-		mu_pT_preds[i]->SetMarkerStyle(21);
-		mu_pT_preds[i]->SetMarkerColor(4);
-
-		mu_pT_par[i]->Draw("E1");
-		mu_pT_preds[i]->Draw("SAME");
-
-		TString can_mu_pT = Form("imgs/mu_pT_%d.png", i);
-		can->SaveAs(can_mu_pT.Data());
-
-
-		mu_xF_par[i]->SetMaximum(5.);
-		mu_xF_par[i]->SetMinimum(-5.);
-
-		mu_xF_par[i]->SetMarkerStyle(8);
-		mu_xF_par[i]->SetMarkerColor(2);
-
-		mu_xF_preds[i]->SetMaximum(5.);
-		mu_xF_preds[i]->SetMinimum(-5.);
-
-		mu_xF_preds[i]->SetMarkerStyle(21);
-		mu_xF_preds[i]->SetMarkerColor(4);
-
-		mu_xF_par[i]->Draw("E1");
-		mu_xF_preds[i]->Draw("SAME");
-
-		TString can_mu_xF = Form("imgs/mu_xF_%d.png", i);
-		can->SaveAs(can_mu_xF.Data());
+		TString mu_xF_can = Form("imgs/mu_xF_%d.png", i);
+		mu_xF[i]->Draw("E1");
+		can->SaveAs(mu_xF_can.Data());
 
 		/*
 		*/
+		TString nu_mass_can = Form("imgs/nu_mass_%d.png", i);
+		nu_mass[i]->Draw("E1");
+		can->SaveAs(nu_mass_can.Data());
 
-		nu_mass_par[i]->SetMaximum(5.);
-		nu_mass_par[i]->SetMinimum(-5.);
+		TString nu_pT_can = Form("imgs/nu_pT_%d.png", i);
+		nu_pT[i]->Draw("E1");
+		can->SaveAs(nu_pT_can.Data());
 
-		nu_mass_par[i]->SetMarkerStyle(8);
-		nu_mass_par[i]->SetMarkerColor(2);
-
-		nu_mass_preds[i]->SetMaximum(5.);
-		nu_mass_preds[i]->SetMinimum(-5.);
-
-		nu_mass_preds[i]->SetMarkerStyle(21);
-		nu_mass_preds[i]->SetMarkerColor(4);
-
-		nu_mass_par[i]->Draw("E1");
-		nu_mass_preds[i]->Draw("SAME");
-
-		TString can_nu_mass = Form("imgs/nu_mass_%d.png", i);
-		can->SaveAs(can_nu_mass.Data());
-
-		nu_pT_par[i]->SetMaximum(5.);
-		nu_pT_par[i]->SetMinimum(-5.);
-
-		nu_pT_par[i]->SetMarkerStyle(8);
-		nu_pT_par[i]->SetMarkerColor(2);
-
-		nu_pT_preds[i]->SetMaximum(5.);
-		nu_pT_preds[i]->SetMinimum(-5.);
-
-		nu_pT_preds[i]->SetMarkerStyle(21);
-		nu_pT_preds[i]->SetMarkerColor(4);
-
-		nu_pT_par[i]->Draw("E1");
-		nu_pT_preds[i]->Draw("SAME");
-
-		TString can_nu_pT = Form("imgs/nu_pT_%d.png", i);
-		can->SaveAs(can_nu_pT.Data());
-
-
-		nu_xF_par[i]->SetMaximum(5.);
-		nu_xF_par[i]->SetMinimum(-5.);
-
-		nu_xF_par[i]->SetMarkerStyle(8);
-		nu_xF_par[i]->SetMarkerColor(2);
-
-		nu_xF_preds[i]->SetMaximum(5.);
-		nu_xF_preds[i]->SetMinimum(-5.);
-
-		nu_xF_preds[i]->SetMarkerStyle(21);
-		nu_xF_preds[i]->SetMarkerColor(4);
-
-		nu_xF_par[i]->Draw("E1");
-		nu_xF_preds[i]->Draw("SAME");
-
-		TString can_nu_xF = Form("imgs/nu_xF_%d.png", i);
-		can->SaveAs(can_nu_xF.Data());
+		TString nu_xF_can = Form("imgs/nu_xF_%d.png", i);
+		nu_xF[i]->Draw("E1");
+		can->SaveAs(nu_xF_can.Data());
 	}
-
 }

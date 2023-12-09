@@ -26,9 +26,9 @@ class MakeHist
 	double PI = TMath::Pi();
 	int N_BINS = 3;
 
-	double mass_edges[4] = {4., 5.5, 6.5, 9.};
-	double pT_edges[4] = {0., 0.5, 1., 2.5};
-	double xF_edges[4] = {-0.1, 0.3, 0.5, 1.0};
+	double mass_edges[4] = {4., 5.5, 6.2, 9.};
+	double pT_edges[4] = {0., 0.7, 1.2, 2.5};
+	double xF_edges[4] = {-0.1, 0.4, 0.6, 1.0};
 
 public:
 	float lambda_par[3][3][3]; // injected lambda, mu, nu values

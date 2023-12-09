@@ -67,7 +67,14 @@ void MakeHist::FillHist(TTree* data, TRandom3* event)
 	*/
 
 	int n_reco = 10000;
-	int n_fill;
+	int n_fill = 0;
+
+	/*
+	TH1D* mass_hist = new TH1D("mass_hist", "; mass [GeV]; events [a.u.]", 3, mass_edges);
+	TH1D* pT_hist = new TH1D("pT_hist", "; pT [GeV]; events [a.u.]", 3, pT_edges);
+	TH1D* xF_hist = new TH1D("xF_hist", "; xF; events [a.u.]", 3, xF_edges);
+	*/
+
 	for(int i = 0; i < num_events; i++)
 	{
 		data->GetEntry(i);
@@ -81,6 +88,12 @@ void MakeHist::FillHist(TTree* data, TRandom3* event)
 
 		if(rand_mass <= true_mass && rand_pT <= true_pT && rand_xF <= true_xF)
 		{
+			/*
+			mass_hist->Fill(true_mass);
+			pT_hist->Fill(true_pT);
+			xF_hist->Fill(true_xF);
+			*/
+
 			for(int ii = 0; ii < N_BINS; ii++)
 			{
 				double mass_min = mass_edges[ii];
@@ -113,6 +126,17 @@ void MakeHist::FillHist(TTree* data, TRandom3* event)
 		} // filling is done
 		if(n_fill==n_reco){break;}
 	}
+
+	TCanvas* can = new TCanvas();
+
+	mass_hist->Draw("HIST");
+	can->SaveAs("imgs/mass.png");
+
+	pT_hist->Draw("HIST");
+	can->SaveAs("imgs/pT.png");
+
+	xF_hist->Draw("HIST");
+	can->SaveAs("imgs/xF.png");
 
 	/*
 	* Normalize to unity
