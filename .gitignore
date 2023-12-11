@@ -1,4 +1,4 @@
-articles
+data/
 .DS_Store
 *.aux
 *.log
@@ -8,16 +8,6 @@ articles
 *.toc
 *.vrb
 *.root
-.idea/
+*.pt
 __pycache__
-notes/06April2023.tex
-notes/07April2023.tex
-notes/22March2023.tex
-notes/23March2023.tex
-notes/26March2023.tex
-notes/30March2023.tex
-notes/31March2023.tex
-TDCTime.png
-TDCTime.py
-code/
-cuts.h
+imgs/
