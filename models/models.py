@@ -133,10 +133,7 @@ class ParamExtractor():
 		test_dataset = TensorDataset(test_tree["X_det"], test_tree["X_par"])
 		test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-		tree = {
-		"X_par": [],
-		"X_pred": [],
-		}
+		X_par, X_pred = [], []
 
 		self.network.eval()
 		with torch.no_grad():
@@ -149,7 +146,12 @@ class ParamExtractor():
 				# print("prediction shape : ", y.shape)
 				# print("target shape : ", targets.shape)
 
-				tree["X_pred"].append(outputs.view(inputs.size(0), 4, 3).detach())
-				tree["X_par"].append(targets)
+				X_pred.append(outputs.view(inputs.size(0), 4, 3).detach())
+				X_par.append(targets)
+
+		tree = {
+		"X_par": torch.cat(X_par, axis=0),
+		"X_pred": torch.cat(X_pred, axis=0),
+		}
 
 		torch.save(tree, "results.pt")
