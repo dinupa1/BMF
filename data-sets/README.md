@@ -1,9 +1,5 @@
 # Creating data sets for U-Net training
 
-## E906 messy MC
-
-Follow the instructions in this [repository](https://github.com/abinashpun/seaquest-projects/tree/nmsu_ana/e906_gmc) to generate the E906 messy MC events.
-
 ## Apply basic cuts
 
 We have applied basic cuts to improve the data quality. Cuts that are applied `mass > 5.` and `xF > 0.`. Change the cuts according to the analysis.

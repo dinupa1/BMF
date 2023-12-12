@@ -16,8 +16,8 @@ using namespace std;
 
 class MakeTree
 {
-	float X_par[9][3][3]; // lambda, mu, nu, (and errors) in the particle level
-	float X_det[3][12][12]; // phi vs. costheta, sin2theta vs. cosphi and sintheta2 vs. cos2phi
+	float X_par[4][3]; // lambda, mu, nu, (and errors) in the particle level
+	float X_det[4][10][10]; // phi vs. costheta, sin2theta vs. cosphi and sintheta2 vs. cos2phi
 
 public:
 	TTree* tree;

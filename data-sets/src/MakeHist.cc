@@ -17,50 +17,41 @@ using namespace std;
 
 MakeHist::MakeHist(TRandom3* event)
 {
-	phi_costheta = new TH2D("phi_costh", "; #phi [rad]; cos#theta [a.u.]", 12, -PI, PI, 12, 0.6, 0.6);
-	cosphi_costheta = new TH2D("cosphi_costh", "; cos#phi [a.u.]; cos#theta [a.u.]", 12, -1., 1., 12, 0.6, 0.6);
-	cos2phi_costheta = new TH2D("cos2phi_costh", "; cos2#phi [a.u.]; cos#theta [a.u.]", 12, -1., 1., 12, 0.6, 0.6);
-
 	/*
 	* Fill theta for each bin
 	*/
-
 	for(int i = 0; i < N_BINS; i++)
 	{
-		for(int j = 0; j < N_BINS; j++)
-		{
-			for(int k = 0; k < N_BINS; k++)
-			{
-				lambda_par[i][j][k] = event->Uniform(-1., 1.);
-				mu_par[i][j][k] = event->Uniform(-0.5, 0.5);
-				nu_par[i][j][k] = event->Uniform(-0.5, 0.5);
-			}
-		}
+		lambda_par[i] = event->Uniform(-1., 1.);
+		mu_par[i] = event->Uniform(-0.5, 0.5);
+		nu_par[i] = event->Uniform(-0.5, 0.5);
+
+		TString hist_name = Form("phi_costheta_%d", i);
+		phi_costheta[i] = new TH2D(hist_name.Data(), "; #phi [rad]; cos#theta [a.u.]", 10, -PI, PI, 10, -0.6, 0.6);
 	}
 }
 
 MakeHist::~MakeHist()
 {
-	delete phi_costheta;
-	delete cosphi_costheta;
-	delete cos2phi_costheta;
+	for(int i = 0; i < N_BINS; i++)
+	{
+		delete phi_costheta[i];
+	}
 }
 
 void MakeHist::FillHist(TTree* data, TRandom3* event)
 {
 	int num_events = data->GetEntries();
 
-	//int fpga1;
-	double true_mass, true_pT, true_xF, true_phi, true_costh, phi, costh;
+	double mass, pT, xF, phi, costh, true_phi, true_costh;
 
-	//data->SetBranchAddress("fpga1",			&fpga1);
-	data->SetBranchAddress("true_mass",		&true_mass);
-	data->SetBranchAddress("true_pT",		&true_pT);
-	data->SetBranchAddress("true_xF",		&true_xF);
-	data->SetBranchAddress("true_phi",		&true_phi);
-	data->SetBranchAddress("true_costh",	&true_costh);
+	data->SetBranchAddress("mass",			&mass);
+	data->SetBranchAddress("pT",			&pT);
+	data->SetBranchAddress("xF",			&xF);
 	data->SetBranchAddress("phi",			&phi);
 	data->SetBranchAddress("costh",			&costh);
+	data->SetBranchAddress("true_phi",		&true_phi);
+	data->SetBranchAddress("true_costh",	&true_costh);
 
 	/*
 	* Fill detector level distributions
@@ -69,137 +60,64 @@ void MakeHist::FillHist(TTree* data, TRandom3* event)
 	int n_reco = 10000;
 	int n_fill = 0;
 
-	/*
-	TH1D* mass_hist = new TH1D("mass_hist", "; mass [GeV]; events [a.u.]", 3, mass_edges);
-	TH1D* pT_hist = new TH1D("pT_hist", "; pT [GeV]; events [a.u.]", 3, pT_edges);
-	TH1D* xF_hist = new TH1D("xF_hist", "; xF; events [a.u.]", 3, xF_edges);
-	*/
-
 	for(int i = 0; i < num_events; i++)
 	{
 		data->GetEntry(i);
 
-		/*
-		* Random variables for event rejection
-		*/
-		float rand_mass = event->Uniform(4., 10.);
-		float rand_pT = event->Uniform(0., 3.);
-		float rand_xF = event->Uniform(-0.2, 1.);
+		double acc1 = event->Uniform(5.0, 9.0);
+		double acc2 = event->Uniform(0.0, 1.0);
 
-		if(rand_mass <= true_mass && rand_pT <= true_pT && rand_xF <= true_xF)
+		if(acc1 <= mass && acc2 <= xF)
 		{
-			/*
-			mass_hist->Fill(true_mass);
-			pT_hist->Fill(true_pT);
-			xF_hist->Fill(true_xF);
-			*/
-
-			for(int ii = 0; ii < N_BINS; ii++)
+			for(int j = 0; j < N_BINS; j++)
 			{
-				double mass_min = mass_edges[ii];
-				double mass_max = mass_edges[ii+1];
-
-				for(int jj = 0; jj < N_BINS; jj++)
+				if(pT_edges[j] < pT && pT <= pT_edges[j+1])
 				{
-					double pT_min = pT_edges[jj];
-					double pT_max = pT_edges[jj+1];
-
-					for(int kk = 0; kk < N_BINS; kk++)
-					{
-						double xF_min = xF_edges[kk];
-						double xF_max = xF_edges[kk+1];
-
-						if(true_mass > mass_min && true_mass <= mass_max &&
-							true_pT > pT_min && true_pT <= pT_max && 
-							true_xF > xF_min && true_xF <= xF_max)
-						{
-							double theta_weight = weight_fn(lambda_par[ii][jj][kk], mu_par[ii][jj][kk], nu_par[ii][jj][kk], true_phi, true_costh);
-
-							phi_costheta->Fill(phi, costh, theta_weight);
-							cosphi_costheta->Fill(cos(phi), costh, theta_weight);
-							cos2phi_costheta->Fill(cos(2.* phi), costh, theta_weight);
-							n_fill +=1;
-						}
-					}
+					double event_weight = weight_fn(lambda_par[j], mu_par[j], nu_par[j], true_phi, true_costh);
+					phi_costheta[j]->Fill(phi, costh, event_weight);
 				}
 			}
-		} // filling is done
+			n_fill += 1;
+		}
 		if(n_fill==n_reco){break;}
 	}
 
-	TCanvas* can = new TCanvas();
-
-	mass_hist->Draw("HIST");
-	can->SaveAs("imgs/mass.png");
-
-	pT_hist->Draw("HIST");
-	can->SaveAs("imgs/pT.png");
-
-	xF_hist->Draw("HIST");
-	can->SaveAs("imgs/xF.png");
-
-	/*
-	* Normalize to unity
-	*/
-
-	phi_costheta->Scale(1./phi_costheta->Integral());
-	cosphi_costheta->Scale(1./cosphi_costheta->Integral());
-	cos2phi_costheta->Scale(1./cos2phi_costheta->Integral());
+	for(int i = 0; i < N_BINS; i++)
+	{
+		phi_costheta[i]->Scale(1./phi_costheta[i]->Integral());
+	}
 }
 
 void MakeHist::DrawHist()
 {
 	TCanvas* can = new TCanvas();
 
-	phi_costheta->Draw("COLZ");
-	can->SaveAs("imgs/phi_costheta.png");
-
-	cosphi_costheta->Draw("COLZ");
-	can->SaveAs("imgs/cosphi_costheta.png");
-
-	cos2phi_costheta->Draw("COLZ");
-	can->SaveAs("imgs/cos2phi_costheta.png");
-
-	TH3D* hist_lambda = new TH3D("hist_lambda", "", N_BINS, mass_edges, N_BINS, pT_edges, N_BINS, xF_edges);
-	TH3D* hist_mu = new TH3D("hist_mu", "", N_BINS, mass_edges, N_BINS, pT_edges, N_BINS, xF_edges);
-	TH3D* hist_nu = new TH3D("hist_nu", "", N_BINS, mass_edges, N_BINS, pT_edges, N_BINS, xF_edges);
+	TH1D* pT_lambda = new TH1D("pT_lambda", "; p_{T}; #lambda [a.u.]", N_BINS, pT_edges);
+	TH1D* pT_mu = new TH1D("pT_mu", "; p_{T}; #mu [a.u.]", N_BINS, pT_edges);
+	TH1D* pT_nu = new TH1D("pT_nu", "; p_{T}; #nu [a.u.]", N_BINS, pT_edges);
 
 	for(int i = 0; i < N_BINS; i++)
 	{
-		for(int j = 0; j < N_BINS; j++)
-		{
-			for(int k = 0; k < N_BINS; k++)
-			{
-				hist_lambda->SetBinContent(i+1, j+1, k+1, lambda_par[i][j][k]);
-				hist_mu->SetBinContent(i+1, j+1, k+1, mu_par[i][j][k]);
-				hist_nu->SetBinContent(i+1, j+1, k+1, nu_par[i][j][k]);
-				TString par_out = Form("lambda = %.3f, mu = %.3f, nu = %.3f", lambda_par[i][j][k], mu_par[i][j][k], nu_par[i][j][k]);
-				cout << par_out.Data() << endl;
-			}
-		}
+		pT_lambda->SetBinContent(i+1, lambda_par[i]);
+		pT_mu->SetBinContent(i+1, mu_par[i]);
+		pT_nu->SetBinContent(i+1, nu_par[i]);
 	}
 
-	TH1D* lambda_pT = (TH1D*)hist_lambda->ProjectionY();
-	lambda_pT->SetNameTitle("lambda_pT", "; p_{T} [GeV]; #lambda [a.u.]");
-	// lambda_pT->SetMarkerStyle(8);
-	// lambda_pT->SetMarkerColor(4);
+	pT_lambda->Draw();
+	can->SaveAs("imgs/pT_lambda.png");
 
-	lambda_pT->Draw("HIST");
-	can->SaveAs("imgs/lambda_pT.png");
+	pT_mu->Draw();
+	can->SaveAs("imgs/pT_mu.png");
 
-	TH1D* mu_pT = (TH1D*)hist_mu->ProjectionY();
-	mu_pT->SetNameTitle("mu_pT", "; p_{T} [GeV]; #mu [a.u.]");
-	// mu_pT->SetMarkerStyle(8);
-	// mu_pT->SetMarkerColor(4);
+	pT_nu->Draw();
+	can->SaveAs("imgs/pT_nu.png");
 
-	mu_pT->Draw("HIST");
-	can->SaveAs("imgs/mu_pT.png");
 
-	TH1D* nu_pT = (TH1D*)hist_nu->ProjectionY();
-	nu_pT->SetNameTitle("nu_pT", "; p_{T} [GeV]; #nu [a.u.]");
-	// nu_pT->SetMarkerStyle(8);
-	// nu_pT->SetMarkerColor(4);
+	for(int i = 0; i < N_BINS; i++)
+	{
+		phi_costheta[i]->Draw("COLZ");
 
-	nu_pT->Draw("HIST");
-	can->SaveAs("imgs/nu_pT.png");
+		TString pic_name = Form("imgs/phi_costheta_%d.png", i);
+		can->SaveAs(pic_name.Data());
+	}
 }
