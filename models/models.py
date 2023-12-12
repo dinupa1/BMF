@@ -14,35 +14,43 @@ class Autoencoder(nn.Module):
 	def __init__(self, latent_size=64):
 		super().__init__()
 
-		self.act = nn.ReLU()
+		self.conv = nn.Sequential(
+			nn.Conv2d(4, 16, kernel_size=3, stride=1, padding=1), # 10, 10
+			nn.BatchNorm2d(16),
+			nn.ReLU(),
+			nn.MaxPool2d((2, 2)),
+			nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1), # 5, 5
+			nn.BatchNorm2d(32),
+			nn.ReLU(),
+			nn.MaxPool2d((2, 2)), # 2, 2
+			)
 
-		self.enc1 = nn.Linear(4* 10* 10, 256, bias=True)
-		self.enc2 = nn.Linear(256, 128, bias=True)
-		self.enc3 = nn.Linear(128, latent_size, bias=True)
+		self.encoder = nn.Sequential(
+			nn.Linear(32* 2* 2, 64, bias=True),
+			nn.ReLU(),
+			nn.Linear(64, latent_size, bias=True),
+			)
 
-		self.dec1 = nn.Linear(latent_size, 128, bias=True)
-		self.dec2 = nn.Linear(128, 256, bias=True)
-		self.dec3 = nn.Linear(256, 4* 3, bias=True)
+		self.decoder = nn.Sequential(
+			nn.Linear(latent_size, 64, bias=True),
+			nn.ReLU(),
+			nn.Linear(64, 4* 3),
+			)
 
-	def encoder(self, x):
-		x = self.enc1(x)
-		x = self.act(x)
-		x = self.enc2(x)
-		x = self.act(x)
-		z = self.enc3(x)
+	def encode(self, x):
+		x = self.conv(x)
+		x = x.view(x.size(0), -1)
+		z = self.encoder(x)
 		return z
 
-	def decoder(self, x):
-		x = self.dec1(x)
-		x = self.act(x)
-		x = self.dec2(x)
-		x = self.act(x)
-		x = self.dec3(x)
+	def decode(self, x):
+		x = self.decoder(x)
 		return x
 
 	def forward(self, x):
-		z = self.encoder(x)
-		x = self.decoder(z)
+		z = self.encode(x)
+		x = self.decode(z)
+		x = x.view(x.size(0), 4, 3)
 		return x
 
 
@@ -78,9 +86,6 @@ class ParamExtractor():
 			self.network.train()
 			runnig_loss = []
 			for inputs, targets in train_dataloader:
-				inputs = inputs.view(inputs.size(0), -1)
-				targets = targets.view(inputs.size(0), -1)
-
 				inputs = inputs.to(device)
 				targets = targets.to(device)
 
@@ -102,9 +107,6 @@ class ParamExtractor():
 			running_acc = []
 			with torch.no_grad():
 				for inputs, targets in val_dataloader:
-					inputs = inputs.view(inputs.size(0), -1)
-					targets = targets.view(inputs.size(0), -1)
-
 					inputs = inputs.to(device)
 					targets = targets.to(device)
 
@@ -140,7 +142,6 @@ class ParamExtractor():
 		self.network.eval()
 		with torch.no_grad():
 			for inputs, targets in test_dataloader:
-				inputs = inputs.view(inputs.size(0), -1)
 
 				outputs = self.network(inputs)
 
@@ -148,7 +149,7 @@ class ParamExtractor():
 				# print("prediction shape : ", y.shape)
 				# print("target shape : ", targets.shape)
 
-				X_pred.append(outputs.view(inputs.size(0), 4, 3).detach())
+				X_pred.append(outputs.detach())
 				X_par.append(targets)
 
 		tree = {

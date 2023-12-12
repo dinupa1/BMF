@@ -20,33 +20,16 @@ class PlotHist
 	TTree* tree;
 	int nevents;
 
-	float X_par[6][3][3];
-	float X_preds[6][3][3];
+	float X_par[4][3];
+	float X_pred[4][3];
 
-	double lambda_array[3][3];
-	double mu_array[3][3];
-	double nu_array[3][3];
-
-	TH1D* lambda_mass[3];
-	TH1D* lambda_pT[3];
-	TH1D* lambda_xF[3];
-
-	TH1D* mu_mass[3];
-	TH1D* mu_pT[3];
-	TH1D* mu_xF[3];
-
-	TH1D* nu_mass[3];
-	TH1D* nu_pT[3];
-	TH1D* nu_xF[3];
-
-	double mass_edges[4] = {4., 5.5, 6.5, 9.};
-	double pT_edges[4] = {0., 0.5, 1., 2.5};
-	double xF_edges[4] = {-0.1, 0.3, 0.5, 1.0};
+	// double mass_edges[4] = {4., 5.5, 6.5, 9.};
+	double pT_edges[5] = {0.0, 0.4, 0.8, 1.2, 2.5};
+	// double xF_edges[4] = {-0.1, 0.3, 0.5, 1.0};
 
 public:
 	PlotHist();
 	virtual ~PlotHist(){};
-	void DeltaHist(int i);
 	void DrawResolution();
 	//void DrawHist();
 };
