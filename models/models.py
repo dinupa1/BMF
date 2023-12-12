@@ -135,6 +135,8 @@ class ParamExtractor():
 
 		X_par, X_pred = [], []
 
+		self.network = self.network.to("cpu")
+
 		self.network.eval()
 		with torch.no_grad():
 			for inputs, targets in test_dataloader:
