@@ -54,11 +54,44 @@ class Autoencoder(nn.Module):
 		return x
 
 
+class ParamCNN(nn.Module):
+	def __init__(self):
+		super().__init__()
+
+		self.conv = nn.Sequential(
+			nn.Conv2d(4, 16, kernel_size=3, stride=1, padding=1), # 10, 10
+			nn.BatchNorm2d(16),
+			nn.ReLU(),
+			nn.MaxPool2d((2, 2)),
+			nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1), # 5, 5
+			nn.BatchNorm2d(32),
+			nn.ReLU(),
+			nn.MaxPool2d((2, 2)), # 2, 2
+			)
+
+		self.fc = nn.Sequential(
+			nn.Linear(32* 2* 2, 32, bias=True),
+			nn.ReLU(),
+			nn.Linear(32, 16, bias=True),
+			nn.ReLU(),
+			nn.Linear(16, 4*3)
+			)
+
+
+
+	def forward(self, x):
+		x = self.conv(x)
+		x = x.view(x.size(0), -1)
+		x = self.decode(z)
+		x = x.view(x.size(0), 4, 3)
+		return x
+
+
 class ParamExtractor():
 	def __init__(self, latent_size=64, learning_rate=0.001, step_size=100, gamma=0.1):
 		super().__init__()
 
-		self.network = Autoencoder(latent_size)
+		self.network = ParamCNN()
 		self.optimizer = optim.Adam(self.network.parameters(), lr=learning_rate)
 		self.scheduler = StepLR(self.optimizer, step_size=step_size, gamma=gamma)
 
