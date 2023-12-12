@@ -70,7 +70,9 @@ class ParamCNN(nn.Module):
 			)
 
 		self.fc = nn.Sequential(
-			nn.Linear(32* 2* 2, 32, bias=True),
+			nn.Linear(32* 2* 2, 64, bias=True),
+			nn.ReLU(),
+			nn.Linear(64, 32, bias=True),
 			nn.ReLU(),
 			nn.Linear(32, 16, bias=True),
 			nn.ReLU(),
