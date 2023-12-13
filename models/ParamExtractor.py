@@ -13,7 +13,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # for CUDA
 
 plt.rc("font", size=14)
 
-latent_size = 16
+latent_size = 8
 batch_size = 1024
 learning_rate = 0.0001
 num_epochs = 200
