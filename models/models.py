@@ -175,6 +175,8 @@ class ParamExtractor():
 		self.network.eval()
 		with torch.no_grad():
 			for inputs, targets in test_dataloader:
+				inputs = inputs.view(inputs.size(0), -1)
+				targets = targets.view(targets.size(0), -1)
 
 				outputs = self.network(inputs)
 
@@ -183,7 +185,7 @@ class ParamExtractor():
 				# print("target shape : ", targets.shape)
 
 				X_pred.append(outputs.view(outputs.size(0), 4, 3).detach())
-				X_par.append(targets)
+				X_par.append(targets.view(targets.size(0), 4, 3))
 
 		tree = {
 		"X_par": torch.cat(X_par, axis=0),
