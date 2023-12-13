@@ -113,8 +113,8 @@ class ParamExtractor():
 			self.network.train()
 			runnig_loss = []
 			for inputs, targets in train_dataloader:
-				inputs = inputs.view(x.size(0), -1)
-				targets = inputs.view(x.size(0), -1)
+				inputs = inputs.view(inputs.size(0), -1)
+				targets = targets.view(targets.size(0), -1)
 
 				inputs = inputs.to(device)
 				targets = targets.to(device)
@@ -137,8 +137,8 @@ class ParamExtractor():
 			running_acc = []
 			with torch.no_grad():
 				for inputs, targets in val_dataloader:
-					inputs = inputs.view(x.size(0), -1)
-					targets = inputs.view(x.size(0), -1)
+					inputs = inputs.view(inputs.size(0), -1)
+					targets = targets.view(targets.size(0), -1)
 
 					inputs = inputs.to(device)
 					targets = targets.to(device)
