@@ -56,7 +56,7 @@ for i in range(n_steps):
 	with torch.no_grad():
 		outputs = model.network(test_tree["X_det"][:5])
 		X_par.append(test_tree["X_par"][:5].numpy())
-		X_preds.append(outputs.detach().numpy())
+		X_preds.append(outputs.view(outputs.size(0), 4, 3).detach().numpy())
 
 save = {
 "X_par_mean": torch.from_numpy(np.mean(X_par, axis=0)).float(),

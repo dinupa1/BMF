@@ -11,35 +11,30 @@ plt.rc("font", size=14)
 
 
 class Autoencoder(nn.Module):
-	def __init__(self, latent_size=64):
+	def __init__(self, latent_size=16):
 		super().__init__()
 
-		self.conv = nn.Sequential(
-			nn.Conv2d(4, 16, kernel_size=3, stride=1, padding=1), # 10, 10
-			nn.BatchNorm2d(16),
-			nn.ReLU(),
-			nn.MaxPool2d((2, 2)),
-			nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1), # 5, 5
-			nn.BatchNorm2d(32),
-			nn.ReLU(),
-			nn.MaxPool2d((2, 2)), # 2, 2
-			)
-
 		self.encoder = nn.Sequential(
-			nn.Linear(32* 2* 2, 64, bias=True),
+			nn.Linear(4* 10* 10, 128, bias=True),
 			nn.ReLU(),
-			nn.Linear(64, latent_size, bias=True),
+			nn.Linear(128, 64, bias=True),
+			nn.ReLU(),
+			nn.Linear(64, 32, bias=True),
+			nn.ReLU(),
+			nn.Linear(32, latent_size, bias=True),
 			)
 
 		self.decoder = nn.Sequential(
-			nn.Linear(latent_size, 64, bias=True),
+			nn.Linear(latent_size, 32, bias=True),
 			nn.ReLU(),
-			nn.Linear(64, 4* 3),
+			nn.Linear(32, 64, bias=True),
+			nn.ReLU(),
+			nn.Linear(64, 128, bias=True),
+			nn.ReLU(),
+			nn.Linear(128, 4* 3, bias=True),
 			)
 
 	def encode(self, x):
-		x = self.conv(x)
-		x = x.view(x.size(0), -1)
 		z = self.encoder(x)
 		return z
 
@@ -50,7 +45,6 @@ class Autoencoder(nn.Module):
 	def forward(self, x):
 		z = self.encode(x)
 		x = self.decode(z)
-		x = x.view(x.size(0), 4, 3)
 		return x
 
 
@@ -88,10 +82,10 @@ class ParamCNN(nn.Module):
 
 
 class ParamExtractor():
-	def __init__(self, learning_rate=0.001, step_size=100, gamma=0.1):
+	def __init__(self, latent_size, learning_rate=0.001, step_size=100, gamma=0.1):
 		super().__init__()
 
-		self.network = ParamCNN()
+		self.network = Autoencoder(latent_size)
 		self.optimizer = optim.Adam(self.network.parameters(), lr=learning_rate)
 		self.scheduler = StepLR(self.optimizer, step_size=step_size, gamma=gamma)
 
@@ -119,6 +113,9 @@ class ParamExtractor():
 			self.network.train()
 			runnig_loss = []
 			for inputs, targets in train_dataloader:
+				inputs = inputs.view(x.size(0), -1)
+				targets = inputs.view(x.size(0), -1)
+
 				inputs = inputs.to(device)
 				targets = targets.to(device)
 
@@ -140,6 +137,9 @@ class ParamExtractor():
 			running_acc = []
 			with torch.no_grad():
 				for inputs, targets in val_dataloader:
+					inputs = inputs.view(x.size(0), -1)
+					targets = inputs.view(x.size(0), -1)
+
 					inputs = inputs.to(device)
 					targets = targets.to(device)
 
@@ -182,7 +182,7 @@ class ParamExtractor():
 				# print("prediction shape : ", y.shape)
 				# print("target shape : ", targets.shape)
 
-				X_pred.append(outputs.detach())
+				X_pred.append(outputs.view(outputs.size(0), 4, 3).detach())
 				X_par.append(targets)
 
 		tree = {

@@ -31,6 +31,6 @@ public:
 	PlotHist();
 	virtual ~PlotHist(){};
 	void DrawResolution();
-	//void DrawHist();
+	void DrawHist();
 };
 #endif /* _H_PlotHist_H_ */
