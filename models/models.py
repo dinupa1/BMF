@@ -70,9 +70,7 @@ class ParamCNN(nn.Module):
 			)
 
 		self.fc = nn.Sequential(
-			nn.Linear(32* 2* 2, 64, bias=True),
-			nn.ReLU(),
-			nn.Linear(64, 32, bias=True),
+			nn.Linear(32* 2* 2, 32, bias=True),
 			nn.ReLU(),
 			nn.Linear(32, 16, bias=True),
 			nn.ReLU(),
@@ -90,7 +88,7 @@ class ParamCNN(nn.Module):
 
 
 class ParamExtractor():
-	def __init__(self, latent_size=64, learning_rate=0.001, step_size=100, gamma=0.1):
+	def __init__(self, learning_rate=0.001, step_size=100, gamma=0.1):
 		super().__init__()
 
 		self.network = ParamCNN()
