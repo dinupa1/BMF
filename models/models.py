@@ -17,21 +17,28 @@ class Autoencoder(nn.Module):
 		self.encoder = nn.Sequential(
 			nn.Linear(4* 10* 10, 64, bias=True),
 			nn.ReLU(),
-			nn.Linear(64, 64, bias=True),
+			nn.Linear(64, 32, bias=True),
 			nn.ReLU(),
 			# nn.Linear(32, 16, bias=True),
 			# nn.ReLU(),
-			nn.Linear(64, latent_size, bias=True),
+			nn.Linear(32, latent_size, bias=True),
 			)
 
 		self.decoder = nn.Sequential(
-			nn.Linear(latent_size, 64, bias=True),
+			nn.Linear(latent_size, 32, bias=True),
 			nn.ReLU(),
-			nn.Linear(64, 64, bias=True),
+			nn.Linear(32, 64, bias=True),
 			nn.ReLU(),
 			# nn.Linear(32, 64, bias=True),
 			# nn.ReLU(),
-			nn.Linear(64, 4* 3, bias=True),
+			nn.Linear(64, 4* 10* 10, bias=True),
+			nn.Sigmoid(),
+			)
+
+		self.regression = nn.Sequential(
+			nn.Linear(latent_size, 32, bias=True),
+			nn.ReLU(),
+			nn.Linear(32, 4* 3, bias=True),
 			)
 
 	def encode(self, x):
@@ -45,7 +52,8 @@ class Autoencoder(nn.Module):
 	def forward(self, x):
 		z = self.encode(x)
 		x = self.decode(z)
-		return x
+		theta = self.regression(z)
+		return x, theta
 
 
 class ParamCNN(nn.Module):
@@ -98,7 +106,8 @@ class ParamExtractor():
 		print(self.network)
 		print("total trainable params: {}".format(total_trainable_params))
 
-		criterion = nn.MSELoss()
+		criterion = nn.BCELoss()
+		criterion_theta = nn.MSELoss()
 
 		train_dataset = TensorDataset(train_tree["X_det"], train_tree["X_par"])
 		val_dataset = TensorDataset(val_tree["X_det"], val_tree["X_par"])
@@ -121,9 +130,9 @@ class ParamExtractor():
 
 				self.optimizer.zero_grad()
 
-				outputs = self.network(inputs)
+				outputs, theta = self.network(inputs)
 
-				loss = criterion(outputs, targets)
+				loss = criterion(outputs, inputs) + criterion_theta(theta, targets)
 
 				loss.backward()
 				self.optimizer.step()
@@ -143,8 +152,8 @@ class ParamExtractor():
 					inputs = inputs.to(device)
 					targets = targets.to(device)
 
-					outputs = self.network(inputs)
-					loss = criterion(outputs, targets)
+					outputs, theta = self.network(inputs)
+					loss = criterion(outputs, inputs) + criterion_theta(theta, targets)
 
 					running_acc.append(loss.item())
 				epoch_val = np.nanmean(running_acc)
@@ -178,13 +187,13 @@ class ParamExtractor():
 				inputs = inputs.view(inputs.size(0), -1)
 				targets = targets.view(targets.size(0), -1)
 
-				outputs = self.network(inputs)
+				outputs, theta = self.network(inputs)
 
 				# y = outputs.view(inputs.size(0), 4, 3)
 				# print("prediction shape : ", y.shape)
 				# print("target shape : ", targets.shape)
 
-				X_pred.append(outputs.view(outputs.size(0), 4, 3).detach())
+				X_pred.append(theta.view(theta.size(0), 4, 3).detach())
 				X_par.append(targets.view(targets.size(0), 4, 3))
 
 		tree = {

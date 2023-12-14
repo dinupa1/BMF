@@ -15,13 +15,13 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # for CUDA
 
 plt.rc("font", size=14)
 
-latent_size = 32
+latent_size = 16
 batch_size = 1024
-learning_rate = 0.0001
-num_epochs = 200
-step_size = 50
+learning_rate = 0.001
+num_epochs = 1000
+step_size = 100
 gamma = 0.1
-n_steps = 50
+n_steps = 5
 
 tree = torch.load("unet-tensor.pt")
 
@@ -48,16 +48,16 @@ for i in range(n_steps):
 	"X_par": torch.from_numpy(y_val),
 	}
 
-	model = ParamExtractor(learning_rate, step_size, gamma)
+	model = ParamExtractor(latent_size, learning_rate, step_size, gamma)
 	model.train(train_dic, val_dic, batch_size, num_epochs, device)
 
 	model.network.to("cpu")
 
 	model.network.eval()
 	with torch.no_grad():
-		outputs = model.network(test_tree["X_det"][:5])
+		outputs, theta = model.network(test_tree["X_det"][:5].view(test_tree["X_det"][:5].size(0), -1))
 		X_par.append(test_tree["X_par"][:5].numpy())
-		X_preds.append(outputs.view(outputs.size(0), 4, 3).detach().numpy())
+		X_preds.append(theta.view(theta.size(0), 4, 3).detach().numpy())
 
 save = {
 "X_par_mean": torch.from_numpy(np.mean(X_par, axis=0)).float(),
