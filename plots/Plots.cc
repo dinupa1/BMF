@@ -10,5 +10,5 @@ void Plots()
 {
 	auto ph = new PlotHist();
 	ph->DrawResolution();
-	ph->DrawHist();
+	ph->Print();
 }

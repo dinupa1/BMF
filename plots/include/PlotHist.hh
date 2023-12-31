@@ -17,11 +17,12 @@ using namespace std;
 
 class PlotHist
 {
-	TTree* tree;
+	TTree* inTree;
 	int nevents;
 
-	float X_par[4][3];
-	float X_pred[4][3];
+	float X_par[3];
+	float X_pred_mu[3];
+    float X_pred_std[3];
 
 	// double mass_edges[4] = {4., 5.5, 6.5, 9.};
 	double pT_edges[5] = {0.0, 0.4, 0.8, 1.2, 2.5};
@@ -31,6 +32,6 @@ public:
 	PlotHist();
 	virtual ~PlotHist(){};
 	void DrawResolution();
-	void DrawHist();
+	void Print();
 };
 #endif /* _H_PlotHist_H_ */

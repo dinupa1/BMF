@@ -13,3 +13,5 @@ notes/
 *.pt
 imgs/
 build/
+WeeklyUpdate/
+.ipynb_checkpoints
