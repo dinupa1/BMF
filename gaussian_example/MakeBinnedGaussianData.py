@@ -16,7 +16,7 @@ data = uproot.open("gauss_data.root")
 X0_train_tree = data["X0_train_tree"]
 X1_train_tree = data["X1_train_tree"]
 X0_test_tree = data["X0_test_tree"]
-X1_test_tree = data["X0_test_tree"]
+X1_test_tree = data["X1_test_tree"]
 
 tensor_tree = {
     "X0_train_tree": {

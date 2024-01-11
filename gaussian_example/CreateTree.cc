@@ -7,7 +7,7 @@
 
 using namespace std;
 
-int num_events = 100000;
+int num_events = 1000000;
 const int num_samples = 100000;
 
 int num_bins = 30;
@@ -81,7 +81,7 @@ void CreateTree()
 {
     TRandom3* event = new TRandom3();
 
-    TFile* outFile = new TFile("gaus_data.root", "recreate");
+    TFile* outFile = new TFile("gauss_data.root", "recreate");
 
     TTree* X0_train_tree = (TTree*)MakeTree("X0_train_tree");
     TTree* X1_train_tree = (TTree*)MakeTree("X1_train_tree");
