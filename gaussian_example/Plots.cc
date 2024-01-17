@@ -13,6 +13,8 @@ TCanvas* can;
 
 void Plots()
 {
+    gStyle->SetOptStat(0);
+
     auto inFile = TFile::Open("results.root", "READ");
     auto save = (TTree*)inFile->Get("save");
     int num_bins = 30;
@@ -59,9 +61,9 @@ void Plots()
 
     H0->Draw("HIST");
     H1->Draw("HIST SAME");
-    //H01->Draw("E1 SAME");
+    H01->Draw("E1 SAME");
 
-    can->SaveAs("imgs/weights0.png");
+    can->SaveAs("imgs/weights.png");
 
 
     auto tree2 = (TTree*)inFile->Get("mu_vals");

@@ -7,8 +7,8 @@
 
 using namespace std;
 
-int num_events = 1000000;
-const int num_samples = 100000;
+int num_events = 100000;
+const int num_samples = 1000000;
 
 int num_bins = 30;
 double xmin = -6.;
