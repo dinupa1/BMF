@@ -11,3 +11,5 @@ data/
 *.pt
 __pycache__
 imgs/
+.ipynb_checkpoints/
+documents/
