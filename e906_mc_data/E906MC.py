@@ -8,8 +8,7 @@ from models import NetFit
 import h5py
 
 # Check if GPU is available
-#device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # for CUDA
-device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # for CUDA
 
 plt.rc("font", size=14)
 
@@ -89,11 +88,11 @@ X1_test_det = {
 hidden_dim = 64
 batch_size = 1024
 learning_rate = 0.001
-num_epochs = 2
+num_epochs = 500
 step_size = 20
 early_stopping_patience = 20
 gamma = 0.1
-num_runs = 2
+num_runs = 50
 
 # particle level fit
 model = NetFit(hidden_dim, learning_rate, step_size, gamma, batch_size)
