@@ -24,24 +24,28 @@ outputs.create_dataset("X0_train/X_par", data=X0_train["X_par"].array().to_numpy
 outputs.create_dataset("X0_train/X_det", data=X0_train["X_det"].array().to_numpy())
 outputs.create_dataset("X0_train/W_par", data=X0_train["W_par"].array().to_numpy())
 outputs.create_dataset("X0_train/W_det", data=X0_train["W_det"].array().to_numpy())
+outputs.create_dataset("X0_train/label", data=X0_train["label"].array().to_numpy())
 
 outputs.create_dataset("X1_train/thetas", data=X1_train["thetas"].array().to_numpy())
 outputs.create_dataset("X1_train/X_par", data=X1_train["X_par"].array().to_numpy())
 outputs.create_dataset("X1_train/X_det", data=X1_train["X_det"].array().to_numpy())
 outputs.create_dataset("X1_train/W_par", data=X1_train["W_par"].array().to_numpy())
 outputs.create_dataset("X1_train/W_det", data=X1_train["W_det"].array().to_numpy())
+outputs.create_dataset("X1_train/label", data=X1_train["label"].array().to_numpy())
 
 outputs.create_dataset("X0_test/thetas", data=X0_test["thetas"].array().to_numpy())
 outputs.create_dataset("X0_test/X_par", data=X0_test["X_par"].array().to_numpy())
 outputs.create_dataset("X0_test/X_det", data=X0_test["X_det"].array().to_numpy())
 outputs.create_dataset("X0_test/W_par", data=X0_test["W_par"].array().to_numpy())
 outputs.create_dataset("X0_test/W_det", data=X0_test["W_det"].array().to_numpy())
+outputs.create_dataset("X0_test/label", data=X0_test["label"].array().to_numpy())
 
 outputs.create_dataset("X1_test/thetas", data=X1_test["thetas"].array().to_numpy())
 outputs.create_dataset("X1_test/X_par", data=X1_test["X_par"].array().to_numpy())
 outputs.create_dataset("X1_test/X_det", data=X1_test["X_det"].array().to_numpy())
 outputs.create_dataset("X1_test/W_par", data=X1_test["W_par"].array().to_numpy())
 outputs.create_dataset("X1_test/W_det", data=X1_test["W_det"].array().to_numpy())
+outputs.create_dataset("X1_test/label", data=X1_test["label"].array().to_numpy())
 
 outputs.close()
 
