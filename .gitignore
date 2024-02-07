@@ -14,3 +14,6 @@ imgs/
 .ipynb_checkpoints/
 documents/
 .idea
+*.png
+*.hdf5
+makedata
