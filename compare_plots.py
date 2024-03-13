@@ -1,5 +1,3 @@
-import os
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -30,7 +28,3 @@ outputs = uproot.recreate("../e906-LH2-data/output.root", compression=uproot.ZLI
 outputs["tree"] = tree
 outputs["tree_mc"] = tree_mc
 outputs.close()
-
-
-# compare histograms
-os.system("root -b -q compare_plots.cc")

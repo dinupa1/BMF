@@ -1,9 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 import uproot
-import awkward as ak
 
 import h5py
 from sklearn.model_selection import train_test_split
@@ -80,7 +77,7 @@ def e906_data_cuts(tree: uproot.models.TTree.Model_TTree_v19, beam_offset: float
         ((events.y1_st3 - beam_offset) * (events.y2_st3 - beam_offset) < 0.) &
         (events.nHits1 + events.nHits2 > 29) &
         (events.nHits1St1 + events.nHits2St1 > 8) &
-        (np.abs(events.x1_st1 + events.x2_st1 < 42))
+        (np.abs(events.x1_st1 + events.x2_st1) < 42)
     )
 
     occ_cut_2111_v42 = (
@@ -123,20 +120,10 @@ result_mix = uproot.open("../e906-LH2-data/merged_RS67_3089LH2.root:result_mix")
 result_flask = uproot.open("../e906-LH2-data/merged_RS67_3089flask.root:result")
 
 tree = e906_data_cuts(result)
-liveP = np.sum(tree.liveP.to_numpy())
-
-print("---> # of live P {}".format(liveP))
-
 tree_mix = e906_data_cuts(result_mix)
-
 tree_flask = e906_data_cuts(result_flask)
-liveP_flask = np.sum(tree_flask.liveP.to_numpy())
 
-print("---> # of flask live P {}".format(liveP_flask))
-
-print("---> ratio {}".format(liveP/liveP_flask))
-
-save = uproot.open("../e906-LH2-data/data.root:save")
+save = uproot.open("../e906-LH2-data/e906-messy-mc.root:save")
 
 tree_mc = e906_mc_cuts(save)
 
@@ -144,15 +131,18 @@ train_tree, test_tree = train_test_split(tree_mc.to_numpy(), test_size=0.5, shuf
 
 len1 = len(tree.mass.to_numpy())
 len2 = len(tree_mix.mass.to_numpy())
-len_total = len1 + len2
+len3 = len(tree_flask.mass.to_numpy())
+len_total = len1 + len2 + len3
+
+weight = 1.57319e+17/3.57904e+16
 
 train_dic = {
-    "mass": np.concatenate((tree.mass.to_numpy(), tree_mix.mass.to_numpy())),
-    "pT": np.concatenate((tree.pT.to_numpy(), tree_mix.pT.to_numpy())),
-    "xB": np.concatenate((tree.xB.to_numpy(), tree_mix.xB.to_numpy())),
-    "xT": np.concatenate((tree.xT.to_numpy(), tree_mix.xT.to_numpy())),
-    "xF": np.concatenate((tree.xF.to_numpy(), tree_mix.xF.to_numpy())),
-    "weight": np.concatenate((np.ones(len1), -1.* np.ones(len2))),
+    "mass": np.concatenate((tree.mass.to_numpy(), tree_mix.mass.to_numpy(), tree_flask.mass.to_numpy())),
+    "pT": np.concatenate((tree.pT.to_numpy(), tree_mix.pT.to_numpy(), tree_flask.pT.to_numpy())),
+    "xB": np.concatenate((tree.xB.to_numpy(), tree_mix.xB.to_numpy(), tree_flask.xB.to_numpy())),
+    "xT": np.concatenate((tree.xT.to_numpy(), tree_mix.xT.to_numpy(), tree_flask.xT.to_numpy())),
+    "xF": np.concatenate((tree.xF.to_numpy(), tree_mix.xF.to_numpy(), tree_flask.xF.to_numpy())),
+    "weight": np.concatenate((np.ones(len1), -1. * np.ones(len2), -weight * np.ones(len3))),
 }
 
 train_dic_mc = {
@@ -172,14 +162,6 @@ test_dic_mc = {
     "xF": test_tree["xF"][:len_total],
     "weight": np.ones(len_total),
 }
-
-
-# outputs = uproot.recreate("../e906-LH2-data/reweight.root", compression=uproot.ZLIB(4))
-# outputs["train_tree"] = train_dic
-# outputs["train_tree_mc"] = train_dic_mc
-# outputs["test_tree_mc"] = test_dic_mc
-# outputs.close()
-
 
 outputs = h5py.File("../e906-LH2-data/reweight.hdf5", "w")
 
