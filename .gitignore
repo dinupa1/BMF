@@ -13,3 +13,4 @@ imgs/
 *.sh
 .idea/
 .ipynb_checkpoints/
+build/

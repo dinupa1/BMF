@@ -17,24 +17,24 @@ void normalize(TH1D* hist, TH1D* hist_mc, TH1D* hist_mc2)
     hist->SetMaximum(xmax);
 }
 
-void plots(TH1D* h1, TH1D* h2, TH1D* h3, TString fname)
+void plots(TH1D* h1, TH1D* h2, TString fname)
 {
     auto can = new TCanvas(fname.Data(), fname.Data(), 800, 800);
 
     h1->SetFillColorAlpha(kTeal+1, 0.3);
 
-    h2->SetMarkerColor(kAzure+1);
+    h2->SetMarkerColor(kViolet+1);
     h2->SetMarkerStyle(20);
 
 //    double xmax = 1.5* h2->GetMaximum();
 //    h2->SetMaximum(xmax);
 
-    h3->SetMarkerColor(kViolet +1);
-    h3->SetMarkerStyle(20);
+//    h3->SetMarkerColor(kViolet +1);
+//    h3->SetMarkerStyle(20);
 
     h1->Draw("HIST");
     h2->Draw("E1 SAME");
-    h3->Draw("E1 SAME");
+//    h3->Draw("E1 SAME");
 
     TString save_name = Form("imgs/%s.png", fname.Data());
 
@@ -56,18 +56,21 @@ void ratio_plots(TH1D* hist, TH1D* hist_mc, TString var, TString units, TString 
     hist_mc->SetMarkerColor(kAzure+1);
     hist_mc->SetMarkerStyle(20);
 
-//    TF1* fit = new TF1("fit", "0.* x + [1]");
+    TF1* fit = new TF1("fit", "[0]* x+ [1]");
+    fit->SetParName(0, "a");
+    fit->SetParName(1, "b");
+//    fit->SetParName(2, "c");
 
     TString cname = Form("can_%s", hname.Data());
 
     auto c = new TCanvas(cname.Data(), cname.Data(), 800, 800);
-//    hist_mc->Fit(fit);
+    hist_mc->Fit(fit);
     hist_mc->Draw("E1");
 
     TString pname = Form("imgs/%s_ratio_%s.png", fname.Data(), var.Data());
     c->SaveAs(pname.Data());
 
-//    delete fit;
+    delete fit;
 }
 
 
@@ -75,8 +78,8 @@ void compare_plots()
 {
     TH1::SetDefaultSumw2();
 
-//    gStyle->SetOptStat(0);
-//    gStyle->SetOptFit(1);
+    gStyle->SetOptStat(0);
+    gStyle->SetOptFit(1);
 
     int bins = 20;
 
@@ -85,7 +88,7 @@ void compare_plots()
     auto tree_mc = (TTree*)infile->Get("tree_mc");
 
     int nevents = tree->GetEntries();
-    int nevents_mc = tree->GetEntries();
+    int nevents_mc = tree_mc->GetEntries();
 
     std::cout << "---> mc events " << nevents_mc << " real events " <<  nevents <<std::endl;
 
@@ -158,11 +161,17 @@ void compare_plots()
     normalize(hxT, hxT_mc, hxT_mc2);
     normalize(hxF, hxF_mc, hxF_mc2);
 
-    plots(hmass, hmass_mc, hmass_mc2, "mass");
-    plots(hpT, hpT_mc, hpT_mc2, "pT");
-    plots(hxB, hxB_mc, hxB_mc2, "xB");
-    plots(hxT, hxT_mc, hxT_mc2, "xT");
-    plots(hxF, hxF_mc, hxF_mc2, "xF");
+    plots(hmass, hmass_mc, "before_mass");
+    plots(hpT, hpT_mc, "before_pT");
+    plots(hxB, hxB_mc, "before_xB");
+    plots(hxT, hxT_mc, "before_xT");
+    plots(hxF, hxF_mc, "before_xF");
+
+    plots(hmass, hmass_mc2, "after_mass");
+    plots(hpT, hpT_mc2, "after_pT");
+    plots(hxB, hxB_mc2, "after_xB");
+    plots(hxT, hxT_mc2, "after_xT");
+    plots(hxF, hxF_mc2, "after_xF");
 
     ratio_plots(hmass, hmass_mc, "mass", "GeV", "before");
     ratio_plots(hpT, hpT_mc, "pT", "GeV", "before");
